@@ -1136,6 +1136,7 @@ Field notes:
 | D21 | `storage_ok` semantics | Produced by a real write+fsync+read-back probe on a reserved dot-path outside run files. Not a constant, not "process is up". |
 | D22 | Windows host support | Runner uses `subprocess.run(argv, env={**os.environ, **overrides})`, `pathlib`, binary file modes, `shutil.which("docker")`, and no shell tools. Container-side code remains Linux-only. On Docker Desktop (WSL2) the runner still verifies the OOM kill from `State.OOMKilled`, not from host-side assumptions. |
 | D23 | M0 scope control | Must-have items versus deferrable items are ranked in "M0 Scope Priorities and Deferrable Items". No requirement is dropped, only sequenced. |
+| D24 | Minimum Python version | Approved compatibility decision: Python 3.12 is the minimum for M0 and `pyproject.toml` sets `requires-python = ">=3.12"`. It is verified on host Python 3.12.10 and image Python 3.12.8 (task 1.5). The pinned packages declare `>=3.10`, but 3.10 and 3.11 were not tested and are not claimed. No other design decision changes. |
 
 ## Correctness Properties
 
@@ -1375,7 +1376,7 @@ tests/
 
 - `pytest.ini` sets `testpaths = tests` and registers the `docker_integration` marker.
 - In `pytest_collection_modifyitems`: if the user did not opt in, every item marked `docker_integration` is deselected and reported, so no integration test runs (Requirement 13.10). If the user opted in with `--run-docker` or `CORONER_RUN_DOCKER=1` and `docker info` fails, each integration item gets a skip with the message "Docker is unavailable", and unit tests still run (13.6, 13.11). With opt-in and Docker available, failing integration tests fail the pytest exit status without changing unit results (13.9). pytest's standard summary reports pass, fail, and skip counts (13.7).
-- Documented commands: `pytest` (unit only), `pytest --run-docker` or `CORONER_RUN_DOCKER=1 pytest` (unit plus integration).
+- Documented commands: `pytest` (unit only), `pytest --run-docker` or setting `CORONER_RUN_DOCKER=1` (unit plus integration). Only the exact value `1` opts in; `0`, `true`, `yes`, and an empty value do not. In PowerShell: `$env:CORONER_RUN_DOCKER = "1"; pytest`. In POSIX shells: `CORONER_RUN_DOCKER=1 pytest`.
 
 ### Network-free and Docker-free guarantees (Requirement 13.8)
 
@@ -1460,7 +1461,7 @@ M0 states what it does not know. These statements appear in the documentation, i
 
 The Experiment_Runner and the pytest suite run on Windows PowerShell. The Demo_App, Probe, and Collector run only in Linux containers, so Docker Desktop must use **Linux containers with the WSL2 backend** (Requirement 16.4, 16.5). No container-side code supports Windows. On Windows the Probe cannot read `/proc` when run natively, which is only relevant to unit tests, and those use injected readers.
 
-Prerequisites: Docker Desktop (Linux containers, WSL2 backend), Docker Compose v2 (`docker compose`), Python 3.11 or newer (the documented minimum, confirmed when the code is written), and Git.
+Prerequisites: Docker Desktop (Linux containers, WSL2 backend), Docker Compose v2 (`docker compose`), Python 3.12 or newer (the approved minimum, decision D24), and Git.
 
 Verification commands (PowerShell, from the repository root):
 

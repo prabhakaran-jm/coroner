@@ -24,6 +24,109 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794648955588
       }
+    ],
+    "1.2 Create Python packaging and package skeleton (no pytest yet)": [
+      {
+        "executionId": "1d8369b1-4c25-4906-84a3-07cad3585d0f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649530496
+      },
+      {
+        "executionId": "1d8369b1-4c25-4906-84a3-07cad3585d0f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649737875
+      }
+    ],
+    "1.5 (PRIORITY) Verify dependency compatibility and finalise exact pins": [
+      {
+        "executionId": "444c8b96-0231-40cc-833d-ff47969b3967",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649980022
+      },
+      {
+        "executionId": "444c8b96-0231-40cc-833d-ff47969b3967",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651042182
+      }
+    ],
+    "1.8 (PRIORITY) Create the main `.venv` from the verified pinned requirements": [
+      {
+        "executionId": "334ab6f2-538d-4b3d-8016-9dc400704303",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651186797
+      },
+      {
+        "executionId": "334ab6f2-538d-4b3d-8016-9dc400704303",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651449246
+      }
+    ],
+    "1.3 Implement pytest opt-in, markers, and Docker-free/network-free guards with tests": [
+      {
+        "executionId": "68a189bf-9543-48eb-b749-eeba94ee44cd",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651683046
+      },
+      {
+        "executionId": "68a189bf-9543-48eb-b749-eeba94ee44cd",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652168644
+      }
+    ],
+    "1.6 Add structure tests: import graph, fresh-interpreter import, exact pins": [
+      {
+        "executionId": "fc651613-9f29-49c9-9a68-a01f3ddd1674",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652447883
+      },
+      {
+        "executionId": "fc651613-9f29-49c9-9a68-a01f3ddd1674",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652787414
+      }
+    ],
+    "1.7 Checkpoint - M0.1 verification gate (toolchain, dependencies, Docker, tests)": [
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652930948
+      }
+    ],
+    "1.9 Create the disposable OOM-survival spike (code only, `spike/`)": [
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652977363
+      },
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794653344726
+      }
+    ],
+    "1.10 (PRIORITY) Run the spike and record real results in `docs/m0-results/oom-spike.md`": [
+      {
+        "executionId": "cdc5a045-03ed-4ddb-bd39-829db569804f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794653526170
+      },
+      {
+        "executionId": "cdc5a045-03ed-4ddb-bd39-829db569804f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794654140263
+      }
+    ],
+    "1.11 Propose the baseline specification commit and verify remote privacy (propose only)": [
+      {
+        "executionId": "d91ec103-04b9-42b0-8e83-cf869d33685c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794654240526
+      },
+      {
+        "executionId": "d91ec103-04b9-42b0-8e83-cf869d33685c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659254198
+      }
     ]
   }
 }

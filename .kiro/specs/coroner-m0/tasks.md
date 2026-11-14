@@ -40,7 +40,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: command output is recorded in `docs/m0-results/environment.md`, the branch is `feat/coroner-m0`, and `.kiro` is confirmed not ignored. No commit is made.
     - _Requirements: 14.1, 14.5_
 
-  - [ ] 1.2 Create Python packaging and package skeleton (no pytest yet)
+  - [x] 1.2 Create Python packaging and package skeleton (no pytest yet)
     - Create `pyproject.toml` (project metadata, `requires-python` set after task 1.5, setuptools package discovery for `coroner*`, no runtime dependencies listed here), `pytest.ini` (`testpaths = tests`, register `docker_integration`), and empty packages with `__init__.py`: `coroner/common`, `coroner/evidence`, `coroner/probe`, `coroner/demo_app`, `coroner/collector`, `coroner/runner`, `coroner/runner/experiments`.
     - Create directories `tests/unit/`, `tests/docker_integration/`, `requirements/`, `docker/`, `docs/m0-results/`.
     - Files: `pyproject.toml`, `pytest.ini`, `coroner/**/__init__.py`, `tests/unit/__init__.py` or equivalent.
@@ -50,7 +50,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: the import and parse checks succeed with output recorded. The skeleton has zero tests by design; "no tests exist yet" is recorded as a fact, not as a pass.
     - _Requirements: 14.4_
 
-  - [ ] 1.3 Implement pytest opt-in, markers, and Docker-free/network-free guards with tests
+  - [x] 1.3 Implement pytest opt-in, markers, and Docker-free/network-free guards with tests
     - `tests/conftest.py`: `--run-docker` option, `CORONER_RUN_DOCKER=1` env opt-in, deselect `docker_integration` items when not opted in (report them), skip with "Docker is unavailable" when opted in and `docker info` fails.
     - `tests/unit/conftest.py`: autouse guards that make `socket.getaddrinfo` and `socket.socket.connect` raise (allow `socket.socketpair` for the Windows asyncio self-pipe), and make `subprocess.Popen` fail for argv starting with `docker` or `docker-compose`.
     - Tests: `tests/unit/test_optin.py` using `pytester` or a subprocess of `sys.executable -m pytest` against a tiny fixture project; `tests/unit/test_guards.py` showing a connect attempt and a `docker` Popen are blocked.
@@ -72,7 +72,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: actual outputs and the chosen, verified tag are recorded. No Dockerfile is written yet.
     - _Requirements: 8.2, 8.9, 14.1, 16.4_
 
-  - [ ] 1.5 (PRIORITY) Verify dependency compatibility and finalise exact pins
+  - [x] 1.5 (PRIORITY) Verify dependency compatibility and finalise exact pins
     - In a clean venv (`python -m venv .venv-verify`), install the design's candidate pins (`fastapi==0.115.6`, `uvicorn==0.34.0`, `pytest==8.3.4`, `hypothesis==6.122.3`, `httpx==0.28.1`) and run `pip check`. Use `pip index versions <pkg>` or `pip download --no-deps` to confirm each version exists. If a candidate is missing, yanked, or incompatible with the verified Python version (also check against the image's Python from task 1.4), STOP and ask before substituting.
     - Generate transitive pins with `pip freeze` into `requirements/demo_app.txt`, `requirements/collector.txt`, `requirements/runner.txt` (stdlib-only plus any needed), and `requirements/dev.txt` (includes the others, pytest, hypothesis, httpx, PyYAML if the compose parse test needs it). All lines use `==`, with no ranges.
     - Set `requires-python` in `pyproject.toml` to the verified minimum.
@@ -83,7 +83,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real install, `pip check`, and `pytest --version` output are recorded, the image-build `pip check` is marked as pending for task 5.5, and `.venv-verify` is removed (it is also gitignored). Removal is of this one directory only.
     - _Requirements: 14.5, 14.1_
 
-  - [ ] 1.6 Add structure tests: import graph, fresh-interpreter import, exact pins
+  - [x] 1.6 Add structure tests: import graph, fresh-interpreter import, exact pins
     - `tests/unit/test_structure.py`: AST check of the allowed-import table from the design (probe imports only the stdlib; evidence imports common; collector imports evidence and common; runner imports evidence and common; demo_app imports probe; nothing imports runner, collector, or demo_app except its entry points); fresh-interpreter `python -c "import coroner.<pkg>"` per package using `sys.executable` only; every non-comment line in `requirements/*.txt` matches `^[A-Za-z0-9_.\-\[\]]+==\S+$`.
     - Files: `tests/unit/test_structure.py`.
     - Prerequisite: main `.venv` from task 1.8 (pytest must be installed there).
@@ -92,10 +92,10 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: output is recorded with zero failures, exit code 0, and the passed count meets the expected count.
     - _Requirements: 14.4, 14.5, 13.8_
 
-  - [ ] 1.7 Checkpoint - M0.1 verification gate (toolchain, dependencies, Docker, tests)
+  - [x] 1.7 Checkpoint - M0.1 verification gate (toolchain, dependencies, Docker, tests)
     - Run `.\.venv\Scripts\python.exe -m pytest -q` (expected: exit code 0 and at least the counts of 1.3 plus 1.6; exit code 5 is a FAILURE), record the real counts, confirm that 1.1, 1.4, 1.5, and 1.8 recorded real results, and ask the user if questions arise. The spike (1.9, 1.10) and the baseline commit proposal (1.11) are completed after this gate and closed by checkpoint 1.12.
 
-  - [ ] 1.8 (PRIORITY) Create the main `.venv` from the verified pinned requirements
+  - [x] 1.8 (PRIORITY) Create the main `.venv` from the verified pinned requirements
     - Only after 1.5 passed. `python -m venv .venv`; `.\.venv\Scripts\python.exe -m pip install -r requirements/dev.txt`; `pip check`; `pip freeze` compared to the pins in `requirements/dev.txt` (every pinned package present at the pinned version). The interpreter version must equal the one verified in 1.1 and 1.5. If the install differs from the verified result, STOP and ask.
     - Do not run the test suite to prove this task. Verify by `python -m pytest --version` only.
     - Files: `docs/m0-results/environment.md` (append the `.venv` section). `.venv` is gitignored (existing `.venv` rule).
@@ -104,7 +104,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real install, `pip check`, and `pytest --version` output are recorded, and `.venv` is confirmed ignored.
     - _Requirements: 14.5, 14.1_
 
-  - [ ] 1.9 Create the disposable OOM-survival spike (code only, `spike/`)
+  - [x] 1.9 Create the disposable OOM-survival spike (code only, `spike/`)
     - Purpose: a minimal early technical check that an independent collector container keeps a real telemetry sample after a genuine container OOM kill of a separate container. It is disposable, does NOT replace any M0 test or Experiment C, and never counts a simulated OOM as success. Prerequisites: 1.4 (verified image tag) and 1.8.
     - Create under `spike/` (gitignored): `spike/compose.spike.yaml` with `name: coroner-spike`, a uniquely named volume `coroner_spike_evidence`, containers `coroner-spike-collector` and `coroner-spike-victim`, the image tag verified in 1.4, no host ports (the victim reaches the collector over the compose network), no bind mounts of host paths other than read-only code. The victim has `mem_limit: 64m`, `memswap_limit: 64m`, `restart: "no"`, `privileged: false`. The collector has no memory limit tied to the victim and `restart: "no"`.
     - `spike/collector.py` (stdlib only): `http.server` on the compose network that appends each received JSON line to `/data/spike.jsonl` with write, flush, and `os.fsync`, then acknowledges; `GET /healthz`.
@@ -115,18 +115,18 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: the config output and compile check are recorded.
     - _Requirements: 11.1, 11.3, 4.3, 5.1_
 
-  - [ ] 1.10 (PRIORITY) Run the spike and record real results in `docs/m0-results/spike.md`
+  - [x] 1.10 (PRIORITY) Run the spike and record real results in `docs/m0-results/oom-spike.md`
     - Start only the spike project: `docker compose -f spike/compose.spike.yaml -p coroner-spike up -d --build collector`, wait for `/healthz`, then start the victim. Wait for the victim to stop (up to 120 s). Never use plain `docker compose` against the main project here.
     - Independent checks (copy real output, never hand-write): `docker inspect coroner-spike-victim` shows `State.OOMKilled` true, `State.ExitCode` 137, `State.Status` exited, and `HostConfig.Memory` 67108864; `docker inspect coroner-spike-collector` shows `State.Running` true; the volume holds `spike.jsonl` with at least 3 lines of valid JSON samples; read back the sample count and the highest real `rss_bytes` (greater than the first RSS, below or near the 64 MiB limit); `docker logs coroner-spike-victim` does not claim a handled exit.
     - Result rule: all of OOMKilled true, exit 137, collector running, and at least 3 samples present on the volume are required for PASS. Any other outcome (for example OOMKilled false, collector stopped, no samples) is recorded as FAIL with the real values, and the task STOPS and asks the user. Do not retry with a different tactic, do not simulate, do not relax a check.
     - Cleanup: `docker compose -p coroner-spike -f spike/compose.spike.yaml down` (containers and network only, no `-v`). Delete the spike volume `coroner-spike_coroner_spike_evidence` (verify the exact name with `docker volume ls --filter label=com.docker.compose.project=coroner-spike`) only by following Execution Rule 11: list contents and count run files, archive `spike.jsonl` to `runs/archive/spike-<UTC timestamp>/`, and obtain explicit user approval. Leave the `spike/` directory in place (gitignored) unless the user approves deleting it.
-    - Files: `docs/m0-results/spike.md` (tracked), `runs/archive/` (gitignored).
-    - Expected: `spike.md` contains the real container ids, inspect values, collector status, sample count, first and highest RSS, the host time of the run, and a PASS or FAIL line. It states that it is a disposable spike and not an M0 experiment result.
+    - Files: `docs/m0-results/oom-spike.md` (tracked), `runs/archive/` (gitignored).
+    - Expected: `oom-spike.md` contains the real container ids, inspect values, collector status, sample count, first and highest RSS, the host time of the run, and a PASS or FAIL line. It states that it is a disposable spike and not an M0 experiment result.
     - Verify: `docker inspect coroner-spike-victim --format '{{.State.OOMKilled}} {{.State.ExitCode}} {{.State.Status}} {{.HostConfig.Memory}}'; docker inspect coroner-spike-collector --format '{{.State.Running}}'; docker volume ls --filter label=com.docker.compose.project=coroner-spike`.
     - Done when: results and PASS or FAIL are recorded from real output, the collector and victim containers are removed with `down`, and any volume deletion followed Execution Rule 11.
     - _Requirements: 11.3, 11.4, 11.5, 11.10, 5.3, 4.3_
 
-  - [ ] 1.11 Propose the baseline specification commit and verify remote privacy (propose only)
+  - [x] 1.11 Propose the baseline specification commit and verify remote privacy (propose only)
     - Show the user: `git branch --show-current` (must be `feat/coroner-m0`), `git status --short`, `git diff --stat`, and the exact paths that would be staged: `.kiro/specs/coroner-m0/` (requirements.md, design.md, tasks.md, `.config.kiro`) and `.gitignore`. Add nothing else. Draft a commit message (for example `docs: add approved coroner-m0 specification and gitignore rules`).
     - Verify the GitHub remote is private before any push: `git remote -v`, then `gh repo view --json visibility,url` (or, if `gh` is not available, ask the user to confirm visibility in the GitHub settings). Record the real result. If the repository is public or its visibility cannot be determined, do NOT push; report and ask. Never change visibility.
     - Do NOT run `git add`, `git commit`, or `git push` unless the user explicitly approves in this step; if approved, stage only the listed paths and commit only. Pushing needs a separate explicit approval.
@@ -831,6 +831,7 @@ Cut-line rule: if the work is behind the target dates above, drop optional (`*`)
 - Git and Docker volume safety follow Execution Rules 9 and 11; commits and volume deletions need the user's explicit approval at that moment.
 - Docker tasks (5.5 to 5.7, 7.x, 8.3, 8.4) must run sequentially, never in parallel, because they share the Compose project `coroner`.
 - Checkpoints are not part of the dependency graph.
+- Task 1.11 (baseline specification commit proposal and remote privacy check) is an administrative Git checkpoint, not a technical dependency. It is not in the dependency graph, so it blocks no wave. It stays tracked and pending, and must be completed before GitHub Checkpoint 2 (checkpoint 1.12). Approved by the user on 14 November 2026; no other dependency changed.
 
 ## Task Dependency Graph
 
@@ -838,7 +839,7 @@ Cut-line rule: if the work is behind the target dates above, drop optional (`*`)
 {
   "waves": [
     { "id": 0, "tasks": ["1.1", "1.2", "1.4"] },
-    { "id": 1, "tasks": ["1.5", "1.11"] },
+    { "id": 1, "tasks": ["1.5"] },
     { "id": 2, "tasks": ["1.8"] },
     { "id": 3, "tasks": ["1.3", "1.9"] },
     { "id": 4, "tasks": ["1.6", "1.10"] },
