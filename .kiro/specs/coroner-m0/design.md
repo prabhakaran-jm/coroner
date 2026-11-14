@@ -331,7 +331,7 @@ return 200 ack
 Rules that follow from this ordering:
 
 - **No acknowledgement before persistence.** A crash between `append` and the HTTP response loses only the acknowledgement. The Probe treats the Sample as undelivered, which can make the Collector's stored data a superset of what the Probe believes was delivered (see "ack-lost" in limitations). Stored records are never lost after an acknowledgement.
-- **One write per ingest.** A Sample and any Gap_Records it triggers are serialized into a single buffer and written with one `write` plus one flush plus one fsync. A discontinuity gap and a drop gap triggered by the same Sample are therefore both marked reconciled before either reaches disk, and both are durable together.
+- **One write per ingest.** A Sample and any Gap_Records it triggers are serialized into a single buffer and written with one `write` plus one flush plus one fsync. A discontinuity gap and a drop gap triggered by the same Sample are therefore both marked reconciled before either reaches disk. After a successful append (and, under Crash_Durable, its fsync) the whole batch is durable together, and only then is the Sample acknowledged. After a failed append, part of the batch, even part of a line, may be on disk; nothing is acknowledged, no atomicity is claimed, and recovery (decision D26) must run before the run accepts another write.
 - **Dirty files are repaired before reuse.** If a write fails partway, the file may end in a partial line. `mark_dirty` forces the repair path (below) before the next append, so a partial line is never followed by a record on the same line.
 - **Ack latency.** The 500 ms target at 1 Sample per second is checked in an integration test. The Collector also logs `ingest_ms` per request for diagnosis.
 
@@ -464,7 +464,7 @@ RECORD_TYPES = ("run_metadata", "sample", "gap", "sequence_anomaly",
 @dataclass(frozen=True)
 class ValidationIssue:
     field: str
-    reason_code: str            # e.g. "missing", "wrong_type", "out_of_range", "invalid_run_id"
+    reason_code: str            # e.g. "missing_field", "wrong_type", "out_of_range", "invalid_run_id"
     reason: str
 def validate_run_id(value: object) -> ValidationIssue | None: ...
 def validate_sample(obj: object) -> list[ValidationIssue]: ...
@@ -995,7 +995,7 @@ Written to the run file when the Run_Identifier is valid, otherwise to `_rejecti
 {"record_type":"rejection","schema_version":1,"run_id":null,"recv_time":"2025-01-01T12:00:11.250Z","http_status":422,"reason_code":"invalid_run_id","field":"run_id","reason":"run_id longer than 64 characters","body_len":214,"body_preview_b64":"eyJydW5faWQiOi..."}
 ```
 
-`reason_code` values include `invalid_json`, `invalid_run_id`, `missing_field`, `wrong_type`, `out_of_range`, `null_without_reason`, `unknown_field`, and `body_too_large`. `body_preview_b64` holds at most the first 1,024 bytes.
+`reason_code` values include `invalid_json`, `invalid_run_id`, `missing_field`, `wrong_type`, `out_of_range`, `invalid_format`, `null_without_reason`, `unknown_field`, and `body_too_large`. `body_preview_b64` holds at most the first 1,024 bytes.
 
 ### Repair_Record
 
@@ -1137,6 +1137,8 @@ Field notes:
 | D22 | Windows host support | Runner uses `subprocess.run(argv, env={**os.environ, **overrides})`, `pathlib`, binary file modes, `shutil.which("docker")`, and no shell tools. Container-side code remains Linux-only. On Docker Desktop (WSL2) the runner still verifies the OOM kill from `State.OOMKilled`, not from host-side assumptions. |
 | D23 | M0 scope control | Must-have items versus deferrable items are ranked in "M0 Scope Priorities and Deferrable Items". No requirement is dropped, only sequenced. |
 | D24 | Minimum Python version | Approved compatibility decision: Python 3.12 is the minimum for M0 and `pyproject.toml` sets `requires-python = ">=3.12"`. It is verified on host Python 3.12.10 and image Python 3.12.8 (task 1.5). The pinned packages declare `>=3.10`, but 3.10 and 3.11 were not tested and are not claimed. No other design decision changes. |
+| D25 | Where `ConfigError` is defined | Approved on 14 November 2026. `ConfigError(ValueError)` is defined once, in `coroner.common.envparse`, because `coroner.common` cannot import `coroner.evidence` (dependency direction `evidence -> common`). `coroner.evidence.writer` imports it from there (a re-export is allowed) and does not define a second class. This supersedes the `class ConfigError` line listed under `writer.py` in the interface sketch. No other interface changes. |
+| D26 | Failure recovery and batch atomicity (clarification, no schema or durability-level change) | Approved on 14 November 2026. (1) A successful append under Crash_Durable means the whole batch was written, flushed, and fsynced (the directory too when it must be) before any acknowledgement. (2) A failed append may leave part of the batch on disk (complete lines, or a partial last line); no atomicity is claimed, and the batch is not acknowledged. (3) A failing write, flush, or fsync never yields a successful durability acknowledgement. (4) The affected run accepts no further write until recovery has run: tail repair of an incomplete last line, reconciliation of complete `sample` records whose associated gap records are missing (without duplicating a gap record that already exists), and a rebuild of the run state from the file. (5) The Collector establishes evidence-directory durability at startup, including after a restart. (6) Run ID case handling is unchanged for Linux M0. (7) Task 2.19 stays required before Collector acceptance. **Wording conflict, precisely:** the "Rules that follow from this ordering" bullet says a Sample and its gap records "are therefore both marked reconciled before either reaches disk, and both are durable together". That holds only for a successful append; after a failed append they may be only partly on disk. Read it as "acknowledged implies both are durable". The sentence in "One write per ingest" was corrected on 14 November 2026 to say exactly that. The implementation of (4) and (5) belongs to tasks 2.10, 3.2, and 3.5; their task text does not mention it yet. |
 
 ## Correctness Properties
 

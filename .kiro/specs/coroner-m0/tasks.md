@@ -139,7 +139,7 @@ These rules apply to every task and are part of the completion criteria.
     - Confirm that 1.10 recorded a PASS from real output (on FAIL, stop and ask), run `.\.venv\Scripts\python.exe -m pytest -q` again (expected exit code 0, passed count at least that of checkpoint 1.7, exit code 5 is a FAILURE), and record the counts. Propose (do not perform) a milestone commit per Execution Rule 9: list specific paths (packaging, `tests/`, `requirements/`, `docs/m0-results/`, `.gitignore`), draft the message, and wait for explicit approval. Ask the user if questions arise. Target date: 14 November 2026.
 
 - [ ] 2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests
-  - [ ] 2.1 Implement `coroner.common` helpers with unit tests
+  - [x] 2.1 Implement `coroner.common` helpers with unit tests
     - `timeutil.py`: `utc_now_ms()`, `format_utc_ms(dt)`, `parse_utc_ms(text)` (UTC, `YYYY-MM-DDTHH:mm:ss.sssZ`). `envparse.py`: `parse_int_env()`, `parse_mem_size()` (units b, k, m, g, powers of 1024, error names the value).
     - Files: `coroner/common/timeutil.py`, `coroner/common/envparse.py`, `tests/unit/common/test_timeutil.py`, `tests/unit/common/test_envparse.py`.
     - Expected: UTC millisecond strings round-trip; invalid sizes raise an error naming the value.
@@ -147,7 +147,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: tests pass with output recorded; `common` imports only the stdlib.
     - _Requirements: 2.2, 4.2, 8.3, 8.4_
 
-  - [ ] 2.2 Implement `evidence/schema.py`
+  - [x] 2.2 Implement `evidence/schema.py`
     - `SCHEMA_VERSION`, `RUN_ID_RE` (`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`), `RECORD_TYPES`, `ValidationIssue`, `validate_run_id`, `validate_sample` (types, ranges, bool-not-int, null needs reason of 1 to 200 characters, unknown fields rejected, `interval_ms` 100 to 60000, `dropped` 0 to 4294967295), `validate_record`.
     - Files: `coroner/evidence/schema.py`.
     - Expected: valid Samples from the design examples pass; each mutation yields a specific `reason_code`.
@@ -155,7 +155,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by 2.3.
     - _Requirements: 4.5, 4.7, 4.9, 7.6, 7.7, 2.9_
 
-  - [ ] 2.3 Write schema unit tests
+  - [x] 2.3 Write schema unit tests
     - Cases: the design's valid and null-measurement Sample examples; missing, wrong type, out of range, empty or over-64-character or pattern-violating run ids; null without reason; unknown field; boolean as integer; NaN.
     - Files: `tests/unit/evidence/test_schema.py`.
     - Expected: every mutation is rejected with the expected `field` and `reason_code`.
@@ -163,7 +163,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: tests pass with output recorded.
     - _Requirements: 4.5, 4.9, 7.7_
 
-  - [ ] 2.4 (PRIORITY) Implement `evidence/writer.py`
+  - [x] 2.4 (PRIORITY) Implement `evidence/writer.py`
     - `Durability`, `ConfigError`, `parse_durability`, `serialize_record` (`ensure_ascii=True`, `allow_nan=False`, compact separators, one `\n`), `fsync_directory` (no-op on win32), `EvidenceWriter` with injectable `fsync` and `fsync_dir`, `path_for`, `append` (one buffered write, flush, fsync under crash, directory fsync on creation), `append_bytes_durably`, `close`. Binary mode only.
     - Files: `coroner/evidence/writer.py`.
     - Expected: `durability` reflects what was actually done; a failing fsync raises `OSError`.
@@ -171,7 +171,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by 2.5.
     - _Requirements: 4.6, 4.10, 4.11, 4.12, 4.13, 4.14, 4.15, 5.4, 5.12_
 
-  - [ ] 2.5 Write writer unit tests and Property 6 (durability configuration parsing)
+  - [x] 2.5 Write writer unit tests and Property 6 (durability configuration parsing)
     - Unit tests with a recording `fsync` double: crash calls fsync on the file after write and on the directory on creation; process never calls fsync; invalid value raises `ConfigError` naming the value; one line per record with exactly one `\n`.
     - **Property 6: Durability configuration parsing** over arbitrary text plus the boundary values `process`, `crash`, `Crash`, ` process`, empty, unset.
     - Files: `tests/unit/evidence/test_writer.py`, `tests/unit/evidence/test_prop_durability.py`.
@@ -181,7 +181,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.10, 4.11, 4.12, 13.14**
     - _Requirements: 4.10, 4.11, 4.12, 4.13, 4.14, 13.14_
 
-  - [ ] 2.6 Implement `evidence/gaps.py`
+  - [x] 2.6 Implement `evidence/gaps.py`
     - `IntervalSet`, `merge_ranges`, `union_size`, `reconcile`, `derive_drop_range`, `SeqState`, `SeqEvents`, `classify` (new, duplicate, reset; first `seq > 0` yields `[0, seq-1]`; anomalies do not move the baseline), `missing_sample_count` (sequence discontinuities only), `unreconciled_drops` (design pseudocode).
     - Files: `coroner/evidence/gaps.py`.
     - Expected: the design's counting rules hold: discontinuities only for Missing_Sample_Count; drops, silence never counted there.
@@ -189,7 +189,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by 2.7 to 2.9.
     - _Requirements: 6.1, 6.3, 6.4, 6.8, 6.9, 6.10, 6.11, 6.12, 6.13_
 
-  - [ ] 2.7 Write Property 10 test (sequence anomalies classified exactly and separately)
+  - [x] 2.7 Write Property 10 test (sequence anomalies classified exactly and separately)
     - **Property 10: Sequence anomalies are classified exactly and separately** over arrival-order lists on a small integer domain. Include the example with one missing, one duplicate, and one reset (Requirement 13.3).
     - Files: `tests/unit/evidence/test_prop_seq.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_seq.py -q`.
@@ -197,7 +197,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 6.1, 6.4, 13.3**
     - _Requirements: 6.1, 6.4, 13.3_
 
-  - [ ] 2.8 Write Property 11 test (drop range derivation and reconciliation fields)
+  - [x] 2.8 Write Property 11 test (drop range derivation and reconciliation fields)
     - **Property 11: Probe-reported drop ranges and reconciliation fields agree with the ranges**, including the rule that drop records never carry `missing_count`.
     - Files: `tests/unit/evidence/test_prop_drop.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_drop.py -q`.
@@ -205,7 +205,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 6.3, 6.8, 6.9, 6.10, 6.11**
     - _Requirements: 6.3, 6.8, 6.9, 6.10, 6.11_
 
-  - [ ] 2.9 Write Property 12 test (gap accounting) and the five worked examples
+  - [x] 2.9 Write Property 12 test (gap accounting) and the five worked examples
     - **Property 12: Gap accounting counts each number once, from discontinuities only**, checked against a brute-force set union. Example tests (a) to (e) from the design: overlap, partial overlap, unknown range, silence adds nothing, duplicated discontinuity counts once.
     - Files: `tests/unit/evidence/test_prop_gap_accounting.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_gap_accounting.py -q`.
@@ -215,6 +215,7 @@ These rules apply to every task and are part of the completion criteria.
 
   - [ ] 2.10 (PRIORITY) Implement `evidence/repair.py`
     - `TailInspection`, `inspect_tail` (backward scan in 64 KiB chunks), `repair_file` (append-only: isolating newline plus `repair` record with `fragment_b64` capped at 1 MiB, `fragment_len`, `file`, `line_no`, `reason`, `action`; one durable append; idempotent; never truncates).
+    - Recovery responsibility (approved 14 November 2026, design D26): this task owns incomplete JSONL-tail repair and the repair-before-append requirement. After an `OSError` from an append, or when a startup scan finds an incomplete or invalid last line, `repair_file` must complete durably (isolating newline plus Repair_Record, at the configured durability level) before the run accepts another append. Tests show that an append after a completed repair starts on a fresh line, that a partially written repair is repaired again by a second run (the partial repair record becomes another Malformed_Line and no byte is lost), and that repair never truncates. Which run is dirty (the gate) belongs to 3.2, and the replay of missing gap records belongs to 3.5. No recovery code beyond tail repair is written here.
     - Files: `coroner/evidence/repair.py`.
     - Expected: original bytes remain an unmodified prefix; a second repair changes nothing.
     - Verify: covered by tests in 2.14 to 2.16; quick check `python -m pytest tests/unit/evidence/test_repair_reader_examples.py -q`.
@@ -277,8 +278,18 @@ These rules apply to every task and are part of the completion criteria.
     - _Requirements: 6.5, 6.6, 6.7, 12.5_
 
   - [ ] 2.18 Checkpoint - M0.2 complete
-    - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 1, 2, 6, 8, 9, 10, 11, 12, 13 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 15 November 2026.
+    - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 1, 2, 6, 8, 9, 10, 11, 12, 13 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Confirm that task 2.19 (payload contracts of the six non-sample record types) is complete or that the user explicitly deferred it. Target date: 15 November 2026.
 
+  - [ ] 2.19 Follow-up (tracked): define and validate the payload contracts of the six non-sample record types
+    - Gap, approved by the user on 14 November 2026 (with tasks 2.2 to 2.4): `validate_record` checks only the envelope (`record_type`, `schema_version`, `run_id`, `recv_time`) for `run_metadata`, `gap`, `sequence_anomaly`, `rejection`, `repair`, and `termination`. Full validation exists for `sample` records only, so `EvidenceWriter.append` cannot guarantee those six payloads. No payload schema has been invented for them.
+    - Before any component relies on those records (the Collector service 3.5, the termination endpoint, the runner), STOP and ask the user to approve a payload contract for each type, taken from the design's "Data Models" examples. Do not invent fields, types, or ranges. After approval, add one validator per type to `coroner/evidence/schema.py`, extend `validate_record` to call them, and keep validation non-raising and deterministic (sorted issue order).
+    - Tests: `tests/unit/evidence/test_schema_payloads.py` with, per type, the design example (valid), each missing field, wrong type, out-of-range value, and unknown field, plus the sequence of gap types.
+    - Until this task is complete, every document that mentions record validation must keep stating that these six payloads are envelope-validated only.
+    - Files: `coroner/evidence/schema.py`, `tests/unit/evidence/test_schema_payloads.py`, `docs/m0-results/m0.2-evidence-library.md`.
+    - Expected: each of the six types is rejected with a specific `field` and `reason_code` when its payload is wrong.
+    - Verify: `python -m pytest tests/unit/evidence/test_schema_payloads.py tests/unit/evidence/test_schema.py -q`.
+    - Done when: the user approved the contracts, tests pass with output recorded, and the writer, repair, and gap tests still pass (default suite exit code 0).
+    - _Requirements: 5.5, 6.8, 12.2_
 - [ ] 3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests
   - [ ] 3.1 Implement `collector/config.py` with tests
     - `CollectorConfig`, `load_config(env)`: durability via `parse_durability` (invalid value exits non-zero with a message naming it), `CORONER_MAX_BODY_BYTES` (default 65536), `CORONER_WATCHDOG_TICK_MS` (default 50), evidence directory `/data/evidence` (overridable for tests).
@@ -289,6 +300,7 @@ These rules apply to every task and are part of the completion criteria.
 
   - [ ] 3.2 Implement `collector/state.py` (RunState, RunRegistry)
     - Per-run `threading.Lock`, lazy state load by scanning the run file (highest seq, seen IntervalSet, last sample times, interval, next gap number, `silence_open`, `terminated`, `dirty`), `open_run` (ensure file, run repair, write `run_metadata` `created` or `resumed` with real durability and `fsync_before_ack`), `mark_dirty`, `apply` (state changes only after a durable write), `.collector.lock` flock on POSIX (no-op on win32).
+    - Recovery responsibility (approved 14 November 2026, design D26): this task owns Collector startup storage verification, directory durability, and recovery gating. At startup, before serving: create the evidence directory if it is missing, verify it is a writable directory, run the repair scan (2.10) over every `*.jsonl`, then `fsync` the evidence directory itself, after every restart as well, so a file created by an earlier process or by a failed first append has a durable directory entry (a documented no-op on win32). `mark_dirty` blocks `open_run` and every append for that run until recovery completes in this order: tail repair (2.10), replay of persisted Samples to regenerate missing gap records (3.5), then a rebuild of the in-memory run state from the file. `next_gap_number` is rebuilt as 1 plus the highest existing valid gap identifier (`gap-` followed by ASCII digits, in a valid gap record), and an identifier is never reused. Final file permissions are reviewed in task 5.6.
     - Files: `coroner/collector/state.py`.
     - Verify: covered by 3.6 to 3.8 and 3.13.
     - Done when: module implemented and covered by those tests.
@@ -311,6 +323,7 @@ These rules apply to every task and are part of the completion criteria.
 
   - [ ] 3.5 (PRIORITY) Implement `collector/service.py` (IngestService)
     - Ordering: size check, parse, validate, per-run lock, `open_run`, `classify`, `build_records` (sample or `sequence_anomaly`, discontinuity gap, drop gap with `range_status`, reconciliation marking, one write), `writer.append`, then `apply`, then acknowledge. `OSError` leads to `mark_dirty`, 503, no acknowledgement, in-memory state unchanged. Rejections go to the run file for a valid run id, otherwise `_rejections.jsonl` (`rejection_recorded: false` if that write fails). Termination recording. Log `ingest_ms`.
+    - Recovery responsibility (approved 14 November 2026, design D26): this task owns recovery of missing gap records by replaying persisted Samples. After tail repair, replay the valid `sample` records in file order through `classify` and `apply` (anomalies are not needed to rebuild the baseline) to compute the expected sequence discontinuity and Probe-reported drop gaps, compare them with the stored gap records by semantic identity, and append only the missing ones in one durable append before the run accepts new Samples. Semantic identity, never `gap_id` or times alone: for a discontinuity `gap_type`, `detected_at_seq`, `first_missing_seq`, `last_missing_seq`; for a drop `gap_type`, `detected_at_seq`, `dropped_count`, `range_status`, `first_missing_seq`, `last_missing_seq`. A stored gap with the same `gap_type` and `detected_at_seq` but different remaining fields is a conflict: report it, add no second record, overwrite nothing. Silence-timeout gaps are time-based and are not regenerated. New gap ids come from the `next_gap_number` rebuilt in 3.2. Keep the existing batch order (the Sample or anomaly record first, then its gap records); do not write gap records first. Late Samples keep their `reset` classification and stay counted as missing. Recovery is idempotent: a second replay adds nothing.
     - Files: `coroner/collector/service.py`.
     - Verify: covered by 3.6 to 3.8.
     - Done when: module implemented and covered by those tests.
@@ -831,6 +844,7 @@ Cut-line rule: if the work is behind the target dates above, drop optional (`*`)
 - Git and Docker volume safety follow Execution Rules 9 and 11; commits and volume deletions need the user's explicit approval at that moment.
 - Docker tasks (5.5 to 5.7, 7.x, 8.3, 8.4) must run sequentially, never in parallel, because they share the Compose project `coroner`.
 - Checkpoints are not part of the dependency graph.
+- Task 2.19 (payload contracts of the six non-sample record types) sits in wave 10 so it finishes before wave 11 (Collector service 3.5), which is the first component that relies on those records. It needs the user's approval of the contracts before any code (STOP and ask).
 - Task 1.11 (baseline specification commit proposal and remote privacy check) is an administrative Git checkpoint, not a technical dependency. It is not in the dependency graph, so it blocks no wave. It stays tracked and pending, and must be completed before GitHub Checkpoint 2 (checkpoint 1.12). Approved by the user on 14 November 2026; no other dependency changed.
 
 ## Task Dependency Graph
@@ -848,7 +862,7 @@ Cut-line rule: if the work is behind the target dates above, drop optional (`*`)
     { "id": 7, "tasks": ["2.3", "2.4", "2.6", "4.2", "4.10"] },
     { "id": 8, "tasks": ["2.5", "2.7", "2.8", "2.9", "2.10", "2.11", "4.3"] },
     { "id": 9, "tasks": ["2.12", "2.13", "2.14", "2.15", "2.16", "3.1", "3.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9", "4.11"] },
-    { "id": 10, "tasks": ["2.17", "3.2", "3.4", "4.12", "4.13", "4.14", "6.1", "6.3", "6.9", "6.11"] },
+    { "id": 10, "tasks": ["2.17", "2.19", "3.2", "3.4", "4.12", "4.13", "4.14", "6.1", "6.3", "6.9", "6.11"] },
     { "id": 11, "tasks": ["3.5", "3.9", "6.2", "6.4", "6.5", "6.10", "6.12"] },
     { "id": 12, "tasks": ["3.6", "3.7", "3.8", "3.10", "3.11", "6.6", "6.7", "6.13"] },
     { "id": 13, "tasks": ["3.12", "3.13", "3.14", "6.8", "6.14"] },

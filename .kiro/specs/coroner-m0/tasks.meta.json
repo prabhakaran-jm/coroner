@@ -146,6 +146,114 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794659964842
       }
+    ],
+    "2.1 Implement `coroner.common` helpers with unit tests": [
+      {
+        "executionId": "c52b31f8-d32d-4dc8-ac47-d8d82ca20d7f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794660814523
+      },
+      {
+        "executionId": "c52b31f8-d32d-4dc8-ac47-d8d82ca20d7f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661156261
+      }
+    ],
+    "2.2 Implement `evidence/schema.py`": [
+      {
+        "executionId": "29e6429f-55bd-40c3-8bca-6f7a7d3b5541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661372022
+      },
+      {
+        "executionId": "29e6429f-55bd-40c3-8bca-6f7a7d3b5541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661693311
+      }
+    ],
+    "2.3 Write schema unit tests": [
+      {
+        "executionId": "2e79a922-0a7b-4e0e-b554-206b226a8f4f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661922374
+      },
+      {
+        "executionId": "2e79a922-0a7b-4e0e-b554-206b226a8f4f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794662267983
+      }
+    ],
+    "2.4 (PRIORITY) Implement `evidence/writer.py`": [
+      {
+        "executionId": "e9cf7d8b-f049-403d-ae02-b51a3db9f295",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794662750409
+      },
+      {
+        "executionId": "e9cf7d8b-f049-403d-ae02-b51a3db9f295",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794663484257
+      }
+    ],
+    "2.5 Write writer unit tests and Property 6 (durability configuration parsing)": [
+      {
+        "executionId": "b290cf10-d71c-48fc-abc0-c49fb5cca56e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794666187379
+      },
+      {
+        "executionId": "b290cf10-d71c-48fc-abc0-c49fb5cca56e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794666900477
+      }
+    ],
+    "2.6 Implement `evidence/gaps.py`": [
+      {
+        "executionId": "647be7da-60d7-4f91-8429-a162892b1f60",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667177370
+      },
+      {
+        "executionId": "647be7da-60d7-4f91-8429-a162892b1f60",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667637987
+      }
+    ],
+    "2.7 Write Property 10 test (sequence anomalies classified exactly and separately)": [
+      {
+        "executionId": "95e2607b-5eca-41c7-85eb-9881d9bf8278",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667949657
+      },
+      {
+        "executionId": "95e2607b-5eca-41c7-85eb-9881d9bf8278",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794668254710
+      }
+    ],
+    "2.8 Write Property 11 test (drop range derivation and reconciliation fields)": [
+      {
+        "executionId": "146c575f-a508-4a0c-8142-8eee60ec3a01",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794672781917
+      },
+      {
+        "executionId": "146c575f-a508-4a0c-8142-8eee60ec3a01",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794673125571
+      }
+    ],
+    "2.9 Write Property 12 test (gap accounting) and the five worked examples": [
+      {
+        "executionId": "0c03681a-9eac-4057-bb28-fcf4fb6f880a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794680128997
+      },
+      {
+        "executionId": "0c03681a-9eac-4057-bb28-fcf4fb6f880a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794680924080
+      }
     ]
   }
 }
