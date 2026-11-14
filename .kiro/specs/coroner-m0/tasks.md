@@ -29,7 +29,7 @@ These rules apply to every task and are part of the completion criteria.
 
 ## Tasks
 
-- [ ] 1. M0.1 Repository setup, Python packaging, Docker prerequisites and dependency verification
+- [x] 1. M0.1 Repository setup, Python packaging, Docker prerequisites and dependency verification
   - [x] 1.1 Verify toolchain and repository hygiene (.gitignore, .kiro tracked)
     - FIRST verify the Python toolchain and record versions: `git --version`, `python --version`, `python -m pip --version` (also `where.exe python` to record which interpreter is used). If `python` or `pip` is missing or older than the design's minimum, STOP and ask. Do not install anything in this task.
     - Git branch: run `git status --short` and `git branch --list feat/coroner-m0`. If the branch does not exist, create it with `git switch -c feat/coroner-m0`. If it exists, switch with `git switch feat/coroner-m0` after checking status. The untracked approved `.kiro/specs/` files must remain untouched (never use `git stash -u`, `git clean`, `git reset --hard`, or `git checkout -f`). Record `git branch --show-current`.
@@ -135,7 +135,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: the staging list, draft message, and recorded visibility result are shown to the user, and either the user's approval or a "deferred" decision is recorded.
     - _Requirements: 14.1_
 
-  - [ ] 1.12 Checkpoint - M0.1 complete (including spike)
+  - [x] 1.12 Checkpoint - M0.1 complete (including spike)
     - Confirm that 1.10 recorded a PASS from real output (on FAIL, stop and ask), run `.\.venv\Scripts\python.exe -m pytest -q` again (expected exit code 0, passed count at least that of checkpoint 1.7, exit code 5 is a FAILURE), and record the counts. Propose (do not perform) a milestone commit per Execution Rule 9: list specific paths (packaging, `tests/`, `requirements/`, `docs/m0-results/`, `.gitignore`), draft the message, and wait for explicit approval. Ask the user if questions arise. Target date: 14 November 2026.
 
 - [ ] 2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests

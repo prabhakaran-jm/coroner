@@ -127,6 +127,25 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794659254198
       }
+    ],
+    "1.12 Checkpoint - M0.1 complete (including spike)": [
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659659494
+      },
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659964595
+      }
+    ],
+    "1. M0.1 Repository setup, Python packaging, Docker prerequisites and dependency verification": [
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659964842
+      }
     ]
   }
 }
