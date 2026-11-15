@@ -493,9 +493,20 @@ def test_envelope_run_id_must_be_valid(value: object) -> None:
     assert only(validate_record(record)) == ("run_id", "invalid_run_id")
 
 
-def test_null_run_id_is_allowed_only_for_rejection_records() -> None:
+def test_a_repair_record_still_needs_a_valid_run_id_when_it_is_not_null() -> None:
+    record = json.loads(OTHER_RECORD_JSON["repair"])
+    del record["run_id"]
+    assert only(validate_record(record)) == ("run_id", "invalid_run_id")  # absent is not null
+    record["run_id"] = "bad id"
+    assert only(validate_record(record)) == ("run_id", "invalid_run_id")
+
+
+def test_null_run_id_is_allowed_only_for_rejection_and_repair_records() -> None:
     assert validate_record(json.loads(OTHER_RECORD_JSON["rejection_no_run"])) == []
-    for name in ("repair", "run_metadata", "termination", "gap_silence"):
+    repair = json.loads(OTHER_RECORD_JSON["repair"])
+    repair["run_id"] = None
+    assert validate_record(repair) == []  # design D27: which file may hold it is the reader's and writer's job
+    for name in ("run_metadata", "termination", "gap_silence"):
         record = json.loads(OTHER_RECORD_JSON[name])
         record["run_id"] = None
         assert only(validate_record(record)) == ("run_id", "invalid_run_id")

@@ -213,7 +213,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 6.11, 6.12, 6.13, 13.12**
     - _Requirements: 6.11, 6.12, 6.13, 13.12_
 
-  - [ ] 2.10 (PRIORITY) Implement `evidence/repair.py`
+  - [x] 2.10 (PRIORITY) Implement `evidence/repair.py`
     - `TailInspection`, `inspect_tail` (backward scan in 64 KiB chunks), `repair_file` (append-only: isolating newline plus `repair` record with `fragment_b64` capped at 1 MiB, `fragment_len`, `file`, `line_no`, `reason`, `action`; one durable append; idempotent; never truncates).
     - Recovery responsibility (approved 14 November 2026, design D26): this task owns incomplete JSONL-tail repair and the repair-before-append requirement. After an `OSError` from an append, or when a startup scan finds an incomplete or invalid last line, `repair_file` must complete durably (isolating newline plus Repair_Record, at the configured durability level) before the run accepts another append. Tests show that an append after a completed repair starts on a fresh line, that a partially written repair is repaired again by a second run (the partial repair record becomes another Malformed_Line and no byte is lost), and that repair never truncates. Which run is dirty (the gate) belongs to 3.2, and the replay of missing gap records belongs to 3.5. No recovery code beyond tail repair is written here.
     - Files: `coroner/evidence/repair.py`.
@@ -222,21 +222,21 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by 2.14 to 2.16.
     - _Requirements: 5.5, 5.6, 5.7, 5.8_
 
-  - [ ] 2.11 (PRIORITY) Implement `evidence/reader.py` (`read_evidence`)
+  - [x] 2.11 (PRIORITY) Implement `evidence/reader.py` (`read_evidence`)
     - Binary read, split on `\n`, strict UTF-8, `json.loads`, `ReadError` kinds (`invalid_utf8`, `invalid_json`, `not_an_object`, `incomplete_last_line`, `invalid_record`, `isolated_by_repair`), quarantine, `has_repair_record` link, `line_numbers`, accepts `Path` or `bytes`, never modifies the file. Lines isolated by a `repair` record with `appended_newline` are always quarantined (D19).
     - Files: `coroner/evidence/reader.py`.
     - Verify: covered by 2.13, 2.14, 2.16.
     - Done when: module implemented and covered by those tests.
     - _Requirements: 5.9, 5.10, 5.11_
 
-  - [ ] 2.12 Implement `summarize` and `RunSummary` in `reader.py`
+  - [x] 2.12 Implement `summarize` and `RunSummary` in `reader.py`
     - Compute `sample_count` from valid `sample` records only, `missing_sample_count`, `unreconciled_drop_count` with `unreconciled_drop_uncertain`, `gap_counts_by_type`, `silence_intervals` (`sample_count: "unknown"`), `duplicate_count`, `reset_count`, `rejection_count`, `malformed_line_count`, `last_sample_time` or `"none received"`, `termination_cause` (`unknown` without a record), `unobserved_interval_note`, `durability_levels`, and a warning when a stored `reconciliation` field disagrees with the ranges.
     - Files: `coroner/evidence/reader.py`.
     - Verify: covered by 2.17.
     - Done when: module implemented and covered by 2.17.
     - _Requirements: 6.5, 6.6, 6.7, 6.11, 6.12, 6.13, 12.5_
 
-  - [ ] 2.13 Write Property 1 test (record framing and round trip)
+  - [x] 2.13 Write Property 1 test (record framing and round trip)
     - **Property 1: Record framing and round trip** with 0 to 1,000 records containing newlines, U+2028, non-ASCII; uses a temporary directory and an `fsync` double.
     - Files: `tests/unit/evidence/test_prop_roundtrip.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_roundtrip.py -q`.
@@ -244,7 +244,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.6, 5.4, 5.9, 12.2, 12.3, 13.2**
     - _Requirements: 4.6, 5.4, 5.9, 12.2, 12.3, 13.2_
 
-  - [ ] 2.14 Write Property 2 test (reader quarantine) and repair/reader example tests
+  - [x] 2.14 Write Property 2 test (reader quarantine) and repair/reader example tests
     - **Property 2: Reader quarantines bad lines and keeps going**.
     - Examples (Requirement 13.13): incomplete last line preserved in the `repair` record with length, file, and line number; repair persisted before the next append; new records start on a fresh line; Malformed_Line reported with file, line number, byte length; excluded from Sample counts; a fragment that is valid JSON is still quarantined (D19); the file is never truncated; the `repair` record is not counted as a Sample.
     - Files: `tests/unit/evidence/test_prop_reader_quarantine.py`, `tests/unit/evidence/test_repair_reader_examples.py`.
@@ -253,7 +253,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 5.10, 13.13**
     - _Requirements: 5.5, 5.7, 5.10, 13.1, 13.13_
 
-  - [ ] 2.15 Write Property 8 test (repair never loses or alters bytes)
+  - [x] 2.15 Write Property 8 test (repair never loses or alters bytes)
     - **Property 8: Repair never loses or alters bytes** over arbitrary `bytes` tails, using an `fsync` double that records ordering (repair persisted before the next append).
     - Files: `tests/unit/evidence/test_prop_repair_bytes.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_repair_bytes.py -q`.
@@ -261,7 +261,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 5.5, 5.6, 5.7, 5.8, 13.13**
     - _Requirements: 5.5, 5.6, 5.7, 5.8, 13.13_
 
-  - [ ] 2.16 Write Property 9 test (repair idempotent and file stays readable)
+  - [x] 2.16 Write Property 9 test (repair idempotent and file stays readable)
     - **Property 9: Repair is idempotent and keeps the file readable**.
     - Files: `tests/unit/evidence/test_prop_repair_idempotent.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_repair_idempotent.py -q`.

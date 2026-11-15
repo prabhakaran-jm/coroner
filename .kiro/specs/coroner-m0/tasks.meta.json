@@ -1,5 +1,10 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "2.14 Write Property 2 test (reader quarantine) and repair/reader example tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1794699308578
+    }
+  },
   "executionHistory": {
     "1.1 Verify toolchain and repository hygiene (.gitignore, .kiro tracked)": [
       {
@@ -253,6 +258,100 @@
         "executionId": "0c03681a-9eac-4057-bb28-fcf4fb6f880a",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794680924080
+      }
+    ],
+    "2.10 (PRIORITY) Implement `evidence/repair.py`": [
+      {
+        "executionId": "4f73e252-2dbd-4662-b76e-047453798ee5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794681871601
+      },
+      {
+        "executionId": "4f73e252-2dbd-4662-b76e-047453798ee5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794683368672
+      },
+      {
+        "executionId": "839edc4b-1132-447b-99c6-8ae86d1f0118",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794733812062
+      },
+      {
+        "executionId": "839edc4b-1132-447b-99c6-8ae86d1f0118",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794736476462
+      }
+    ],
+    "2.11 (PRIORITY) Implement `evidence/reader.py` (`read_evidence`)": [
+      {
+        "executionId": "327b293f-8e2f-4e4a-835d-b3b25b58b0d6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794683821785
+      },
+      {
+        "executionId": "327b293f-8e2f-4e4a-835d-b3b25b58b0d6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794684977998
+      }
+    ],
+    "2.12 Implement `summarize` and `RunSummary` in `reader.py`": [
+      {
+        "executionId": "14f0d737-2029-4c3a-bccd-22d123c60151",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794685652073
+      },
+      {
+        "executionId": "14f0d737-2029-4c3a-bccd-22d123c60151",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794696837988
+      }
+    ],
+    "2.13 Write Property 1 test (record framing and round trip)": [
+      {
+        "executionId": "07dab876-2ce3-4c9a-a7d3-af829a994f2f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794696959696
+      },
+      {
+        "executionId": "07dab876-2ce3-4c9a-a7d3-af829a994f2f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794698199824
+      }
+    ],
+    "2.14 Write Property 2 test (reader quarantine) and repair/reader example tests": [
+      {
+        "executionId": "9ad4c962-a070-4ad2-bccf-f949fb2d8338",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794698418369
+      },
+      {
+        "executionId": "9ad4c962-a070-4ad2-bccf-f949fb2d8338",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794699327045
+      }
+    ],
+    "2.15 Write Property 8 test (repair never loses or alters bytes)": [
+      {
+        "executionId": "5314b840-82b4-4c4b-af13-4a0987b37d38",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794731852886
+      },
+      {
+        "executionId": "5314b840-82b4-4c4b-af13-4a0987b37d38",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794732585403
+      }
+    ],
+    "2.16 Write Property 9 test (repair idempotent and file stays readable)": [
+      {
+        "executionId": "b090637e-fbd5-4d4a-87e0-fdb3addd1541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794732703827
+      },
+      {
+        "executionId": "b090637e-fbd5-4d4a-87e0-fdb3addd1541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794733517969
       }
     ]
   }

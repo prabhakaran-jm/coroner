@@ -24,6 +24,7 @@ from coroner.evidence.writer import (
     Durability,
     EvidenceWriter,
     RecordError,
+    TailRepairRequired,
     fsync_directory,
     parse_durability,
     serialize_record,
@@ -331,13 +332,16 @@ def test_append_is_append_only_and_never_touches_existing_bytes(tmp_path: Path) 
     assert len(after.splitlines()) == 4
 
 
-def test_append_does_not_repair_an_incomplete_last_line(tmp_path: Path) -> None:
-    """Repair is repair.py's job (task 2.10). The writer only appends, so a fragment must be repaired first."""
-    w, _, directory = make(tmp_path)
+def test_append_refuses_a_file_with_an_incomplete_last_line_and_writes_nothing(tmp_path: Path) -> None:
+    """Repair-before-append (task 2.10, design D26): the writer never glues a record onto a partial line.
+    It does not repair either; `repair_file` does."""
+    w, recorder, directory = make(tmp_path)
     path = directory / "r1.jsonl"
     path.write_bytes(b'{"partial":')
-    w.append("r1", [sample_record()])
-    assert path.read_bytes().startswith(b'{"partial":{"record_type"')
+    with pytest.raises(TailRepairRequired, match="r1.jsonl does not end with a newline"):
+        w.append("r1", [sample_record()])
+    assert path.read_bytes() == b'{"partial":' and recorder.events == []
+    assert not issubclass(TailRepairRequired, OSError)  # a logic condition, not an I/O failure
 
 
 def test_one_write_one_flush_for_the_whole_batch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -806,18 +810,18 @@ def test_a_failed_write_that_stops_just_before_the_newline_leaves_valid_json_wit
     assert json.loads(stored) == sample_record(seq=0)  # parses, but was never acknowledged
 
 
-def test_appending_after_a_partial_line_without_repair_glues_two_records_together(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Why tail repair (task 2.10) must run before the next append after an OSError."""
-    w, _, directory = make(tmp_path)
+def test_after_a_partial_write_the_next_append_is_refused_until_the_tail_is_repaired(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    w, recorder, directory = make(tmp_path)
     line = serialize_record(sample_record(seq=0))
     with monkeypatch.context() as patch:
         use_partial_writes(patch, limit=len(line) - 1, log=[])
         with pytest.raises(OSError):
             w.append("r1", [sample_record(seq=0)])
-    w.append("r1", [sample_record(seq=1)])
-    last_line = (directory / "r1.jsonl").read_bytes().splitlines()[-1]
-    with pytest.raises(json.JSONDecodeError):
-        json.loads(last_line)
+    before = (directory / "r1.jsonl").read_bytes()
+    recorder.events.clear()
+    with pytest.raises(TailRepairRequired):
+        w.append("r1", [sample_record(seq=1)])
+    assert (directory / "r1.jsonl").read_bytes() == before and recorder.events == []
 
 
 def test_a_write_call_that_raises_before_writing_anything_returns_no_result(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -1022,7 +1026,7 @@ def test_retry_after_a_failed_directory_fsync_syncs_the_directory_again(tmp_path
 def test_retry_after_a_failed_write_that_created_the_file_still_syncs_the_directory_entry(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     w, events = flaky_writer(tmp_path)
     with monkeypatch.context() as patch:
-        use_partial_writes(patch, limit=5, log=[])
+        use_partial_writes(patch, limit=0, log=[])  # the file is created and stays empty, so a retry is allowed
         with pytest.raises(OSError):
             w.append("r1", [sample_record(seq=0)])
     assert events == []
@@ -1042,7 +1046,7 @@ def test_retry_via_append_bytes_durably_also_syncs_the_directory_entry(tmp_path:
 def test_process_durable_never_syncs_a_directory_even_after_a_failed_first_append(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     w, recorder, _ = make(tmp_path, Durability.PROCESS)
     with monkeypatch.context() as patch:
-        use_partial_writes(patch, limit=5, log=[])
+        use_partial_writes(patch, limit=0, log=[])
         with pytest.raises(OSError):
             w.append("r1", [sample_record(seq=0)])
     result = w.append("r1", [sample_record(seq=1)])

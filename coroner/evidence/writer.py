@@ -20,6 +20,11 @@ What it guarantees
   something that was not persisted. `AppendResult.durability` reports what was actually
   done, not what was configured.
 * `fsync` and `fsync_dir` are injectable so tests observe the calls without a host crash.
+* Repair-before-append: `append` refuses (TailRepairRequired, nothing written) when the file does not end
+  with a newline (a record could be glued onto a partial line) or when its last line, though terminated,
+  is not a JSON object (design D27: a malformed tail is repaired and recorded before anything is added).
+  `append_bytes_durably`, which the
+  repair itself uses, is not guarded.
 * No atomicity is claimed. A batch is one write call, but a failed write, flush, or fsync can leave part
   of the batch, even part of a line, in the file. Only a normal return means every line was written
   and, under Crash_Durable, synced. After an OSError the file may end in a partial line, and the
@@ -29,6 +34,7 @@ What it guarantees
 """
 from __future__ import annotations
 
+import io
 import json
 import os
 import sys
@@ -48,13 +54,19 @@ __all__ = [
     "EvidenceWriter",
     "RecordError",
     "REJECTIONS_STEM",
+    "TailRepairRequired",
+    "TAIL_LINE_CAP",
     "fsync_directory",
+    "is_json_object",
     "parse_durability",
+    "rfind_newline",
     "serialize_record",
 ]
 
 REJECTIONS_STEM = "_rejections"
 FILE_SUFFIX = ".jsonl"
+TAIL_LINE_CAP = 2 * 1024 * 1024  # a last line longer than this is never parsed and is invalid (D28); repair imports this, so both agree
+_TAIL_CHUNK = 64 * 1024
 
 
 class Durability(str, Enum):
@@ -68,6 +80,13 @@ class RecordError(ValueError):
     def __init__(self, message: str, issues: Iterable[ValidationIssue] = ()) -> None:
         super().__init__(message)
         self.issues: tuple[ValidationIssue, ...] = tuple(issues)
+
+
+class TailRepairRequired(RuntimeError):
+    """The file does not end with a newline, so appending would glue a record onto a partial line.
+
+    Run `coroner.evidence.repair.repair_file` first. Nothing was written.
+    """
 
 
 def parse_durability(raw: str | None) -> Durability:
@@ -125,6 +144,31 @@ def serialize_record(record: Mapping[str, Any]) -> bytes:
     if b"\n" in data or b"\r" in data:  # cannot happen with ensure_ascii; checked because Requirement 5.4 depends on it
         raise RecordError("serialized record contains a raw newline")
     return data + b"\n"
+
+
+def _reject_constant(name: str) -> Any:
+    raise ValueError(f"non-finite JSON constant {name}")
+
+
+def is_json_object(line: bytes) -> bool:
+    try:
+        value = json.loads(line.decode("utf-8"), parse_constant=_reject_constant)
+    except (UnicodeDecodeError, ValueError, RecursionError):
+        return False
+    return isinstance(value, dict)
+
+
+def rfind_newline(handle: Any, end: int) -> int:
+    """Offset of the last newline strictly before `end`, or -1, scanning backward in chunks."""
+    position = end
+    while position > 0:
+        low = max(0, position - _TAIL_CHUNK)
+        handle.seek(low)
+        index = handle.read(position - low).rfind(b"\n")
+        if index >= 0:
+            return low + index
+        position = low
+    return -1
 
 
 def fsync_directory(directory: Path) -> None:
@@ -215,6 +259,11 @@ class EvidenceWriter:
                 raise RecordError(f"record {index}: {exc}") from exc
         if not lines:
             return AppendResult(path, 0, 0, False, False, False)
+        problem = self._tail_problem(path)  # repair-before-append (design D26, D27); stateless, read from the file
+        if problem == "unterminated":
+            raise TailRepairRequired(f"{path.name} does not end with a newline; run repair_file before appending")
+        if problem is not None:
+            raise TailRepairRequired(f"{path.name} ends with a line that is not a JSON object; run repair_file before appending")
         data = b"".join(lines)
         created, fsynced_file, fsynced_dir = self._write(path, data)
         return AppendResult(path, len(lines), len(data), created, fsynced_file, fsynced_dir)
@@ -240,6 +289,32 @@ class EvidenceWriter:
     def close(self) -> None:
         """Mark the writer closed. No file handle is kept between appends. Safe to call twice."""
         self._closed = True
+
+    @staticmethod
+    def _tail_problem(path: Path) -> str | None:
+        """None when `path` is missing, empty, or ends with a terminated JSON-object line; else why appending is refused.
+
+        "unterminated": the last byte is not a newline. "invalid_last_line": the last line is terminated but is
+        not a UTF-8 JSON object, or is longer than TAIL_LINE_CAP. The validity test is the one `repair.inspect_tail`
+        uses, so a file that `repair_file` calls clean is never refused here (a test checks that they agree).
+        Only the last line is read, backward in chunks. `io.open`, not the module-level `open`.
+        """
+        try:
+            with io.open(path, "rb") as handle:
+                size = handle.seek(0, os.SEEK_END)
+                if size == 0:
+                    return None
+                handle.seek(size - 1)
+                if handle.read(1) != b"\n":
+                    return "unterminated"
+                end = size - 1  # exclusive end of the last line's content
+                start = rfind_newline(handle, end) + 1
+                if end - start > TAIL_LINE_CAP:
+                    return "invalid_last_line"
+                handle.seek(start)
+                return None if is_json_object(handle.read(end - start)) else "invalid_last_line"
+        except FileNotFoundError:
+            return None
 
     def _require_open(self) -> None:
         if self._closed:

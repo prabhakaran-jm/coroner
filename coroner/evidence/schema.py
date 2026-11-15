@@ -42,6 +42,10 @@ RECORD_TYPES = (
     "termination",
 )
 
+# A null run_id is allowed in these record types at the schema level (design D27). The file-context
+# rule (a null-run_id `repair` belongs only in `_rejections.jsonl`) is enforced by the reader and writer.
+NULL_RUN_ID_TYPES = ("rejection", "repair")
+
 INVALID_RUN_ID = "invalid_run_id"
 MISSING_FIELD = "missing_field"
 WRONG_TYPE = "wrong_type"
@@ -279,7 +283,8 @@ def validate_record(obj: object) -> list[ValidationIssue]:
     """All problems with a stored record's envelope, and with the nested Sample of a `sample` record.
 
     Checked for every record type: `record_type` in RECORD_TYPES, `schema_version` equal to
-    SCHEMA_VERSION, `run_id` a valid Run_Identifier (null only for `rejection`), and a
+    SCHEMA_VERSION, `run_id` a valid Run_Identifier (null only for `rejection` and `repair`; which
+    file may hold a null run_id is decided by the reader and the writer, design D27), and a
     `recv_time` timestamp. For `sample` records the nested `sample` must be a valid Sample
     whose `run_id` equals the envelope's, and no other top-level field is allowed. The
     type-specific payload of the other record types is not validated here.
@@ -306,8 +311,8 @@ def validate_record(obj: object) -> list[ValidationIssue]:
     if "run_id" not in obj:
         issues.append(_issue("run_id", INVALID_RUN_ID, "run_id is missing"))
     elif run_id is None:
-        if record_type != "rejection":
-            issues.append(_issue("run_id", INVALID_RUN_ID, "run_id may be null only in rejection records"))
+        if record_type not in NULL_RUN_ID_TYPES:
+            issues.append(_issue("run_id", INVALID_RUN_ID, "run_id may be null only in rejection and repair records"))
     else:
         problem = validate_run_id(run_id)
         if problem is not None:
