@@ -410,6 +410,74 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794766710720
       }
+    ],
+    "3.1 Implement `collector/config.py` with tests": [
+      {
+        "executionId": "f2029872-6336-4348-895d-d96b3f13e59a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794767518528
+      },
+      {
+        "executionId": "f2029872-6336-4348-895d-d96b3f13e59a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794767872071
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768451372
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768754441
+      }
+    ],
+    "3.2 Implement `collector/state.py` (RunState, RunRegistry)": [
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768755149
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794769787737
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773284513
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773613151
+      }
+    ],
+    "3.3 (PRIORITY) Implement `collector/storage_probe.py`": [
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773618961
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794774386691
+      }
+    ],
+    "3.4 Write Property 28 test, Collector half (`storage_ok` requires a successful probe)": [
+      {
+        "executionId": "d1b06b17-4ed8-46b7-b6c2-6a76857224e3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794782566532
+      },
+      {
+        "executionId": "d1b06b17-4ed8-46b7-b6c2-6a76857224e3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794783510015
+      }
     ]
   }
 }

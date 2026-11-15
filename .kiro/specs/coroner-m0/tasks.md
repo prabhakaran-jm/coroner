@@ -291,14 +291,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: the user approved the contracts, tests pass with output recorded, and the writer, repair, and gap tests still pass (default suite exit code 0).
     - _Requirements: 5.5, 6.8, 12.2_
 - [ ] 3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests
-  - [ ] 3.1 Implement `collector/config.py` with tests
+  - [x] 3.1 Implement `collector/config.py` with tests
     - `CollectorConfig`, `load_config(env)`: durability via `parse_durability` (invalid value exits non-zero with a message naming it), `CORONER_MAX_BODY_BYTES` (default 65536), `CORONER_WATCHDOG_TICK_MS` (default 50), evidence directory `/data/evidence` (overridable for tests).
     - Files: `coroner/collector/config.py`, `tests/unit/collector/test_config.py`.
     - Verify: `python -m pytest tests/unit/collector/test_config.py -q`.
     - Done when: passes with output recorded.
     - _Requirements: 4.10, 4.11, 4.12_
 
-  - [ ] 3.2 Implement `collector/state.py` (RunState, RunRegistry)
+  - [x] 3.2 Implement `collector/state.py` (RunState, RunRegistry)
     - Per-run `threading.Lock`, lazy state load by scanning the run file (highest seq, seen IntervalSet, last sample times, interval, next gap number, `silence_open`, `terminated`, `dirty`), `open_run` (ensure file, run repair, write `run_metadata` `created` or `resumed` with real durability and `fsync_before_ack`), `mark_dirty`, `apply` (state changes only after a durable write), `.collector.lock` flock on POSIX (no-op on win32).
     - Recovery responsibility (approved 14 November 2026, design D26): this task owns Collector startup storage verification, directory durability, and recovery gating. At startup, before serving: create the evidence directory if it is missing, verify it is a writable directory, run the repair scan (2.10) over every `*.jsonl`, then `fsync` the evidence directory itself, after every restart as well, so a file created by an earlier process or by a failed first append has a durable directory entry (a documented no-op on win32). `mark_dirty` blocks `open_run` and every append for that run until recovery completes in this order: tail repair (2.10), replay of persisted Samples to regenerate missing gap records (3.5), then a rebuild of the in-memory run state from the file. `next_gap_number` is rebuilt as 1 plus the highest existing valid gap identifier (`gap-` followed by ASCII digits, in a valid gap record), and an identifier is never reused. Final file permissions are reviewed in task 5.6.
     - Files: `coroner/collector/state.py`.
@@ -306,14 +306,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by those tests.
     - _Requirements: 4.16, 5.2, 5.3, 5.5_
 
-  - [ ] 3.3 (PRIORITY) Implement `collector/storage_probe.py`
+  - [x] 3.3 (PRIORITY) Implement `collector/storage_probe.py`
     - Real write, flush, fsync, directory fsync (when created), read-back, and compare under `<evidence>/.coroner_probe/probe.tmp`; same injected `fsync` and `fsync_dir` as the writer; 1 s result cache; invalidated by a failed append; takes no run lock and never touches run files; also run once at startup.
     - Files: `coroner/collector/storage_probe.py`.
     - Verify: covered by 3.4.
     - Done when: module implemented and covered by 3.4.
     - _Requirements: 4.4, 4.17, 4.18_
 
-  - [ ] 3.4 Write Property 28 test, Collector half (`storage_ok` requires a successful probe)
+  - [x] 3.4 Write Property 28 test, Collector half (`storage_ok` requires a successful probe)
     - **Property 28: Health readiness requires a successful storage probe**, collector side: every probe step failing alone and in combinations yields `storage_ok: false` with HTTP 200; all steps passing yields true; run files stay byte-identical; a failed ingest invalidates the cache.
     - Files: `tests/unit/collector/test_prop_storage_ok.py`.
     - Verify: `python -m pytest tests/unit/collector/test_prop_storage_ok.py -q`.
