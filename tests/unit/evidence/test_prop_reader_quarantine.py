@@ -83,7 +83,12 @@ def sample_record(seq: int, run_id: str | None = RUN_ID, rss: int = 1000) -> dic
 
 
 def other_record(record_type: str, run_id: str | None, tag: int) -> dict:
-    return {"record_type": record_type, "schema_version": 1, "run_id": run_id, "recv_time": RECV, "detail": {"n": tag, "t": "x\u2028y"}}
+    """A record with a schema-valid payload (task 2.19): a rejection, or a termination for every other type name."""
+    env = {"record_type": record_type, "schema_version": 1, "run_id": run_id, "recv_time": RECV}
+    if record_type == "rejection":
+        return {**env, "http_status": 422, "reason_code": "invalid_json", "field": "$", "reason": "x\u2028y", "body_len": 3 + tag, "body_preview_b64": "eHh4"}
+    return {**env, "source": "experiment_runner", "observed_time": RECV, "container_state": {"status": "exited", "exit_code": tag, "oom_killed": False},
+            "cause_label": "unknown", "note": "x\u2028y"}
 
 
 def repair_record(file_kind: str, line_no: int, raw: bytes, action: str) -> dict:

@@ -95,7 +95,8 @@ def sample(seq: int) -> dict:
 
 
 def rejection() -> dict:
-    return {"record_type": "rejection", "schema_version": 1, "run_id": None, "recv_time": RECV, "http_status": 422, "reason_code": "invalid_json"}
+    return {"record_type": "rejection", "schema_version": 1, "run_id": None, "recv_time": RECV, "http_status": 422, "reason_code": "invalid_json",
+            "field": "$", "reason": "body is not JSON", "body_len": 3, "body_preview_b64": "eHh4"}
 
 
 RUN_PREFIX = line_of(sample(0)) + line_of(sample(1))

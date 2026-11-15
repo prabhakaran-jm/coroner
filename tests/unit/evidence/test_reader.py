@@ -33,12 +33,14 @@ def sample_record(seq: int = 0, run_id: str = "r1") -> dict:
 def repair_record(line_no: int, action: str = "appended_newline", run_id: str | None = "r1", file: str = "r1.jsonl") -> dict:
     return {
         "record_type": "repair", "schema_version": 1, "run_id": run_id, "recv_time": NOW, "file": file, "line_no": line_no,
-        "fragment_len": 3, "fragment_b64": "eHh4", "fragment_truncated": False, "reason": "incomplete_last_line", "action": action,
+        "fragment_len": 3, "fragment_b64": "eHh4", "fragment_truncated": False,
+        "reason": "incomplete_last_line" if action == "appended_newline" else "invalid_json_last_line", "action": action,
     }
 
 
 def rejection_record() -> dict:
-    return {"record_type": "rejection", "schema_version": 1, "run_id": None, "recv_time": RECV, "http_status": 422, "reason_code": "invalid_json"}
+    return {"record_type": "rejection", "schema_version": 1, "run_id": None, "recv_time": RECV, "http_status": 422, "reason_code": "invalid_json",
+            "field": "$", "reason": "body is not JSON", "body_len": 3, "body_preview_b64": "eHh4"}
 
 
 def lines(*records: dict) -> bytes:
@@ -281,14 +283,15 @@ def test_a_repair_record_for_another_run_or_a_null_run_in_a_run_file_links_nothi
         assert kinds(result) == [(1, "invalid_json"), (2, "invalid_record")] and result.errors[0].has_repair_record is False
 
 
-def test_a_missing_file_field_still_links() -> None:
+def test_a_repair_record_without_a_file_field_is_invalid_since_task_2_19_and_links_nothing() -> None:
     record = repair_record(1)
     del record["file"]
-    assert read(b'{"half\n' + lines(record)).errors[0].kind == "isolated_by_repair"
+    result = read(b'{"half\n' + lines(record))
+    assert kinds(result) == [(1, "invalid_json"), (2, "invalid_record")] and result.errors[0].has_repair_record is False
 
 
 def test_the_file_field_is_not_compared_when_the_source_has_no_name() -> None:
-    data = b'{"half\n' + lines(repair_record(1, file="whatever.jsonl"))
+    data = b'{"half\n' + lines(repair_record(1, run_id="whatever", file="whatever.jsonl"))
     assert read_evidence(data).errors[0].kind == "isolated_by_repair"
 
 

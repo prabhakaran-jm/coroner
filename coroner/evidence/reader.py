@@ -27,8 +27,10 @@ What `read_evidence` does
   holds only records whose `run_id` is that run (a null `run_id`, in any record type, is invalid there).
   When the name gives no context, a null `run_id` is accepted only for `rejection` records and no
   run-versus-file comparison is made. A violation is `invalid_record`.
-* The payloads of the six non-sample record types are not validated (task 2.19), and `repair` fields other
-  than `action`, `line_no` and `file` are not used.
+* Since task 2.19 `validate_record` also checks the payload of the six non-sample record types, so a malformed
+  `gap` (or any other bad payload) is quarantined as `invalid_record` here and never reaches `summarize`.
+  File context (above) is still decided here, not in the schema. `repair` fields other than `action`,
+  `line_no` and `file` are not used for linkage.
 
 Interrupted repairs (D27, narrowed by D30): since D30, `repair_file` writes a NUL marker right after an
 unterminated fragment, before the isolating newline. The physical isolated line is the fragment plus one NUL
@@ -331,13 +333,15 @@ def summarize(result: ReadResult) -> RunSummary:
 
     * Only valid, non-quarantined records are used. A quarantined or `isolated_by_repair` line counts only in
       `malformed_line_count`. `repair` records are never Samples.
-    * `sample_count` counts `sample` records only. `last_sample_time` is the `ts` of the last `sample` record in
-      file order (a Sample is appended only when new, so file order is sequence order), else "none received".
+    * `sample_count` counts `sample` records only. `last_sample_time` is the envelope `recv_time` (Receive_Time)
+      of the latest stored valid `sample` record, taken as the last one in file order (file order is storage order; a Sample is
+      appended only when new). It is not the maximum `recv_time`, and not the Sample's own `ts` (Capture_Time). Else "none received".
     * Gap numbers come from `gaps.missing_sample_count` and `gaps.unreconciled_drops` over the `gap` records;
       nothing is recounted here. `unreconciled_drop_uncertain` is true when any unreconciled drop is listed (each is
       uncertain, and an unknown or uncertain range is listed even with a count of 0).
-      A malformed gap payload raises `gaps.GapRecordError`; it is not skipped, so no count is silently wrong
-      (payload validation at read time is task 2.19, which will quarantine such records instead).
+      A malformed gap payload in a hand-built `ReadResult` raises `gaps.GapRecordError`; it is not skipped, so
+      no count is silently wrong. `read_evidence` (task 2.19) quarantines such records, so the error cannot
+      come from a result it produced.
     * Each `silence_timeout` gap is an interval with `sample_count` "unknown". It adds to no count.
     * `duplicate_count` and `reset_count` count `sequence_anomaly` records by `anomaly`; `rejection_count` counts
       `rejection` records.
@@ -370,7 +374,7 @@ def summarize(result: ReadResult) -> RunSummary:
     missing = missing_sample_count(gaps)
     drops = [dict(d) for d in unreconciled_drops(gaps)]
     last_sample_position = samples[-1][0] if samples else -1
-    last_sample_time = samples[-1][1]["sample"]["ts"] if samples else NONE_RECEIVED
+    last_sample_time = samples[-1][1]["recv_time"] if samples else NONE_RECEIVED
 
     silence_intervals: list[dict] = []
     open_silence = False

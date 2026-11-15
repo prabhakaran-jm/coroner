@@ -138,7 +138,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 1.12 Checkpoint - M0.1 complete (including spike)
     - Confirm that 1.10 recorded a PASS from real output (on FAIL, stop and ask), run `.\.venv\Scripts\python.exe -m pytest -q` again (expected exit code 0, passed count at least that of checkpoint 1.7, exit code 5 is a FAILURE), and record the counts. Propose (do not perform) a milestone commit per Execution Rule 9: list specific paths (packaging, `tests/`, `requirements/`, `docs/m0-results/`, `.gitignore`), draft the message, and wait for explicit approval. Ask the user if questions arise. Target date: 14 November 2026.
 
-- [ ] 2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests
+- [x] 2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests
   - [x] 2.1 Implement `coroner.common` helpers with unit tests
     - `timeutil.py`: `utc_now_ms()`, `format_utc_ms(dt)`, `parse_utc_ms(text)` (UTC, `YYYY-MM-DDTHH:mm:ss.sssZ`). `envparse.py`: `parse_int_env()`, `parse_mem_size()` (units b, k, m, g, powers of 1024, error names the value).
     - Files: `coroner/common/timeutil.py`, `coroner/common/envparse.py`, `tests/unit/common/test_timeutil.py`, `tests/unit/common/test_envparse.py`.
@@ -269,7 +269,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 5.5, 5.10, 13.13**
     - _Requirements: 5.5, 5.10, 13.13_
 
-  - [ ] 2.17 Write Property 13 test (run summary consistent with records)
+  - [x] 2.17 Write Property 13 test (run summary consistent with records)
     - **Property 13: Run summary is consistent with the records**, including `none received`, unknown termination cause, and the unobserved-interval note.
     - Files: `tests/unit/evidence/test_prop_summary.py`.
     - Verify: `python -m pytest tests/unit/evidence/test_prop_summary.py -q`.
@@ -277,10 +277,10 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 6.5, 6.6, 6.7, 12.5**
     - _Requirements: 6.5, 6.6, 6.7, 12.5_
 
-  - [ ] 2.18 Checkpoint - M0.2 complete
+  - [x] 2.18 Checkpoint - M0.2 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 1, 2, 6, 8, 9, 10, 11, 12, 13 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Confirm that task 2.19 (payload contracts of the six non-sample record types) is complete or that the user explicitly deferred it. Target date: 15 November 2026.
 
-  - [ ] 2.19 Follow-up (tracked): define and validate the payload contracts of the six non-sample record types
+  - [x] 2.19 Follow-up (tracked): define and validate the payload contracts of the six non-sample record types
     - Gap, approved by the user on 14 November 2026 (with tasks 2.2 to 2.4): `validate_record` checks only the envelope (`record_type`, `schema_version`, `run_id`, `recv_time`) for `run_metadata`, `gap`, `sequence_anomaly`, `rejection`, `repair`, and `termination`. Full validation exists for `sample` records only, so `EvidenceWriter.append` cannot guarantee those six payloads. No payload schema has been invented for them.
     - Before any component relies on those records (the Collector service 3.5, the termination endpoint, the runner), STOP and ask the user to approve a payload contract for each type, taken from the design's "Data Models" examples. Do not invent fields, types, or ranges. After approval, add one validator per type to `coroner/evidence/schema.py`, extend `validate_record` to call them, and keep validation non-raising and deterministic (sorted issue order).
     - Tests: `tests/unit/evidence/test_schema_payloads.py` with, per type, the design example (valid), each missing field, wrong type, out-of-range value, and unknown field, plus the sequence of gap types.

@@ -49,6 +49,37 @@ def envelope(record_type: str, run_id: str | None = "r1", **extra: object) -> di
     return {"record_type": record_type, "schema_version": 1, "run_id": run_id, "recv_time": RECV, **extra}
 
 
+def meta_record(run_id: str = "r1") -> dict:
+    return envelope("run_metadata", run_id, event="created", durability="crash", fsync_before_ack=True, evidence_file=f"{run_id}.jsonl", collector_version="0.1.0")
+
+
+def silence_gap(run_id: str = "r1") -> dict:
+    return envelope(
+        "gap", run_id, gap_id="gap-0001", gap_type="silence_timeout", start_time=RECV, end_time=RECV, last_sample_time=RECV, detected_time=RECV,
+        threshold_ms=1500, interval_ms=500, sample_count="unknown", reconciliation="not_applicable", reconciles_with=[],
+    )
+
+
+def termination_record(run_id: str = "r1", note: str = "Observed after the fact.") -> dict:
+    return envelope(
+        "termination", run_id, source="experiment_runner", observed_time=RECV, container_state={"status": "exited", "exit_code": 137, "oom_killed": True},
+        cause_label="unknown", note=note,
+    )
+
+
+def rejection_record(run_id: str | None = None) -> dict:
+    return envelope(
+        "rejection", run_id, http_status=422, reason_code="invalid_json", field="$", reason="body is not JSON", body_len=3, body_preview_b64="eHh4"
+    )
+
+
+def repair_rec(run_id: str | None = None, file: str = "_rejections.jsonl") -> dict:
+    return envelope(
+        "repair", run_id, file=file, line_no=1, fragment_len=3, fragment_b64="eHh4", fragment_truncated=False, reason="incomplete_last_line",
+        action="appended_newline",
+    )
+
+
 class Recorder:
     """Records `fsync` and directory-fsync calls, and how much of the file was on disk at each fsync."""
 
@@ -294,11 +325,11 @@ def test_close_is_idempotent_blocks_further_use_and_keeps_no_handle(tmp_path: Pa
 def test_append_writes_one_line_per_record_and_reads_back_equal(tmp_path: Path) -> None:
     w, _, directory = make(tmp_path)
     records = [
-        envelope("run_metadata", event="created", durability="crash", fsync_before_ack=True),
+        meta_record(),
         sample_record(seq=0),
         sample_record(seq=1),
-        envelope("gap", gap_id="gap-0001", gap_type="silence_timeout", reason="é\n\u2028 tricky"),
-        envelope("termination", cause_label="unknown"),
+        silence_gap(),
+        termination_record(note="é\n\u2028 tricky"),
     ]
     result = w.append("r1", records)
     raw = (directory / "r1.jsonl").read_bytes()
@@ -370,7 +401,7 @@ def test_any_iterable_of_records_is_accepted(tmp_path: Path) -> None:
 
 def test_rejections_file_takes_rejection_records_with_a_null_run_id(tmp_path: Path) -> None:
     w, _, directory = make(tmp_path)
-    rejection = envelope("rejection", run_id=None, http_status=422, reason_code="invalid_json")
+    rejection = rejection_record()
     result = w.append("_rejections", [rejection])
     assert result.path == directory / "_rejections.jsonl"
     assert json.loads((directory / "_rejections.jsonl").read_bytes()) == rejection
@@ -597,13 +628,14 @@ def test_a_single_record_or_text_instead_of_a_sequence_is_rejected(tmp_path: Pat
 
 
 def test_a_record_that_cannot_be_serialized_rejects_the_batch(tmp_path: Path) -> None:
+    """Since task 2.19 every field is typed, so validation stops these before serialization; serialize_record's own errors are tested above."""
     w, recorder, directory = make(tmp_path)
     unserializable = envelope("repair", payload={"values": {1, 2}})
-    with pytest.raises(RecordError, match="record 1.*cannot be serialized"):
+    with pytest.raises(RecordError, match="record 1 is invalid"):
         w.append("r1", [sample_record(), unserializable])
     assert nothing_written(directory, recorder)
-    non_string_key = envelope("repair", payload={1: "x"})
-    with pytest.raises(RecordError, match="non-string key"):
+    non_string_key = {**termination_record(), "container_state": {1: "x"}}
+    with pytest.raises(RecordError, match="record 0 is invalid"):
         w.append("r1", [non_string_key])
     assert nothing_written(directory, recorder)
 
@@ -618,13 +650,13 @@ def test_a_record_for_another_run_is_rejected(tmp_path: Path) -> None:
 def test_a_null_run_id_does_not_belong_in_a_run_file(tmp_path: Path) -> None:
     w, recorder, directory = make(tmp_path)
     with pytest.raises(RecordError):
-        w.append("r1", [envelope("rejection", run_id=None)])
+        w.append("r1", [rejection_record(None)])
     assert nothing_written(directory, recorder)
 
 
 @pytest.mark.parametrize(
     "record",
-    [sample_record("r1"), envelope("rejection", run_id="r1"), envelope("repair", run_id=None), envelope("gap", run_id=None)],
+    [sample_record("r1"), rejection_record("r1"), repair_rec("r1"), {**silence_gap(), "run_id": None}, meta_record("r1")],
 )
 def test_the_rejections_file_takes_only_rejections_with_null_run_id(tmp_path: Path, record: dict) -> None:
     w, recorder, directory = make(tmp_path)
@@ -642,18 +674,17 @@ def test_an_invalid_run_id_is_rejected_before_anything_else(tmp_path: Path) -> N
     assert not (tmp_path / "escape.jsonl").exists()
 
 
-def test_non_sample_payloads_are_only_envelope_validated_known_gap_task_2_19(tmp_path: Path) -> None:
-    """Acknowledged limitation: the six non-sample record types are checked for their envelope only.
-
-    This test documents today's behaviour. When task 2.19 adds payload contracts it must change.
-    """
-    w, _, directory = make(tmp_path, Durability.PROCESS)
-    garbage = [
-        envelope(kind, payload_is_not_validated=[1, "x", None])
-        for kind in ("run_metadata", "gap", "sequence_anomaly", "rejection", "repair", "termination")
-    ]
-    assert w.append("r1", garbage).record_count == 6
-    assert len((directory / "r1.jsonl").read_bytes().splitlines()) == 6
+def test_non_sample_payloads_are_validated_since_task_2_19(tmp_path: Path) -> None:
+    """A bad payload of any of the six non-sample types rejects the whole batch and writes nothing."""
+    w, recorder, directory = make(tmp_path, Durability.PROCESS)
+    for kind in ("run_metadata", "gap", "sequence_anomaly", "rejection", "repair", "termination"):
+        garbage = envelope(kind, payload_is_not_validated=[1, "x", None])
+        with pytest.raises(RecordError, match="record 1 is invalid"):
+            w.append("r1", [sample_record(), garbage])
+    assert not list(directory.iterdir())
+    good = [meta_record(), silence_gap(), termination_record()]
+    assert w.append("r1", good).record_count == 3
+    assert len((directory / "r1.jsonl").read_bytes().splitlines()) == 3
 
 
 # --- append_bytes_durably ----------------------------------------------------------
@@ -740,7 +771,7 @@ def test_only_the_run_files_exist_after_appends(tmp_path: Path) -> None:
     w, _, directory = make(tmp_path)
     w.append("r1", [sample_record("r1")])
     w.append("r2", [sample_record("r2")])
-    w.append("_rejections", [envelope("rejection", run_id=None)])
+    w.append("_rejections", [rejection_record()])
     assert sorted(p.name for p in directory.iterdir()) == ["_rejections.jsonl", "r1.jsonl", "r2.jsonl"]
 
 

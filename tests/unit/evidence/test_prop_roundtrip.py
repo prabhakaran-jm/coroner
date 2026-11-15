@@ -6,12 +6,14 @@ number of records, in the same order, with every field equal to the original.
 **Validates: Requirements 4.6, 5.4, 5.9, 12.2, 12.3, 13.2**
 
 Generated records are schema-valid and JSON-native (dict, list, str, int, float that is finite, bool, None).
-Free-form text goes where the schema accepts it: `sample.null_reasons` values (1 to 200 characters) and the
-unvalidated payload of the non-sample record types (task 2.19 will validate those payloads; the envelope is
-validated now). Lone surrogates are left out of generation: see `test_adjacent_surrogates_do_not_round_trip`.
+Free-form text goes where the schema accepts it: `sample.null_reasons` values (1 to 200 characters), and, since
+task 2.19 validates the payload of the six non-sample record types, the string fields of those payloads
+(`collector_version`, `range_note`, `field`, `reason`, `container_state.status`, `note`) and a big integer
+(`container_state.exit_code`). Lone surrogates are left out of generation: see `test_adjacent_surrogates_do_not_round_trip`.
 """
 from __future__ import annotations
 
+import base64
 import json
 import math
 import tempfile
@@ -79,9 +81,9 @@ def sample_bodies(draw) -> dict:
 
 @st.composite
 def other_bodies(draw) -> tuple[str, dict]:
-    """A non-sample record type and its (not yet validated) payload under `detail`. `repair` is left out: it links lines."""
+    """A non-sample record type and the drawn values `build_other` puts into its schema-valid payload. `repair` is left out: it links lines."""
     record_type = draw(st.sampled_from(["run_metadata", "gap", "sequence_anomaly", "rejection", "termination"]))
-    return record_type, {"detail": draw(JSON_VALUE), "label": draw(TEXT)}
+    return record_type, {"text": draw(TEXT), "big": draw(BIG_INT), "variant": draw(st.integers(0, 2)), "sample": draw(sample_bodies())}
 
 
 @st.composite
@@ -98,7 +100,38 @@ def build_record(index: int, record_type: str, body: dict) -> dict:
     if record_type == "sample":
         sample = {"run_id": RUN_ID, "seq": index, **body}
         return {"record_type": "sample", "schema_version": 1, "run_id": RUN_ID, "recv_time": RECV, "sample": sample}
-    return {"record_type": record_type, "schema_version": 1, "run_id": RUN_ID, "recv_time": RECV, "index": index, **body}
+    return build_other(index, record_type, body)
+
+
+def build_other(index: int, record_type: str, body: dict) -> dict:
+    """A schema-valid record of a non-sample type. `index` is stamped into a field of every type, so that order matters."""
+    env = {"record_type": record_type, "schema_version": 1, "run_id": RUN_ID, "recv_time": RECV}
+    text, variant = body["text"], body["variant"]
+    stamped = f"{text}#{index}"
+    if record_type == "run_metadata":
+        crash = variant == 0
+        return {**env, "event": ("created", "resumed")[variant % 2], "durability": "crash" if crash else "process", "fsync_before_ack": crash,
+                "evidence_file": FILE_NAME, "collector_version": stamped}
+    if record_type == "gap":
+        gap = {**env, "gap_id": f"gap-{index:04d}", "start_time": RECV, "end_time": RECV, "reconciles_with": []}
+        if variant == 0:
+            return {**gap, "gap_type": "sequence_discontinuity", "first_missing_seq": index, "last_missing_seq": index + 2, "missing_count": 3,
+                    "reconciliation": "none", "detected_at_seq": index + 3}
+        if variant == 1:
+            return {**gap, "gap_type": "probe_reported_drop", "dropped_count": 1 + index, "range_status": "unknown", "first_missing_seq": None,
+                    "last_missing_seq": None, "range_note": stamped, "reconciliation": "none", "detected_at_seq": index}
+        return {**gap, "gap_type": "silence_timeout", "last_sample_time": RECV, "detected_time": RECV, "threshold_ms": 1500, "interval_ms": 500,
+                "sample_count": "unknown", "reconciliation": "not_applicable"}
+    if record_type == "sequence_anomaly":
+        return {**env, "anomaly": ("duplicate", "reset")[variant % 2], "seq": index, "previous_seq": index + variant,
+                "sample": {"run_id": RUN_ID, "seq": index, **body["sample"]}}
+    if record_type == "rejection":
+        preview = base64.b64encode(stamped.encode("utf-8")[:1024]).decode("ascii")
+        return {**env, "http_status": (413, 422)[variant % 2], "reason_code": ("invalid_json", "wrong_type", "body_too_large")[variant], "field": stamped,
+                "reason": stamped, "body_len": len(stamped.encode("utf-8")[:1024]) + index, "body_preview_b64": preview}
+    return {**env, "source": "experiment_runner", "observed_time": RECV,
+            "container_state": {"status": text, "exit_code": body["big"], "oom_killed": variant == 0},
+            "cause_label": ("docker_oom_kill", "sigkill_sent_by_runner", "unknown")[variant], "note": stamped}
 
 
 class FsyncDouble:
@@ -205,7 +238,7 @@ def test_a_batch_of_exactly_1000_records_with_awkward_text_round_trips() -> None
         build_record(i, "sample", {"pid": i, "container_id_source": "none", "interval_ms": 500, "dropped": 0, "ts": TS_FORMAT.format(i % 60, i % 1000),
                                    "rss_bytes": None, "request_count": 1, "loop_delay_ms": 0.0, "container_id": None,
                                    "null_reasons": {"rss_bytes": awkward, "container_id": awkward[::-1]}})
-        if i % 2 else build_record(i, "termination", {"detail": {awkward: [awkward, -0.0, 1e300, 2**70, True, None]}, "label": awkward})
+        if i % 2 else build_record(i, "termination", {"text": awkward, "big": 2**70, "variant": 0})
         for i in range(1000)
     ]
     assert len(records) == 1000 and all(validate_record(r) == [] for r in records)
@@ -264,8 +297,11 @@ def test_negative_zero_round_trips_as_negative_zero_through_the_writer_and_reade
         record = build_record(0, "sample", body)
         extract = lambda r: r["sample"]["loop_delay_ms"]  # noqa: E731
     else:
-        record = build_record(0, "termination", {"detail": {"x": [-0.0, 0.0]}, "label": "z"})
-        extract = lambda r: r["detail"]["x"][0]  # noqa: E731
+        body = {"text": "z", "big": 1, "variant": 0, "sample": {"pid": 1, "container_id_source": "none", "interval_ms": 500, "dropped": 0,
+                "ts": TS_FORMAT.format(1, 1), "rss_bytes": 1, "request_count": 1, "loop_delay_ms": -0.0, "container_id": None,
+                "null_reasons": {"container_id": "n/a"}}}
+        record = build_record(0, "sequence_anomaly", body)  # a Sample nested in a non-sample record
+        extract = lambda r: r["sample"]["loop_delay_ms"]  # noqa: E731
     assert validate_record(record) == [] and zero_sign(extract(record)) == -1.0
     expected, data, result, _, _ = write_and_read([record], 1)
     assert b"-0.0" in data  # the sign is in the file, not only in memory
@@ -273,10 +309,7 @@ def test_negative_zero_round_trips_as_negative_zero_through_the_writer_and_reade
     assert zero_sign(extract(result.records[0])) == -1.0
     # negative control: the same record with +0.0 is NOT accepted as a round trip of the -0.0 record
     positive = json.loads(json.dumps(record))
-    if where == "sample":
-        positive["sample"]["loop_delay_ms"] = 0.0
-    else:
-        positive["detail"]["x"][0] = 0.0
+    positive["sample"]["loop_delay_ms"] = 0.0
     assert positive == record  # ordinary equality cannot see the difference
     with pytest.raises(AssertionError):
         check_round_trip([positive], expected, data, result)

@@ -1,9 +1,11 @@
-"""Evidence record schema and validation (Requirements 2.9, 4.5, 4.7, 4.9, 7.6, 7.7).
+"""Evidence record schema and validation (Requirements 2.9, 4.5, 4.7, 4.9, 5.5, 6.8, 7.6, 7.7, 12.2).
 
 Pure functions over already-parsed JSON values. The issue list is deterministic: it follows the
 schema's field order, then `null_reasons` problems and unknown fields in sorted key order, so it
-does not depend on the insertion order of the input's keys. Standard library plus `coroner.common`
-only. Nothing here reads files, opens sockets, or serializes: `serialize_record` belongs to
+does not depend on the insertion order of the input's keys. `validate_record` checks the envelope and then
+the payload of every record type: the Sample and, since task 2.19, the payloads of `run_metadata`, `gap`,
+`sequence_anomaly`, `rejection`, `repair` and `termination` (`validate_<type>`). Standard library plus
+`coroner.common` only. Nothing here reads files, opens sockets, or serializes: `serialize_record` belongs to
 the writer. Every validator returns ALL problems found, as `ValidationIssue` objects, never
 raises on bad input, and never mutates its argument.
 
@@ -19,8 +21,10 @@ Reason codes (the Collector stores them in `rejection` records):
 """
 from __future__ import annotations
 
+import base64
 import math
 import re
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -279,15 +283,440 @@ def validate_sample(obj: object) -> list[ValidationIssue]:
     return issues
 
 
+# --- payload contracts of the six non-sample record types (task 2.19) ----------------------------------------
+# Every constraint below comes from the design's "Data Models" section (examples and prose), "Collector
+# persistence" (gap rules) or the repair implementation. Where the design gives no range for a field, only its
+# type is checked. Each validator takes the WHOLE record and returns payload issues only (the envelope is
+# checked by `validate_record`). Issue order is deterministic: required fields in the order below, then
+# cross-field checks, then unknown top-level fields in sorted key order.
+
+FILE_SUFFIX = ".jsonl"  # same values as writer.FILE_SUFFIX and writer.REJECTIONS_STEM (a test compares them)
+REJECTIONS_STEM = "_rejections"
+FRAGMENT_CAP = 1024 * 1024  # same value as repair.FRAGMENT_CAP (a test compares them)
+BODY_PREVIEW_MAX = 1024
+
+RUN_METADATA_EVENTS = ("created", "resumed")
+DURABILITY_LEVELS = ("process", "crash")
+GAP_TYPES = ("sequence_discontinuity", "silence_timeout", "probe_reported_drop")
+RECONCILIATION_VALUES = ("reconciled", "partial_overlap", "none", "not_applicable")
+RANGE_STATUSES = ("known", "uncertain", "unknown")
+ANOMALIES = ("duplicate", "reset")
+REJECTION_REASON_CODES = (
+    "invalid_json",
+    "invalid_run_id",
+    "missing_field",
+    "wrong_type",
+    "out_of_range",
+    "invalid_format",
+    "null_without_reason",
+    "unknown_field",
+    "body_too_large",
+)
+REPAIR_REASONS = ("incomplete_last_line", "missing_trailing_newline", "invalid_json_last_line")
+REPAIR_ACTIONS = ("appended_newline", "none_needed_already_terminated")
+TERMINATION_SOURCE = "experiment_runner"
+CAUSE_LABELS = ("controlled_fatal_process_exit", "sigkill_sent_by_runner", "docker_oom_kill", "unknown")
+HTTP_STATUS_MIN, HTTP_STATUS_MAX = 400, 599  # D31: HTTP error statuses only (the design lists 413 and 422)
+
+_Check = Callable[[str, object], list[ValidationIssue]]
+
+
+def _one(problem: ValidationIssue | None) -> list[ValidationIssue]:
+    return [] if problem is None else [problem]
+
+
+def _c_str(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, str):
+        return [_issue(path, WRONG_TYPE, f"{path} must be a string, got {_brief(value)}")]
+    return []
+
+
+def _c_nonempty_str(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, str):
+        return [_issue(path, WRONG_TYPE, f"{path} must be a string, got {_brief(value)}")]
+    if value == "":
+        return [_issue(path, OUT_OF_RANGE, f"{path} is empty")]
+    return []
+
+
+def _c_bool(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, bool):
+        return [_issue(path, WRONG_TYPE, f"{path} must be a boolean, got {_brief(value)}")]
+    return []
+
+
+def _c_ts(path: str, value: object) -> list[ValidationIssue]:
+    return _one(_validate_timestamp(path, value))
+
+
+def _c_int(minimum: int, maximum: int | None = None) -> _Check:
+    return lambda path, value: _one(_validate_int(path, value, minimum, maximum))
+
+
+def _c_enum(allowed: tuple[str, ...]) -> _Check:
+    def check(path: str, value: object) -> list[ValidationIssue]:
+        if not isinstance(value, str):
+            return [_issue(path, WRONG_TYPE, f"{path} must be a string, got {_brief(value)}")]
+        if value not in allowed:
+            return [_issue(path, OUT_OF_RANGE, f"{path} {_brief(value)} is not one of {', '.join(allowed)}")]
+        return []
+
+    return check
+
+
+def _evidence_file_name_problem(value: str, *, allow_rejections: bool) -> str | None:
+    if not value.endswith(FILE_SUFFIX):
+        return f"does not end with {FILE_SUFFIX}"
+    stem = value[: -len(FILE_SUFFIX)]
+    if stem == REJECTIONS_STEM:
+        return None if allow_rejections else f"{REJECTIONS_STEM}{FILE_SUFFIX} is not a run file"
+    problem = validate_run_id(stem)
+    return None if problem is None else f"stem is not a valid run_id ({problem.reason})"
+
+
+def _c_file_name(allow_rejections: bool) -> _Check:
+    def check(path: str, value: object) -> list[ValidationIssue]:
+        if not isinstance(value, str):
+            return [_issue(path, WRONG_TYPE, f"{path} must be a string, got {_brief(value)}")]
+        problem = _evidence_file_name_problem(value, allow_rejections=allow_rejections)
+        if problem is not None:
+            return [_issue(path, INVALID_FORMAT, f"{path} {_brief(value)} is not an evidence file name: {problem}")]
+        return []
+
+    return check
+
+
+def _file_identity_issue(obj: dict[Any, Any], field: str, *, null_run_file: str | None, allow_rejections: bool) -> list[ValidationIssue]:
+    """D31 (8): the named file is `<run_id>.jsonl` for a valid run_id, or `null_run_file` for a null run_id.
+
+    Skipped when the name is not a string or has the wrong form (reported separately) or when the run_id is
+    missing or invalid (reported by the envelope check).
+    """
+    name, run_id = obj.get(field), obj.get("run_id")
+    if not isinstance(name, str) or _evidence_file_name_problem(name, allow_rejections=allow_rejections) is not None:
+        return []
+    if run_id is None and "run_id" in obj and null_run_file is not None:
+        expected = null_run_file
+    elif isinstance(run_id, str) and validate_run_id(run_id) is None:
+        expected = run_id + FILE_SUFFIX
+    else:
+        return []
+    if name != expected:
+        return [_issue(field, OUT_OF_RANGE, f"{field} {_brief(name)} is not the file of run_id {_brief(run_id)}, expected {expected!r}")]
+    return []
+
+
+def _decode_strict_b64(value: str) -> bytes | None:
+    """The bytes of canonical base64 text, or None: no whitespace, correct padding, nothing non-canonical."""
+    try:
+        raw = base64.b64decode(value, validate=True)
+    except ValueError:  # binascii.Error is a ValueError; a non-ASCII str raises ValueError too
+        return None
+    return raw if base64.b64encode(raw).decode("ascii") == value else None
+
+
+def _c_b64(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, str):
+        return [_issue(path, WRONG_TYPE, f"{path} must be a string, got {_brief(value)}")]
+    if _decode_strict_b64(value) is None:
+        return [_issue(path, INVALID_FORMAT, f"{path} is not canonical base64 (alphabet, padding, no whitespace)")]
+    return []
+
+
+def _c_gap_id_list(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, list):
+        return [_issue(path, WRONG_TYPE, f"{path} must be a list of gap ids, got {_brief(value)}")]
+    out: list[ValidationIssue] = []
+    for index, item in enumerate(value):
+        out.extend(_c_nonempty_str(f"{path}[{index}]", item))
+    return out
+
+
+def _c_unknown_marker(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, str):
+        return [_issue(path, WRONG_TYPE, f"{path} must be the string 'unknown', got {_brief(value)}")]
+    if value != "unknown":
+        return [_issue(path, OUT_OF_RANGE, f"{path} {_brief(value)} is not 'unknown'")]
+    return []
+
+
+def _check_fields(
+    obj: dict[Any, Any],
+    fields: Sequence[tuple[str, _Check]],
+    optional: Sequence[tuple[str, _Check]] = (),
+    prefix: str = "",
+    ignore: tuple[str, ...] = (),
+) -> list[ValidationIssue]:
+    """Required fields in order, then optional ones, then unknown keys in sorted order."""
+    issues: list[ValidationIssue] = []
+    for name, check in fields:
+        path = prefix + name
+        if name not in obj:
+            issues.append(_issue(path, MISSING_FIELD, f"required field {path} is missing"))
+        else:
+            issues.extend(check(path, obj[name]))
+    for name, check in optional:
+        if name in obj:
+            issues.extend(check(prefix + name, obj[name]))
+    known = {n for n, _ in fields} | {n for n, _ in optional} | set(ignore)
+    for key in _sorted_keys(obj):
+        if key not in known:
+            issues.append(_issue(prefix + _key_text(key), UNKNOWN_FIELD, f"unknown field {_brief(key)}"))
+    return issues
+
+
+def validate_run_metadata(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `run_metadata` record. `crash` durability means fsync before the acknowledgement."""
+    issues = _check_fields(
+        obj,
+        [
+            ("event", _c_enum(RUN_METADATA_EVENTS)),
+            ("durability", _c_enum(DURABILITY_LEVELS)),
+            ("fsync_before_ack", _c_bool),
+            ("evidence_file", _c_file_name(False)),
+            ("collector_version", _c_str),
+        ],
+        ignore=_ENVELOPE_FIELDS,
+    )
+    durability, fsync = obj.get("durability"), obj.get("fsync_before_ack")
+    if durability in DURABILITY_LEVELS and isinstance(fsync, bool) and isinstance(durability, str):
+        if (durability == "crash") != fsync:
+            issues.append(
+                _issue("fsync_before_ack", OUT_OF_RANGE, f"fsync_before_ack {fsync} contradicts durability {durability!r} (crash requires true, process requires false)")
+            )
+    issues.extend(_file_identity_issue(obj, "evidence_file", null_run_file=None, allow_rejections=False))
+    return issues
+
+
+_GAP_COMMON: list[tuple[str, _Check]] = [
+    ("gap_id", _c_nonempty_str),
+    ("gap_type", _c_enum(GAP_TYPES)),
+    ("reconciliation", _c_enum(RECONCILIATION_VALUES)),
+    ("reconciles_with", _c_gap_id_list),
+]
+_GAP_BY_TYPE: dict[str, list[tuple[str, _Check]]] = {
+    "sequence_discontinuity": [
+        ("start_time", _c_ts),
+        ("end_time", _c_ts),
+        ("first_missing_seq", _c_int(0)),
+        ("last_missing_seq", _c_int(0)),
+        ("missing_count", _c_int(1)),
+        ("detected_at_seq", _c_int(0)),
+    ],
+    "probe_reported_drop": [
+        ("start_time", _c_ts),
+        ("end_time", _c_ts),
+        ("dropped_count", _c_int(1, DROPPED_MAX)),
+        ("range_status", _c_enum(RANGE_STATUSES)),
+        ("detected_at_seq", _c_int(0)),
+    ],
+    "silence_timeout": [
+        ("start_time", _c_ts),
+        ("end_time", _c_ts),
+        ("last_sample_time", _c_ts),
+        ("detected_time", _c_ts),
+        ("threshold_ms", _c_int(0)),
+        ("interval_ms", _c_int(INTERVAL_MS_MIN, INTERVAL_MS_MAX)),
+        ("sample_count", _c_unknown_marker),
+    ],
+}
+
+
+def _validate_drop_range(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """first_missing_seq and last_missing_seq of a probe_reported_drop: integers only when range_status is known."""
+    issues: list[ValidationIssue] = []
+    status = obj.get("range_status")
+    names = ("first_missing_seq", "last_missing_seq")
+    for name in names:
+        if name not in obj:
+            issues.append(_issue(name, MISSING_FIELD, f"required field {name} is missing (null unless range_status is known)"))
+        elif status == "known":
+            issues.extend(_one(_validate_int(name, obj[name], 0)))
+        elif status in RANGE_STATUSES and obj[name] is not None:
+            issues.append(_issue(name, OUT_OF_RANGE, f"{name} must be null when range_status is {status!r}, got {_brief(obj[name])}"))
+    first, last = obj.get("first_missing_seq"), obj.get("last_missing_seq")
+    if status == "known" and _is_int(first) and _is_int(last) and first > last:  # type: ignore[operator]
+        issues.append(_issue("last_missing_seq", OUT_OF_RANGE, f"last_missing_seq {last} is less than first_missing_seq {first}"))
+    elif status == "known" and _is_int(first) and _is_int(last) and first >= 0 and last >= 0:  # type: ignore[operator]
+        # D31 (5): the range is derived as [detected_at_seq - dropped_count, detected_at_seq - 1] and starts at 0 or later.
+        dropped, detected = obj.get("dropped_count"), obj.get("detected_at_seq")
+        if _is_int(dropped) and _is_int(detected) and 1 <= dropped <= DROPPED_MAX and detected >= 0:  # type: ignore[operator]
+            want_first, want_last = detected - dropped, detected - 1  # type: ignore[operator]
+            if first != want_first:
+                issues.append(_issue("first_missing_seq", OUT_OF_RANGE, f"first_missing_seq {first} is not detected_at_seq - dropped_count = {want_first}"))
+            if last != want_last:
+                issues.append(_issue("last_missing_seq", OUT_OF_RANGE, f"last_missing_seq {last} is not detected_at_seq - 1 = {want_last}"))
+    return issues
+
+
+def validate_gap(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `gap` record. The fields depend on `gap_type`; an unusable `gap_type` is the only issue then
+    reported for the type-specific part. `reconciliation` and `reconciles_with` are advisory and only
+    type-checked (the reader recomputes them from the ranges)."""
+    gap_type = obj.get("gap_type")
+    specific = _GAP_BY_TYPE.get(gap_type) if isinstance(gap_type, str) else None
+    issues = _check_fields(
+        obj,
+        _GAP_COMMON[:2] + (specific or []) + _GAP_COMMON[2:],
+        optional=[("range_note", _c_str)] if gap_type == "probe_reported_drop" else [],
+        ignore=_ENVELOPE_FIELDS
+        + (("first_missing_seq", "last_missing_seq") if gap_type == "probe_reported_drop" else ())
+        + (tuple(k for k in obj if isinstance(k, str)) if specific is None else ()),  # unusable gap_type: no unknown-field noise
+    )
+    if gap_type == "sequence_discontinuity":
+        first, last, count = obj.get("first_missing_seq"), obj.get("last_missing_seq"), obj.get("missing_count")
+        if _is_int(first) and _is_int(last) and first >= 0 and last >= 0:  # type: ignore[operator]
+            if first > last:  # type: ignore[operator]
+                issues.append(_issue("last_missing_seq", OUT_OF_RANGE, f"last_missing_seq {last} is less than first_missing_seq {first}"))
+            elif _is_int(count) and count != last - first + 1:  # type: ignore[operator]
+                issues.append(_issue("missing_count", OUT_OF_RANGE, f"missing_count {count} is not last_missing_seq - first_missing_seq + 1 = {last - first + 1}"))  # type: ignore[operator]
+    elif gap_type == "probe_reported_drop":
+        issues.extend(_validate_drop_range(obj))
+    return issues
+
+
+def validate_sequence_anomaly(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `sequence_anomaly` record; the nested `sample` is a full Sample that agrees with `run_id` and `seq`."""
+    issues = _check_fields(
+        obj,
+        [
+            ("anomaly", _c_enum(ANOMALIES)),
+            ("seq", _c_int(0)),
+            ("previous_seq", _c_int(0)),
+            ("sample", lambda path, value: []),  # checked below with dotted paths
+        ],
+        ignore=_ENVELOPE_FIELDS,
+    )
+    if "sample" in obj:
+        for nested in validate_sample(obj["sample"]):
+            field = "sample" if nested.field == "$" else f"sample.{nested.field}"
+            issues.append(_issue(field, nested.reason_code, nested.reason))
+        sample = obj["sample"] if isinstance(obj["sample"], dict) else {}
+        run_id, nested_run_id = obj.get("run_id"), sample.get("run_id")
+        if isinstance(run_id, str) and isinstance(nested_run_id, str) and run_id != nested_run_id:
+            issues.append(_issue("run_id", INVALID_RUN_ID, f"run_id {_brief(run_id)} differs from sample.run_id {_brief(nested_run_id)}"))
+        seq, nested_seq = obj.get("seq"), sample.get("seq")
+        if _is_int(seq) and _is_int(nested_seq) and seq != nested_seq:
+            issues.append(_issue("seq", OUT_OF_RANGE, f"seq {seq} differs from sample.seq {nested_seq}"))
+    # D31 (6): a duplicate is at or below the highest accepted number, a reset strictly below it.
+    anomaly, seq, previous = obj.get("anomaly"), obj.get("seq"), obj.get("previous_seq")
+    if _is_int(seq) and _is_int(previous) and seq >= 0 and previous >= 0 and anomaly in ANOMALIES:  # type: ignore[operator]
+        if anomaly == "duplicate" and seq > previous:  # type: ignore[operator]
+            issues.append(_issue("seq", OUT_OF_RANGE, f"duplicate seq {seq} is above previous_seq {previous}"))
+        elif anomaly == "reset" and seq >= previous:  # type: ignore[operator]
+            issues.append(_issue("seq", OUT_OF_RANGE, f"reset seq {seq} is not below previous_seq {previous}"))
+    return issues
+
+
+def validate_rejection(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `rejection` record. The preview is at most the first 1,024 bytes of the body, as base64."""
+    issues = _check_fields(
+        obj,
+        [
+            ("http_status", _c_int(HTTP_STATUS_MIN, HTTP_STATUS_MAX)),
+            ("reason_code", _c_enum(REJECTION_REASON_CODES)),
+            ("field", _c_str),
+            ("reason", _c_nonempty_str),
+            ("body_len", _c_int(0)),
+            ("body_preview_b64", _c_b64),
+        ],
+        ignore=_ENVELOPE_FIELDS,
+    )
+    preview = obj.get("body_preview_b64")
+    raw = _decode_strict_b64(preview) if isinstance(preview, str) else None
+    if raw is not None and len(raw) > BODY_PREVIEW_MAX:
+        issues.append(_issue("body_preview_b64", OUT_OF_RANGE, f"body_preview_b64 holds {len(raw)} bytes, at most {BODY_PREVIEW_MAX} allowed"))
+    body_len = obj.get("body_len")
+    if raw is not None and _is_int(body_len) and body_len >= 0 and body_len < len(raw):  # type: ignore[operator]
+        issues.append(_issue("body_len", OUT_OF_RANGE, f"body_len {body_len} is less than the {len(raw)} bytes of body_preview_b64"))
+    return issues
+
+
+def validate_repair(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `repair` record (D28, D30). `fragment_len` is the true length of the line the repair found,
+    `fragment_b64` its first FRAGMENT_CAP bytes, without the repair's own invalidating marker."""
+    issues = _check_fields(
+        obj,
+        [
+            ("file", _c_file_name(True)),
+            ("line_no", _c_int(1)),
+            ("fragment_len", _c_int(0)),
+            ("fragment_b64", _c_b64),
+            ("fragment_truncated", _c_bool),
+            ("reason", _c_enum(REPAIR_REASONS)),
+            ("action", _c_enum(REPAIR_ACTIONS)),
+        ],
+        ignore=_ENVELOPE_FIELDS,
+    )
+    length, encoded, truncated = obj.get("fragment_len"), obj.get("fragment_b64"), obj.get("fragment_truncated")
+    if _is_int(length) and length >= 0:  # type: ignore[operator]
+        raw = _decode_strict_b64(encoded) if isinstance(encoded, str) else None
+        if raw is not None and len(raw) != min(length, FRAGMENT_CAP):  # type: ignore[type-var]
+            issues.append(
+                _issue("fragment_b64", OUT_OF_RANGE, f"fragment_b64 holds {len(raw)} bytes, expected min(fragment_len, {FRAGMENT_CAP}) = {min(length, FRAGMENT_CAP)}")  # type: ignore[type-var]
+            )
+        if isinstance(truncated, bool) and truncated != (length > FRAGMENT_CAP):  # type: ignore[operator]
+            issues.append(_issue("fragment_truncated", OUT_OF_RANGE, f"fragment_truncated {truncated} contradicts fragment_len {length} (cap {FRAGMENT_CAP})"))
+    reason, action = obj.get("reason"), obj.get("action")
+    if reason in REPAIR_REASONS and action in REPAIR_ACTIONS:
+        terminated = action == "none_needed_already_terminated"
+        if terminated != (reason == "invalid_json_last_line"):
+            issues.append(_issue("action", OUT_OF_RANGE, f"action {action!r} does not fit reason {reason!r}"))
+    issues.extend(_file_identity_issue(obj, "file", null_run_file=REJECTIONS_STEM + FILE_SUFFIX, allow_rejections=True))
+    return issues
+
+
+_CONTAINER_STATE_FIELDS: list[tuple[str, _Check]] = [
+    ("status", _c_str),
+    ("exit_code", lambda path, value: [] if _is_int(value) else [_issue(path, WRONG_TYPE, f"{path} must be an integer, got {_brief(value)}")]),
+    ("oom_killed", _c_bool),
+]
+
+
+def _c_container_state(path: str, value: object) -> list[ValidationIssue]:
+    if not isinstance(value, dict):
+        return [_issue(path, WRONG_TYPE, f"{path} must be an object, got {_brief(value)}")]
+    return _check_fields(value, _CONTAINER_STATE_FIELDS, prefix=f"{path}.")
+
+
+def validate_termination(obj: dict[Any, Any]) -> list[ValidationIssue]:
+    """Payload of a `termination` record. Only the shape is checked: the cause is derived by the runner, never here."""
+    return _check_fields(
+        obj,
+        [
+            ("source", _c_enum((TERMINATION_SOURCE,))),
+            ("observed_time", _c_ts),
+            ("container_state", _c_container_state),
+            ("cause_label", _c_enum(CAUSE_LABELS)),
+            ("note", _c_str),
+        ],
+        ignore=_ENVELOPE_FIELDS,
+    )
+
+
+_PAYLOAD_VALIDATORS: dict[str, Callable[[dict[Any, Any]], list[ValidationIssue]]] = {
+    "run_metadata": validate_run_metadata,
+    "gap": validate_gap,
+    "sequence_anomaly": validate_sequence_anomaly,
+    "rejection": validate_rejection,
+    "repair": validate_repair,
+    "termination": validate_termination,
+}
+
+
 def validate_record(obj: object) -> list[ValidationIssue]:
-    """All problems with a stored record's envelope, and with the nested Sample of a `sample` record.
+    """All problems with a stored record: the envelope, then the payload of its record type.
 
     Checked for every record type: `record_type` in RECORD_TYPES, `schema_version` equal to
     SCHEMA_VERSION, `run_id` a valid Run_Identifier (null only for `rejection` and `repair`; which
     file may hold a null run_id is decided by the reader and the writer, design D27), and a
     `recv_time` timestamp. For `sample` records the nested `sample` must be a valid Sample
-    whose `run_id` equals the envelope's, and no other top-level field is allowed. The
-    type-specific payload of the other record types is not validated here.
+    whose `run_id` equals the envelope's, and no other top-level field is allowed. The payload of
+    `run_metadata`, `gap`, `sequence_anomaly`, `rejection`, `repair` and `termination` records is
+    validated by `validate_<type>` (task 2.19): required fields, types, allowed values and ranges,
+    cross-field rules, and no unknown top-level fields. Which file may hold a record, and whether a
+    `repair` or `run_metadata` file may sit in, is not checked here (reader, D27). The named file must match
+    the `run_id` (D31).
     """
     if not isinstance(obj, dict):
         return [_issue("$", WRONG_TYPE, f"record must be an object, got {_brief(obj)}")]
@@ -338,4 +767,6 @@ def validate_record(obj: object) -> list[ValidationIssue]:
         for key in _sorted_keys(obj):
             if key not in _SAMPLE_RECORD_FIELDS:
                 issues.append(_issue(_key_text(key), UNKNOWN_FIELD, f"unknown field {_brief(key)} in a sample record"))
+    elif isinstance(record_type, str) and record_type in _PAYLOAD_VALIDATORS:
+        issues.extend(_PAYLOAD_VALIDATORS[record_type](obj))
     return issues

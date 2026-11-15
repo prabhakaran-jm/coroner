@@ -44,8 +44,8 @@ OTHER_RECORD_JSON = {
     "gap_drop_unknown": '{"record_type":"gap","schema_version":1,"run_id":"r1","recv_time":"2025-01-01T12:00:09.031Z","gap_id":"gap-0003","gap_type":"probe_reported_drop","start_time":"2025-01-01T12:00:08.531Z","end_time":"2025-01-01T12:00:09.031Z","dropped_count":1,"range_status":"unknown","first_missing_seq":null,"last_missing_seq":null,"range_note":"range overlaps received samples","reconciliation":"none","reconciles_with":[],"detected_at_seq":20}',
     "gap_silence": '{"record_type":"gap","schema_version":1,"run_id":"a-20250101T120000Z-9f3a1c2e","recv_time":"2025-01-01T12:00:12.081Z","gap_id":"gap-0004","gap_type":"silence_timeout","start_time":"2025-01-01T12:00:10.530Z","end_time":"2025-01-01T12:00:12.081Z","last_sample_time":"2025-01-01T12:00:10.530Z","detected_time":"2025-01-01T12:00:12.081Z","threshold_ms":1500,"interval_ms":500,"sample_count":"unknown","reconciliation":"not_applicable","reconciles_with":[]}',
     "sequence_anomaly": '{"record_type":"sequence_anomaly","schema_version":1,"run_id":"r1","recv_time":"2025-01-01T12:00:10.001Z","anomaly":"duplicate","seq":7,"previous_seq":9,"sample":{"run_id":"r1","seq":7,"ts":"2025-01-01T12:00:03.500Z","rss_bytes":50000000,"request_count":1,"loop_delay_ms":0.2,"pid":1,"container_id":null,"container_id_source":"none","interval_ms":500,"dropped":0,"null_reasons":{"container_id":"not found"}}}',
-    "rejection_no_run": '{"record_type":"rejection","schema_version":1,"run_id":null,"recv_time":"2025-01-01T12:00:11.250Z","http_status":422,"reason_code":"invalid_run_id","field":"run_id","reason":"run_id longer than 64 characters","body_len":214,"body_preview_b64":"eyJydW5faWQiOi..."}',
-    "repair": '{"record_type":"repair","schema_version":1,"run_id":"a-20250101T120000Z-9f3a1c2e","recv_time":"2025-01-01T12:05:00.004Z","file":"a-20250101T120000Z-9f3a1c2e.jsonl","line_no":143,"fragment_len":57,"fragment_b64":"eyJyZWNvcmRfdHlwZSI6InNhbXBsZSIsInNjaGVtYV92ZXJzaW9uIjox","fragment_truncated":false,"reason":"incomplete_last_line","action":"appended_newline"}',
+    "rejection_no_run": '{"record_type":"rejection","schema_version":1,"run_id":null,"recv_time":"2025-01-01T12:00:11.250Z","http_status":422,"reason_code":"invalid_run_id","field":"run_id","reason":"run_id longer than 64 characters","body_len":214,"body_preview_b64":"eyJydW5faWQiOiI="}',
+    "repair": '{"record_type":"repair","schema_version":1,"run_id":"a-20250101T120000Z-9f3a1c2e","recv_time":"2025-01-01T12:05:00.004Z","file":"a-20250101T120000Z-9f3a1c2e.jsonl","line_no":143,"fragment_len":42,"fragment_b64":"eyJyZWNvcmRfdHlwZSI6InNhbXBsZSIsInNjaGVtYV92ZXJzaW9uIjox","fragment_truncated":false,"reason":"incomplete_last_line","action":"appended_newline"}',
     "termination": '{"record_type":"termination","schema_version":1,"run_id":"c-20250101T121500Z-4be07a11","recv_time":"2025-01-01T12:17:03.300Z","source":"experiment_runner","observed_time":"2025-01-01T12:17:03.221Z","container_state":{"status":"exited","exit_code":137,"oom_killed":true},"cause_label":"docker_oom_kill","note":"Observed after the fact via docker inspect."}',
 }
 
@@ -434,7 +434,7 @@ def test_stored_sample_record_is_valid_and_keeps_both_times() -> None:
 
 
 @pytest.mark.parametrize("name", sorted(OTHER_RECORD_JSON))
-def test_design_example_records_of_every_other_type_pass_the_envelope_check(name: str) -> None:
+def test_design_example_records_of_every_other_type_pass_validation(name: str) -> None:
     assert validate_record(json.loads(OTHER_RECORD_JSON[name])) == []
 
 
@@ -505,6 +505,7 @@ def test_null_run_id_is_allowed_only_for_rejection_and_repair_records() -> None:
     assert validate_record(json.loads(OTHER_RECORD_JSON["rejection_no_run"])) == []
     repair = json.loads(OTHER_RECORD_JSON["repair"])
     repair["run_id"] = None
+    repair["file"] = "_rejections.jsonl"  # D31: a null run_id names the rejections file
     assert validate_record(repair) == []  # design D27: which file may hold it is the reader's and writer's job
     for name in ("run_metadata", "termination", "gap_silence"):
         record = json.loads(OTHER_RECORD_JSON[name])
@@ -570,10 +571,10 @@ def test_sample_record_rejects_extra_top_level_fields() -> None:
     assert only(validate_record(record)) == ("note", "unknown_field")
 
 
-def test_other_record_types_may_carry_their_own_fields() -> None:
+def test_other_record_types_no_longer_carry_unknown_fields_task_2_19() -> None:
     record = json.loads(OTHER_RECORD_JSON["repair"])
     record["anything_extra"] = 1
-    assert validate_record(record) == []
+    assert only(validate_record(record)) == ("anything_extra", "unknown_field")
 
 
 def test_validate_record_does_not_modify_its_input() -> None:

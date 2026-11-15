@@ -3,6 +3,10 @@
     "2.14 Write Property 2 test (reader quarantine) and repair/reader example tests": {
       "status": "passed",
       "lastRunTimestamp": 1794699308578
+    },
+    "2.17 Write Property 13 test (run summary consistent with records)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794738879856
     }
   },
   "executionHistory": {
@@ -352,6 +356,59 @@
         "executionId": "b090637e-fbd5-4d4a-87e0-fdb3addd1541",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794733517969
+      }
+    ],
+    "2.17 Write Property 13 test (run summary consistent with records)": [
+      {
+        "executionId": "6ded9235-12c6-4eff-b63f-c69e6ead1e4a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794738012206
+      },
+      {
+        "executionId": "6ded9235-12c6-4eff-b63f-c69e6ead1e4a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794738909842
+      }
+    ],
+    "2.19 Follow-up (tracked): define and validate the payload contracts of the six non-sample record types": [
+      {
+        "executionId": "e0489a4e-c5e2-40e1-9890-66f0959dd14e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794740002147
+      },
+      {
+        "executionId": "e0489a4e-c5e2-40e1-9890-66f0959dd14e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794744081419
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794763267362
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794765787527
+      }
+    ],
+    "2.18 Checkpoint - M0.2 complete": [
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794765793192
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794766710414
+      }
+    ],
+    "2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests": [
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794766710720
       }
     ]
   }

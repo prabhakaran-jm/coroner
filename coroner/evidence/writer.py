@@ -7,11 +7,9 @@ What it guarantees
 * Every record is one UTF-8 (in fact ASCII, via `ensure_ascii`) JSON object on one line,
   terminated by exactly one newline character, with no raw newline inside it (Requirement 5.4).
 * `EvidenceWriter.append` checks every record BEFORE any byte is written: it must be a JSON
-  object that passes `validate_record` (the envelope for every type, plus the full nested
-  Sample for `sample` records) and must belong in the target file. One bad record rejects the
-  whole batch and the file is untouched. The payloads of `run_metadata`, `gap`,
-  `sequence_anomaly`, `rejection`, `repair`, and `termination` records are NOT validated
-  beyond the envelope: that is a known, tracked gap (task 2.19), not a guarantee.
+  object that passes `validate_record` (the envelope and the payload of every record type, task 2.19,
+  including the full nested Sample for `sample` records) and must belong in the target file. One bad
+  record rejects the whole batch and the file is untouched.
 * Files are only ever opened in binary append mode. Nothing is truncated, rewritten, or
   deleted here.
 * Process_Durable: write and flush to the operating system. Crash_Durable: also `fsync` the
