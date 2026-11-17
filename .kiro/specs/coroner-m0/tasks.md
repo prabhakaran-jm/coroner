@@ -353,14 +353,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.3, 4.8, 4.13, 4.14, 4.15, 4.16, 5.7, 13.14**
     - _Requirements: 4.3, 4.8, 4.13, 4.14, 4.15, 4.16, 5.7, 13.14_
 
-  - [ ] 3.9 Implement `collector/watchdog.py` (SilenceWatchdog)
+  - [x] 3.9 Implement `collector/watchdog.py` (SilenceWatchdog)
     - Daemon thread, injectable clock and tick; only runs that received a Sample in this process lifetime; threshold `3 * interval_ms`; re-checks under the run lock; `silence_open` set only after a durable write; cleared by the next Sample; stops after `termination`.
     - Files: `coroner/collector/watchdog.py`.
     - Verify: covered by 3.10.
     - Done when: module implemented and covered by 3.10.
     - _Requirements: 6.2, 6.13_
 
-  - [ ] 3.10 Write Property 14 test (one silence gap per silence period)
+  - [x] 3.10 Write Property 14 test (one silence gap per silence period)
     - **Property 14: Silence watchdog emits one gap per silence period** with an injected clock, no sleeping.
     - Files: `tests/unit/collector/test_prop_watchdog.py`.
     - Verify: `python -m pytest tests/unit/collector/test_prop_watchdog.py -q`.

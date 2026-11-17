@@ -497,6 +497,11 @@ class RunRegistry:
                 self._states[run_id] = state
             return state
 
+    def states(self) -> list[RunState]:
+        """A snapshot list of every known `RunState` (Task 3.9, the watchdog). The guard is held only to copy the dict."""
+        with self._guard:
+            return list(self._states.values())
+
     @contextmanager
     def lock(self, run_id: str) -> Iterator[RunState]:
         """Hold the run's lock. Only this run is blocked; the registry guard is not held."""

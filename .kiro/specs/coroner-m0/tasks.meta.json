@@ -544,6 +544,30 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794930555194
       }
+    ],
+    "3.9 Implement `collector/watchdog.py` (SilenceWatchdog)": [
+      {
+        "executionId": "88ed95a0-e127-4f17-b786-95129b78aef7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794932043337
+      },
+      {
+        "executionId": "88ed95a0-e127-4f17-b786-95129b78aef7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794933002645
+      }
+    ],
+    "3.10 Write Property 14 test (one silence gap per silence period)": [
+      {
+        "executionId": "69d0e756-cc37-44b9-9338-8d6832443094",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794934453377
+      },
+      {
+        "executionId": "1a598b81-d538-4fd1-9216-df42f2afbf4b",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794937190596
+      }
     ]
   }
 }

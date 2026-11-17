@@ -438,6 +438,20 @@ class IngestService:
         return self._registry
 
     @property
+    def monotonic(self) -> Callable[[], float]:
+        """The monotonic clock behind `NewSample.monotonic`; the silence watchdog must share it (Task 3.9)."""
+        return self._monotonic
+
+    @property
+    def now(self) -> Callable[[], str]:
+        """The wall-clock source for record times; shared with the silence watchdog (Task 3.9)."""
+        return self._now
+
+    def invalidate_storage(self) -> None:
+        """Invalidate the storage probe cache after a failed persistence step (also used by the watchdog)."""
+        self._invalidate()
+
+    @property
     def replay_reports(self) -> Mapping[str, ReplayReport]:
         hook = self._registry.replay_hook
         assert isinstance(hook, GapReplay)
