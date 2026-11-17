@@ -568,6 +568,42 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794937190596
       }
+    ],
+    "3.11 (PRIORITY) Implement `collector/app.py` and `collector/main.py` (HTTP API and startup)": [
+      {
+        "executionId": "87174e6b-b9e1-4408-b1bc-463a70c02879",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794938593506
+      },
+      {
+        "executionId": "87174e6b-b9e1-4408-b1bc-463a70c02879",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794939377290
+      }
+    ],
+    "3.12 Write Collector route tests (TestClient, Docker-free)": [
+      {
+        "executionId": "e4440fd7-70db-4fa7-be4d-0ad9ab52aec9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794940261033
+      },
+      {
+        "executionId": "e4440fd7-70db-4fa7-be4d-0ad9ab52aec9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794941191184
+      }
+    ],
+    "3.13 Write Collector persistence tests (Docker-free)": [
+      {
+        "executionId": "f47a87bf-157e-4044-9240-644e3a42edf3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794951873018
+      },
+      {
+        "executionId": "f47a87bf-157e-4044-9240-644e3a42edf3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794953401672
+      }
     ]
   }
 }

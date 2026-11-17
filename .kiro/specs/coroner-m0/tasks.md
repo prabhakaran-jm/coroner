@@ -368,21 +368,21 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 6.2, 6.13**
     - _Requirements: 6.2, 6.13_
 
-  - [ ] 3.11 (PRIORITY) Implement `collector/app.py` and `collector/main.py` (HTTP API and startup)
+  - [x] 3.11 (PRIORITY) Implement `collector/app.py` and `collector/main.py` (HTTP API and startup)
     - Routes: `GET /healthz` (always 200; body `status`, `durability`, `server_time`, `uptime_s`, `storage_ok`, `storage_error` on failure), `POST /v1/samples` (200/422/413/503), `POST /v1/runs/{run_id}/termination`, minimal read-only `GET /v1/runs/{run_id}/evidence` (`application/x-ndjson`, 404 unknown, 422 invalid id). Startup order: config, lock, storage probe, repair scan of every `*.jsonl`, watchdog, serve. One uvicorn worker, sync handlers.
     - Files: `coroner/collector/app.py`, `coroner/collector/main.py`.
     - Verify: covered by 3.12 and 3.13.
     - Done when: module implemented and covered by those tests.
     - _Requirements: 4.1, 4.3, 4.4, 4.8, 4.17, 4.18, 5.1, 5.5_
 
-  - [ ] 3.12 Write Collector route tests (TestClient, Docker-free)
+  - [x] 3.12 Write Collector route tests (TestClient, Docker-free)
     - 200/422/413/503 paths with a failing writer double, health body with `storage_ok` true and false (HTTP 200 in both), termination record, evidence 404/422/200, `_rejections.jsonl` for an unattributable rejection, no acknowledgement on write failure, process keeps serving.
     - Files: `tests/unit/collector/test_routes.py`.
     - Verify: `python -m pytest tests/unit/collector/test_routes.py -q`.
     - Done when: passes with output recorded.
     - _Requirements: 4.5, 4.8, 4.9, 4.17, 4.18, 13.1_
 
-  - [ ] 3.13 Write Collector persistence tests (Docker-free)
+  - [x] 3.13 Write Collector persistence tests (Docker-free)
     - Simulate a Collector restart by building a new registry and app over the same temporary directory: acknowledged records are unchanged, not duplicated; `resumed` metadata appended; an incomplete last line is repaired at startup before accepting new appends; Process and Crash durability reported as configured; stopped Demo_App (no Samples) leaves records untouched.
     - Files: `tests/unit/collector/test_persistence.py`.
     - Verify: `python -m pytest tests/unit/collector/test_persistence.py -q`.

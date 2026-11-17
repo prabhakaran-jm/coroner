@@ -400,6 +400,17 @@ def _parse_body(raw: bytes) -> Any:
     return json.loads(raw.decode("utf-8"), parse_constant=_parse_constant, object_pairs_hook=_reject_duplicate_keys)
 
 
+def _too_large_reason(raw_len: int, total: int, limit: int, source: str | None) -> str:
+    """The 413 `reason`, stating where the length came from (D34 B): observed in full, declared, or a lower bound."""
+    if source is None:
+        source = "observed" if total == raw_len else "declared"
+    if source == "declared":
+        return f"declared Content-Length is {total} bytes (client-declared, body not read or verified), the limit is {limit}"
+    if source == "lower_bound":
+        return f"body exceeds the limit of {limit} bytes; reading stopped at {total} bytes (lower bound, true length not measured)"
+    return f"body is {total} bytes (observed in full), the limit is {limit}"
+
+
 def _clip(text: str) -> str:
     return text if len(text) <= _REASON_MAX else text[: _REASON_MAX - 3] + "..."
 
@@ -459,14 +470,24 @@ class IngestService:
 
     # --- ingest ------------------------------------------------------------------------------------------
 
-    def ingest(self, raw_body: bytes | bytearray | memoryview) -> IngestResult:
-        """Handle one `POST /v1/samples` body. Never raises for bad input or storage failure."""
+    def ingest(
+        self, raw_body: bytes | bytearray | memoryview, *, body_len: int | None = None, body_len_source: str | None = None
+    ) -> IngestResult:
+        """Handle one `POST /v1/samples` body. Never raises for bad input or storage failure.
+
+        `body_len` (Task 3.11) is for the HTTP layer, which stops reading at `max_body_bytes + 1` bytes: it is the
+        declared or known length of the whole body when that exceeds `raw_body` (a lower bound when unknown). Only
+        the size check and the 413 rejection record use it. Direct callers omit it and get `len(raw_body)`.
+        `body_len_source` (D34 B) names where `body_len` came from: `"declared"` (client Content-Length, body not
+        read), `"lower_bound"` (reading stopped at the limit plus one byte) or `"observed"`; it only changes the
+        413 `reason` text. None means observed when `body_len` is absent or equal to the body, otherwise declared.
+        """
         if not isinstance(raw_body, (bytes, bytearray, memoryview)):
             raise TypeError(f"raw_body must be bytes, got {type(raw_body).__name__}")
         raw = bytes(raw_body)
         recv = self._now()  # Receive_Time: the first thing read for this request (design, "IngestService.ingest")
         started = self._monotonic()
-        result = self._ingest(raw, started, recv)
+        result = self._ingest(raw, started, recv, body_len, body_len_source)
         elapsed_ms = (self._monotonic() - started) * 1000.0
         logger.info(
             "ingest run_id=%s seq=%s kind=%s http=%d ingest_ms=%.3f",
@@ -475,10 +496,14 @@ class IngestService:
         )
         return replace(result, ingest_ms=elapsed_ms)
 
-    def _ingest(self, raw: bytes, started: float, recv: str) -> IngestResult:
+    def _ingest(
+        self, raw: bytes, started: float, recv: str, body_len: int | None = None, body_len_source: str | None = None
+    ) -> IngestResult:
         limit = self._config.max_body_bytes
-        if len(raw) > limit:
-            return self._rejected(raw, recv, 413, None, "body_too_large", "", f"body is {len(raw)} bytes, the limit is {limit}")
+        total = max(len(raw), body_len or 0)
+        if total > limit:
+            reason = _too_large_reason(len(raw), total, limit, body_len_source)
+            return self._rejected(raw, recv, 413, None, "body_too_large", "", reason, total)
         try:
             obj = _parse_body(raw)
         except (UnicodeDecodeError, ValueError, RecursionError) as exc:
@@ -519,7 +544,9 @@ class IngestService:
 
     # --- termination -------------------------------------------------------------------------------------
 
-    def record_termination(self, run_id: object, raw_body: bytes | bytearray | memoryview) -> TerminationResult:
+    def record_termination(
+        self, run_id: object, raw_body: bytes | bytearray | memoryview, *, body_len: int | None = None, body_len_source: str | None = None
+    ) -> TerminationResult:
         """Record the Runner's observed termination (design "Termination record"). Never raises for bad input.
 
         `raw_body` is a JSON object with exactly `source`, `observed_time`, `container_state` (`status`,
@@ -532,7 +559,7 @@ class IngestService:
         raw = bytes(raw_body)
         recv = self._now()  # Receive_Time, read when the request starts, before validation and the run lock
         started = self._monotonic()
-        result = self._terminate(run_id, raw, recv)
+        result = self._terminate(run_id, raw, recv, body_len, body_len_source)
         elapsed_ms = (self._monotonic() - started) * 1000.0
         logger.info(
             "termination run_id=%s recorded=%s http=%d ingest_ms=%.3f",
@@ -541,14 +568,18 @@ class IngestService:
         )
         return replace(result, ingest_ms=elapsed_ms)
 
-    def _terminate(self, run_id: object, raw: bytes, recv: str) -> TerminationResult:
+    def _terminate(
+        self, run_id: object, raw: bytes, recv: str, body_len: int | None = None, body_len_source: str | None = None
+    ) -> TerminationResult:
         problem = validate_run_id(run_id)
         if problem is not None:
             return self._termination_rejected(raw, recv, 422, None, problem.reason_code, problem.field, problem.reason)
         assert isinstance(run_id, str)
         limit = self._config.max_body_bytes
-        if len(raw) > limit:
-            return self._termination_rejected(raw, recv, 413, run_id, "body_too_large", "", f"body is {len(raw)} bytes, the limit is {limit}")
+        total = max(len(raw), body_len or 0)
+        if total > limit:
+            reason = _too_large_reason(len(raw), total, limit, body_len_source)
+            return self._termination_rejected(raw, recv, 413, run_id, "body_too_large", "", reason, total)
         try:
             body = _parse_body(raw)
         except (UnicodeDecodeError, ValueError, RecursionError) as exc:
@@ -579,23 +610,29 @@ class IngestService:
 
     # --- rejections and failures -------------------------------------------------------------------------
 
-    def _rejection_record(self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str) -> dict[str, Any]:
+    def _rejection_record(
+        self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str, body_len: int | None = None
+    ) -> dict[str, Any]:
         return {
             "record_type": "rejection", "schema_version": SCHEMA_VERSION, "run_id": run_id, "recv_time": recv,
             "http_status": status, "reason_code": code, "field": field, "reason": reason,
-            "body_len": len(raw), "body_preview_b64": base64.b64encode(raw[:BODY_PREVIEW_MAX]).decode("ascii"),
+            "body_len": len(raw) if body_len is None else body_len, "body_preview_b64": base64.b64encode(raw[:BODY_PREVIEW_MAX]).decode("ascii"),
         }
 
-    def _rejected(self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str) -> IngestResult:
-        recorded = self._persist_rejection(run_id, code, self._rejection_record(raw, recv, status, run_id, code, field, reason))
+    def _rejected(
+        self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str, body_len: int | None = None
+    ) -> IngestResult:
+        recorded = self._persist_rejection(run_id, code, self._rejection_record(raw, recv, status, run_id, code, field, reason, body_len))
         error = "body_too_large" if code == "body_too_large" else "validation_failed"
         body: dict[str, Any] = {"error": error, "reason_code": code, "field": field, "reason": reason}
         if not recorded:
             body["rejection_recorded"] = False
         return IngestResult(status, body, "rejected", run_id, None, None, recv, (), recorded)
 
-    def _termination_rejected(self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str) -> TerminationResult:
-        recorded = self._persist_rejection(run_id, code, self._rejection_record(raw, recv, status, run_id, code, field, reason))
+    def _termination_rejected(
+        self, raw: bytes, recv: str, status: int, run_id: str | None, code: str, field: str, reason: str, body_len: int | None = None
+    ) -> TerminationResult:
+        recorded = self._persist_rejection(run_id, code, self._rejection_record(raw, recv, status, run_id, code, field, reason, body_len))
         error = "body_too_large" if code == "body_too_large" else "validation_failed"
         body: dict[str, Any] = {"error": error, "reason_code": code, "field": field, "reason": reason}
         if not recorded:
