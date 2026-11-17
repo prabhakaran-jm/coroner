@@ -365,6 +365,11 @@ class RunRegistry:
         return self._config
 
     @property
+    def replay_hook(self) -> ReplayHook:
+        """The recovery hook `open_run` calls (Task 3.5 installs `service.GapReplay` here)."""
+        return self._replay_hook
+
+    @property
     def started(self) -> bool:
         return self._started
 

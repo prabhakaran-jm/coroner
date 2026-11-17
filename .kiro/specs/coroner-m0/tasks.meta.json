@@ -7,6 +7,14 @@
     "2.17 Write Property 13 test (run summary consistent with records)": {
       "status": "passed",
       "lastRunTimestamp": 1794738879856
+    },
+    "3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794862525224
+    },
+    "3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1794930526973
     }
   },
   "executionHistory": {
@@ -477,6 +485,64 @@
         "executionId": "d1b06b17-4ed8-46b7-b6c2-6a76857224e3",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794783510015
+      }
+    ],
+    "3.5 (PRIORITY) Implement `collector/service.py` (IngestService)": [
+      {
+        "executionId": "605d3001-d39f-42bf-b390-4b0d83560ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794811891855
+      },
+      {
+        "executionId": "605d3001-d39f-42bf-b390-4b0d83560ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794853473119
+      }
+    ],
+    "3.6 Write Properties 3 and 5 tests (stored exactly as received; per-run isolation)": [
+      {
+        "executionId": "23f2a6c2-22c0-4cd4-8df1-e6fffb863a52",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794854236919
+      },
+      {
+        "executionId": "23f2a6c2-22c0-4cd4-8df1-e6fffb863a52",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794855515315
+      }
+    ],
+    "3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)": [
+      {
+        "executionId": "a579fe45-2376-414e-a0d9-d450e062a7f3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794858268814
+      },
+      {
+        "executionId": "a579fe45-2376-414e-a0d9-d450e062a7f3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794896037162
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794920515497
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794922649230
+      }
+    ],
+    "3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests": [
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794922653576
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794930555194
       }
     ]
   }

@@ -321,7 +321,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.4, 4.17, 4.18**
     - _Requirements: 4.4, 4.17, 4.18_
 
-  - [ ] 3.5 (PRIORITY) Implement `collector/service.py` (IngestService)
+  - [x] 3.5 (PRIORITY) Implement `collector/service.py` (IngestService)
     - Ordering: size check, parse, validate, per-run lock, `open_run`, `classify`, `build_records` (sample or `sequence_anomaly`, discontinuity gap, drop gap with `range_status`, reconciliation marking, one write), `writer.append`, then `apply`, then acknowledge. `OSError` leads to `mark_dirty`, 503, no acknowledgement, in-memory state unchanged. Rejections go to the run file for a valid run id, otherwise `_rejections.jsonl` (`rejection_recorded: false` if that write fails). Termination recording. Log `ingest_ms`.
     - Recovery responsibility (approved 14 November 2026, design D26): this task owns recovery of missing gap records by replaying persisted Samples. After tail repair, replay the valid `sample` records in file order through `classify` and `apply` (anomalies are not needed to rebuild the baseline) to compute the expected sequence discontinuity and Probe-reported drop gaps, compare them with the stored gap records by semantic identity, and append only the missing ones in one durable append before the run accepts new Samples. Semantic identity, never `gap_id` or times alone: for a discontinuity `gap_type`, `detected_at_seq`, `first_missing_seq`, `last_missing_seq`; for a drop `gap_type`, `detected_at_seq`, `dropped_count`, `range_status`, `first_missing_seq`, `last_missing_seq`. A stored gap with the same `gap_type` and `detected_at_seq` but different remaining fields is a conflict: report it, add no second record, overwrite nothing. Silence-timeout gaps are time-based and are not regenerated. New gap ids come from the `next_gap_number` rebuilt in 3.2. Keep the existing batch order (the Sample or anomaly record first, then its gap records); do not write gap records first. Late Samples keep their `reset` classification and stay counted as missing. Recovery is idempotent: a second replay adds nothing.
     - Files: `coroner/collector/service.py`.
@@ -329,7 +329,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: module implemented and covered by those tests.
     - _Requirements: 4.2, 4.3, 4.5, 4.7, 4.8, 4.9, 4.15, 6.1, 6.3, 6.4, 7.5, 7.7_
 
-  - [ ] 3.6 Write Properties 3 and 5 tests (stored exactly as received; per-run isolation)
+  - [x] 3.6 Write Properties 3 and 5 tests (stored exactly as received; per-run isolation)
     - **Property 3: Valid Samples are stored exactly as received**; **Property 5: Run files are isolated by Run_Identifier**.
     - Files: `tests/unit/collector/test_prop_ingest_stored.py`, `tests/unit/collector/test_prop_isolation.py`.
     - Verify: `python -m pytest tests/unit/collector/test_prop_ingest_stored.py tests/unit/collector/test_prop_isolation.py -q`.
@@ -337,7 +337,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.2, 4.7, 5.2, 7.5, 12.1**
     - _Requirements: 4.2, 4.7, 5.2, 7.5, 12.1_
 
-  - [ ] 3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)
+  - [x] 3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)
     - **Property 4: Invalid input is rejected and never stored as a Sample** covering unparseable body, missing or wrong-typed fields, bad run ids, missing or null-without-reason RSS and loop delay.
     - Files: `tests/unit/collector/test_prop_rejection.py`.
     - Verify: `python -m pytest tests/unit/collector/test_prop_rejection.py -q`.
@@ -345,7 +345,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 4.5, 4.9, 7.7**
     - _Requirements: 4.5, 4.9, 7.7_
 
-  - [ ] 3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests
+  - [x] 3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests
     - **Property 7: Persistence precedes acknowledgement at the claimed level** using a recording writer and `fsync` doubles: write, flush, fsync (file, then directory on creation) occur before the acknowledgement; process level never fsyncs; `durability` equals `crash` only if fsync ran; a write error produces no acknowledgement and unchanged state; dirty files are repaired before the next append.
     - Files: `tests/unit/collector/test_prop_ack_after_persist.py`.
     - Verify: `python -m pytest tests/unit/collector/test_prop_ack_after_persist.py -q`.
