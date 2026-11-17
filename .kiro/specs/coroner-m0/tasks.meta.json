@@ -604,6 +604,25 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794953401672
       }
+    ],
+    "3.15 Checkpoint - M0.3 complete": [
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954220534
+      },
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954969367
+      }
+    ],
+    "3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests": [
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954969578
+      }
     ]
   }
 }

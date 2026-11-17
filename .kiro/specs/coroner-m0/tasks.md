@@ -290,7 +290,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: `python -m pytest tests/unit/evidence/test_schema_payloads.py tests/unit/evidence/test_schema.py -q`.
     - Done when: the user approved the contracts, tests pass with output recorded, and the writer, repair, and gap tests still pass (default suite exit code 0).
     - _Requirements: 5.5, 6.8, 12.2_
-- [ ] 3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests
+- [x] 3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests
   - [x] 3.1 Implement `collector/config.py` with tests
     - `CollectorConfig`, `load_config(env)`: durability via `parse_durability` (invalid value exits non-zero with a message naming it), `CORONER_MAX_BODY_BYTES` (default 65536), `CORONER_WATCHDOG_TICK_MS` (default 50), evidence directory `/data/evidence` (overridable for tests).
     - Files: `coroner/collector/config.py`, `tests/unit/collector/test_config.py`.
@@ -396,7 +396,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: tests pass with output recorded.
     - _Requirements: 5.11, 12.5_
 
-  - [ ] 3.15 Checkpoint - M0.3 complete
+  - [x] 3.15 Checkpoint - M0.3 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 3, 4, 5, 7, 14, and the Collector half of 28 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 16 November 2026.
 
 - [ ] 4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests
