@@ -717,6 +717,85 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795000753267
       }
+    ],
+    "4.10 Implement `demo_app/leak.py` and `demo_app/counting.py`": [
+      {
+        "executionId": "6f46c9c0-2356-436d-888e-53068fb09d1a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003021347
+      },
+      {
+        "executionId": "6f46c9c0-2356-436d-888e-53068fb09d1a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003607178
+      }
+    ],
+    "4.11 (PRIORITY) Implement `demo_app/app.py` and `demo_app/main.py`": [
+      {
+        "executionId": "019526eb-34f6-437d-914d-27d2852042b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003876379
+      },
+      {
+        "executionId": "019526eb-34f6-437d-914d-27d2852042b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795007517405
+      }
+    ],
+    "4.12 Write Property 19 test (leak accumulates exactly or changes nothing)": [
+      {
+        "executionId": "38b16cb8-63c9-487b-9b71-8bbf5da85574",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795008434917
+      },
+      {
+        "executionId": "38b16cb8-63c9-487b-9b71-8bbf5da85574",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009739995
+      }
+    ],
+    "4.13 Write Property 20 test (destructive endpoints routed only when flag is exactly 1)": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009888638
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010981838
+      }
+    ],
+    "4.14 Write Demo_App unit tests including the ordinary HTTP 500 in-process test": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009888814
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010982875
+      }
+    ],
+    "4.15 Checkpoint - M0.4 complete": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010117443
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010984334
+      }
+    ],
+    "4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010984935
+      }
     ]
   }
 }

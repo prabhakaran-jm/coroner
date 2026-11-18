@@ -399,7 +399,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 3.15 Checkpoint - M0.3 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 3, 4, 5, 7, 14, and the Collector half of 28 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 16 November 2026.
 
-- [ ] 4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests
+- [x] 4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests
   - [x] 4.1 Implement Probe config and real readers (`probe/probe.py`, part 1)
     - `ProbeConfig`, `load_config(env, warn)` (invalid `CORONER_SAMPLE_INTERVAL_MS` gives 500 and exactly one warning; default run id `manual-<8 hex>`), `read_rss_bytes()` from `/proc/self/statm` times page size (current RSS, not `getrusage` peak; raises where `/proc` is missing), `read_container_id()` (mountinfo, then cgroup, then `HOSTNAME`, with `container_id_source`). Stdlib only. No synthetic fallback.
     - Files: `coroner/probe/probe.py`, `coroner/probe/__init__.py`.
@@ -467,21 +467,21 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: passes with output recorded and the measured line count is noted.
     - _Requirements: 3.2, 7.3, 14.4, 14.6_
 
-  - [ ] 4.10 Implement `demo_app/leak.py` and `demo_app/counting.py`
+  - [x] 4.10 Implement `demo_app/leak.py` and `demo_app/counting.py`
     - `LeakStore.retain(n)`: `b"\xa5" * n`, lock-protected list, total updated only after allocation succeeds. `RequestCountMiddleware`: pure ASGI, calls `probe.count_request()` on every HTTP request including 404s.
     - Files: `coroner/demo_app/leak.py`, `coroner/demo_app/counting.py`.
     - Verify: covered by 4.12 and 4.14.
     - Done when: implemented and covered by those tests.
     - _Requirements: 1.2, 1.3, 1.7, 2.4_
 
-  - [ ] 4.11 (PRIORITY) Implement `demo_app/app.py` and `demo_app/main.py`
+  - [x] 4.11 (PRIORITY) Implement `demo_app/app.py` and `demo_app/main.py`
     - `create_app(env, *, probe, exit_fn=os._exit)`. Routes: `GET /health` (`status`, `pid`, `run_id`, `probe.next_seq`, `probe.dropped`); `POST /leak?bytes=N` (1 to 104,857,600; 422; 503 `allocation_failed` on `MemoryError`); `POST /crash` calls `exit_fn(1)`; `GET /error` raises `RuntimeError`. The three destructive routes are registered only when the flag is exactly `1` (404 otherwise). Probe start in lifespan; no evidence depends on shutdown. Comments and strings call `/crash` a "controlled fatal process exit via os._exit(1)", never an exception.
     - Files: `coroner/demo_app/app.py`, `coroner/demo_app/main.py`.
     - Verify: covered by 4.12 to 4.14.
     - Done when: implemented and covered by those tests.
     - _Requirements: 1.1, 1.5, 1.6, 1.8, 1.9, 1.10, 1.11, 9.12, 15.6_
 
-  - [ ] 4.12 Write Property 19 test (leak accumulates exactly or changes nothing)
+  - [x] 4.12 Write Property 19 test (leak accumulates exactly or changes nothing)
     - **Property 19: Leak endpoint accumulates exactly or changes nothing**, including `MemoryError` injection and byte content check (non-zero).
     - Files: `tests/unit/demo_app/test_prop_leak.py`.
     - Verify: `python -m pytest tests/unit/demo_app/test_prop_leak.py -q`.
@@ -489,7 +489,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 1.2, 1.3, 1.4, 1.7, 1.8**
     - _Requirements: 1.2, 1.3, 1.4, 1.7, 1.8_
 
-  - [ ] 4.13 Write Property 20 test (destructive endpoints routed only when flag is exactly 1)
+  - [x] 4.13 Write Property 20 test (destructive endpoints routed only when flag is exactly 1)
     - **Property 20: Destructive endpoints are routed only when the flag is exactly 1** over arbitrary values (unset, empty, `0`, `true`, ` 1`); when not routed each endpoint returns 404 and `exit_fn` is never called.
     - Files: `tests/unit/demo_app/test_prop_gating.py`.
     - Verify: `python -m pytest tests/unit/demo_app/test_prop_gating.py -q`.
@@ -497,14 +497,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 1.10, 1.11, 13.16, 15.6**
     - _Requirements: 1.10, 1.11, 13.17, 15.6_
 
-  - [ ] 4.14 Write Demo_App unit tests including the ordinary HTTP 500 in-process test
+  - [x] 4.14 Write Demo_App unit tests including the ordinary HTTP 500 in-process test
     - `/health` 200; `/crash` calls the injected `exit_fn(1)` and nothing else; `/error` returns 500, then `/health` returns 200 with the same `pid`, and fake-transport Samples keep the same `pid` with `seq` increasing by 1 (Requirements 13.15, 15); request counting includes 404s; wording scan: "exception" and "unhandled exception" never describe the crash endpoint.
     - Files: `tests/unit/demo_app/test_app.py`, `tests/unit/demo_app/test_http500_nontermination.py`.
     - Verify: `python -m pytest tests/unit/demo_app -q`.
     - Done when: passes with output recorded.
     - _Requirements: 1.5, 1.6, 1.9, 9.12, 13.1, 13.15, 15.1, 15.2, 15.4, 15.5_
 
-  - [ ] 4.15 Checkpoint - M0.4 complete
+  - [x] 4.15 Checkpoint - M0.4 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts and the measured Probe line count, confirm Properties 15, 18, 19, 20 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 17 November 2026.
 
 - [ ] 5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume
