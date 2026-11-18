@@ -15,6 +15,14 @@
     "3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests": {
       "status": "passed",
       "lastRunTimestamp": 1794930526973
+    },
+    "6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1795030130173
+    },
+    "6.2 Write Property 29 test and runner static scan": {
+      "status": "passed",
+      "lastRunTimestamp": 1795030132844
     }
   },
   "executionHistory": {
@@ -898,6 +906,132 @@
         "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795029728140
+      }
+    ],
+    "6.1 (PRIORITY) Implement `runner/docker_port.py` (`DockerPort`, `DockerCli`, `build_child_env`)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029969840
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031526122
+      }
+    ],
+    "6.3 Implement `runner/evaluate.py` part 1 (`parse_mem_size` and container-state evaluation)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029970502
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031527340
+      }
+    ],
+    "6.9 Implement `runner/manifest.py` and run id generation": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029970927
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031528192
+      }
+    ],
+    "6.11 Implement `runner/collector_client.py` (health, evidence, termination) and clock offset estimation": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029974208
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031529242
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031986952
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032081827
+      }
+    ],
+    "6.2 Write Property 29 test and runner static scan": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029982228
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031526807
+      }
+    ],
+    "6.4 Write Properties 23 and 21 tests (memory size parsing; container state evaluation)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029982753
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031527778
+      }
+    ],
+    "6.10 Write Properties 24 and 25 tests (run id uniqueness; manifest and inspect fidelity)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029983107
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031528614
+      }
+    ],
+    "6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029983688
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031529939
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031987613
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032082463
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032088371
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038923882
       }
     ]
   }

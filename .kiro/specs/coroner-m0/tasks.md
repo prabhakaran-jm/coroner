@@ -563,14 +563,14 @@ These rules apply to every task and are part of the completion criteria.
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm 5.5 to 5.7 recorded real Docker output, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 18 November 2026.
 
 - [ ] 6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation
-  - [ ] 6.1 (PRIORITY) Implement `runner/docker_port.py` (`DockerPort`, `DockerCli`, `build_child_env`)
+  - [x] 6.1 (PRIORITY) Implement `runner/docker_port.py` (`DockerPort`, `DockerCli`, `build_child_env`)
     - Every call is `subprocess.run(argv_list, env=build_child_env(os.environ, overrides), capture_output=True, timeout=..., check=False)`: no `shell=True`, no inline `VAR=value`, `docker_exe` from `shutil.which("docker")`, injectable `run`. Methods: `compose_up` (`-p coroner up -d --no-deps --force-recreate demo_app`), `container_id` (`ps -a -q demo_app`, must be 64 hex), `inspect` (raw bytes, parsed JSON, UTC inspect time), `kill`, `available`. Never mutates `os.environ`.
     - Files: `coroner/runner/docker_port.py`.
     - Verify: covered by 6.2.
     - Done when: implemented and covered by 6.2.
     - _Requirements: 16.1, 16.2, 16.3_
 
-  - [ ] 6.2 Write Property 29 test and runner static scan
+  - [x] 6.2 Write Property 29 test and runner static scan
     - **Property 29: Runner child process environment and argv** with a fake `run`; plus a static scan that `coroner/runner` has no `shell=True`, `bash`, `os.system`, `fcntl`, and builds paths with `pathlib`.
     - Files: `tests/unit/runner/test_prop_env_argv.py`, `tests/unit/runner/test_runner_static.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_env_argv.py tests/unit/runner/test_runner_static.py -q`.
@@ -578,14 +578,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 16.1, 16.2**
     - _Requirements: 16.1, 16.2, 16.3_
 
-  - [ ] 6.3 Implement `runner/evaluate.py` part 1 (`parse_mem_size` and container-state evaluation)
+  - [x] 6.3 Implement `runner/evaluate.py` part 1 (`parse_mem_size` and container-state evaluation)
     - `parse_mem_size` (reuse `common.envparse`), `ContainerState`, `Evaluation`, `evaluate_container_state(experiment, state)` with expected pairs A `(1, false)`, B `(137, false)`, C `(137, true)` and status `exited`; failure messages include observed values.
     - Files: `coroner/runner/evaluate.py`.
     - Verify: covered by 6.4.
     - Done when: implemented and covered by 6.4.
     - _Requirements: 8.4, 9.6, 9.10, 9.11, 10.4, 10.6, 10.9, 11.5, 11.6_
 
-  - [ ] 6.4 Write Properties 23 and 21 tests (memory size parsing; container state evaluation)
+  - [x] 6.4 Write Properties 23 and 21 tests (memory size parsing; container state evaluation)
     - **Property 23: Memory size parsing**; **Property 21: Container state evaluation**.
     - Files: `tests/unit/runner/test_prop_memsize.py`, `tests/unit/runner/test_prop_container_state.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_memsize.py tests/unit/runner/test_prop_container_state.py -q`.
@@ -623,14 +623,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 11.5, 11.6, 11.10, 11.11, 11.12, 11.13, 11.14, 11.17, 11.18, 11.19, 11.20**
     - _Requirements: 11.10, 11.11, 11.17, 11.18, 11.19, 11.20, 13.5, 13.16_
 
-  - [ ] 6.9 Implement `runner/manifest.py` and run id generation
+  - [x] 6.9 Implement `runner/manifest.py` and run id generation
     - Manifest dataclasses, atomic write (temp file, `os.fsync`, `os.replace`, binary mode with explicit `\n`), read, `as_posix()` for stored paths, inspect excerpt extraction (`Id`, `State.OOMKilled`, `State.ExitCode`, `State.Status`, `HostConfig.Memory`) with raw output saved unchanged, `generate_run_id(experiment, existing)` (`<exp>-<UTC yyyymmddThhmmssZ>-<8 hex>`, lowercase, matches `RUN_ID_RE`, unique across `runs/` and known ids).
     - Files: `coroner/runner/manifest.py`.
     - Verify: covered by 6.10.
     - Done when: implemented and covered by 6.10.
     - _Requirements: 9.1, 10.1, 11.1, 11.13, 11.14, 12.1, 12.2, 12.7_
 
-  - [ ] 6.10 Write Properties 24 and 25 tests (run id uniqueness; manifest and inspect fidelity)
+  - [x] 6.10 Write Properties 24 and 25 tests (run id uniqueness; manifest and inspect fidelity)
     - **Property 24: Run identifiers are unique and valid**; **Property 25: Run_Manifest and inspect excerpt fidelity**.
     - Files: `tests/unit/runner/test_prop_run_id.py`, `tests/unit/runner/test_prop_manifest.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_run_id.py tests/unit/runner/test_prop_manifest.py -q`.
@@ -638,14 +638,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 9.1, 10.1, 11.1, 11.13, 11.14, 12.1, 12.2, 12.7**
     - _Requirements: 9.1, 10.1, 11.1, 11.13, 11.14, 12.1, 12.2, 12.7_
 
-  - [ ] 6.11 Implement `runner/collector_client.py` (health, evidence, termination) and clock offset estimation
+  - [x] 6.11 Implement `runner/collector_client.py` (health, evidence, termination) and clock offset estimation
     - Stdlib HTTP client with timeouts. `check_ready(client, clock)` accepts only HTTP 200 and `storage_ok is True`; 200 with `storage_ok` false, absent, or non-boolean aborts immediately with "Collector storage is not healthy"; timeout after 60 s gives `collector_unhealthy`. `estimate_clock_offset_ms(host_before, host_after, server_time)` (midpoint method) returned with the measurement window so the uncertainty (half the round trip) is also recorded.
     - Files: `coroner/runner/collector_client.py`.
     - Verify: covered by 6.12.
     - Done when: implemented and covered by 6.12.
     - _Requirements: 8.7, 8.8, 8.14, 9.8, 10.7, 11.10_
 
-  - [ ] 6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests
+  - [x] 6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests
     - **Property 28: Health readiness requires a successful storage probe**, runner side: arbitrary status codes and bodies; accepted iff status 200 and `storage_ok` exactly `true`. Readiness examples with a fake client and fake clock (200 true proceeds; 200 false and 200 absent abort and the Demo_App is never started; 503 or timeout path). Clock-offset examples with known synthetic times.
     - Files: `tests/unit/runner/test_prop_readiness.py`, `tests/unit/runner/test_clock_offset.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_readiness.py tests/unit/runner/test_clock_offset.py -q`.
