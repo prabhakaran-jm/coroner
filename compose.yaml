@@ -1,0 +1,59 @@
+name: coroner
+
+services:
+  collector:
+    build:
+      context: .
+      dockerfile: docker/collector.Dockerfile
+    image: coroner-collector:m0
+    environment:
+      CORONER_DURABILITY: "${CORONER_DURABILITY:-crash}"
+    ports:
+      - "127.0.0.1:${CORONER_COLLECTOR_PORT:-8081}:8081"
+    volumes:
+      - coroner_evidence:/data/evidence
+    restart: "on-failure:5"
+    user: "10001:10001"
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      # healthy only when HTTP 200 AND the JSON body has storage_ok == true
+      test: ["CMD", "python", "-c", "import json,sys,urllib.request as u; r=u.urlopen('http://127.0.0.1:8081/healthz',timeout=2); b=json.load(r); sys.exit(0 if r.status==200 and b.get('storage_ok') is True else 1)"]
+      interval: 2s
+      timeout: 3s
+      retries: 25
+      start_period: 5s
+
+  demo_app:
+    build:
+      context: .
+      dockerfile: docker/demo_app.Dockerfile
+    image: coroner-demo-app:m0
+    depends_on:
+      collector:
+        condition: service_healthy
+    environment:
+      CORONER_RUN_ID: "${CORONER_RUN_ID:-}"
+      CORONER_COLLECTOR_URL: "http://collector:8081"
+      CORONER_SAMPLE_INTERVAL_MS: "${CORONER_SAMPLE_INTERVAL_MS:-500}"
+      CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS: "${CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS:-0}"
+    ports:
+      - "127.0.0.1:${CORONER_DEMO_PORT:-8080}:8080"
+    mem_limit: "${CORONER_DEMO_MEM_LIMIT:-128m}"
+    # equal to mem_limit: no swap, so the kernel OOM-kills instead of swapping
+    memswap_limit: "${CORONER_DEMO_MEM_LIMIT:-128m}"
+    restart: "no"
+    privileged: false
+    user: "10001:10001"
+    read_only: true
+    tmpfs: ["/tmp:size=8m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys,urllib.request as u; r=u.urlopen('http://127.0.0.1:8080/health',timeout=2); sys.exit(0 if r.status==200 else 1)"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  coroner_evidence: {}

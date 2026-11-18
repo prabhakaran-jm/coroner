@@ -796,6 +796,54 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795010984935
       }
+    ],
+    "5.1 Write `docker/collector.Dockerfile` with non-root UID/GID 10001 and image-baked volume ownership": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011930797
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021871744
+      }
+    ],
+    "5.2 Write `docker/demo_app.Dockerfile`": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011931297
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021872628
+      }
+    ],
+    "5.3 (PRIORITY) Write `compose.yaml`": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011931825
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021872997
+      }
+    ],
+    "5.4 Write static Compose and Dockerfile tests (Docker-free)": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011932261
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021873529
+      }
     ]
   }
 }

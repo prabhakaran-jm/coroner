@@ -508,7 +508,7 @@ These rules apply to every task and are part of the completion criteria.
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts and the measured Probe line count, confirm Properties 15, 18, 19, 20 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 17 November 2026.
 
 - [ ] 5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume
-  - [ ] 5.1 Write `docker/collector.Dockerfile` with non-root UID/GID 10001 and image-baked volume ownership
+  - [x] 5.1 Write `docker/collector.Dockerfile` with non-root UID/GID 10001 and image-baked volume ownership
     - Base image is the pinned tag verified in task 1.4. Create group and user with UID/GID 10001 (`groupadd -g 10001`, `useradd -u 10001 -g 10001 --no-create-home`). Create `/data/evidence` in the image and `chown 10001:10001` it with mode `0750`, so a fresh named volume mounted there inherits that ownership on first use (Docker initialises an empty named volume from the image directory). Install `requirements/collector.txt` with `pip install --no-cache-dir -r` and then `pip check`. Copy only `coroner/common`, `coroner/evidence`, `coroner/collector`. `USER 10001:10001`. Exec-form `CMD` for one uvicorn worker. If the image-baked approach fails in task 5.6 (for example on Docker Desktop), STOP and ask before switching to an init step.
     - Files: `docker/collector.Dockerfile`, `.dockerignore`.
     - Expected: the file builds in 5.5.
@@ -516,21 +516,21 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: file written with a pinned tag (no `latest`).
     - _Requirements: 4.1, 5.1, 8.9, 14.5_
 
-  - [ ] 5.2 Write `docker/demo_app.Dockerfile`
+  - [x] 5.2 Write `docker/demo_app.Dockerfile`
     - Same pinned base. Non-root user 10001:10001. Copy only `coroner/probe` and `coroner/demo_app`. Install `requirements/demo_app.txt`, then `pip check`. Exec-form `CMD` runs `uvicorn --workers 1` so the server is PID 1, listening on `0.0.0.0:8080` inside the container.
     - Files: `docker/demo_app.Dockerfile`.
     - Verify: static check in 5.4; build in 5.5.
     - Done when: file written with a pinned tag (no `latest`).
     - _Requirements: 1.1, 1.6, 8.9, 8.13_
 
-  - [ ] 5.3 (PRIORITY) Write `compose.yaml`
+  - [x] 5.3 (PRIORITY) Write `compose.yaml`
     - Follow the design sketch: `name: coroner`; collector with `127.0.0.1:${CORONER_COLLECTOR_PORT:-8081}:8081`, `coroner_evidence:/data/evidence`, `restart: on-failure:5`, `user: "10001:10001"`, `cap_drop: [ALL]`, `no-new-privileges`, healthcheck requiring HTTP 200 and `storage_ok is True`; demo_app with `depends_on: collector: condition: service_healthy`, `mem_limit` and `memswap_limit` from `${CORONER_DEMO_MEM_LIMIT:-128m}`, `restart: "no"`, `privileged: false`, `read_only: true`, tmpfs `/tmp`, loopback port, flag default `0`, no volumes, no bind mounts. Use `python -c` healthchecks (no curl).
     - Files: `compose.yaml`.
     - Verify: `docker compose config` (parse check only, no containers started).
     - Done when: `docker compose config` output recorded and shows the expected values.
     - _Requirements: 8.1, 8.2, 8.3, 8.5, 8.6, 8.7, 8.9, 8.10, 8.11, 8.12, 8.13_
 
-  - [ ] 5.4 Write static Compose and Dockerfile tests (Docker-free)
+  - [x] 5.4 Write static Compose and Dockerfile tests (Docker-free)
     - Parse `compose.yaml` and the Dockerfiles with PyYAML and text parsing: pinned tags (no `latest`, no untagged), loopback-only ports, restart policies, no host bind mounts, `depends_on` health condition, default flag value `0`, Collector healthcheck command checks both the HTTP status and `storage_ok`, user 10001, `cap_drop`, memory limit variable default `128m`, volume mounted only in the collector.
     - Files: `tests/unit/test_compose_static.py`.
     - Verify: `python -m pytest tests/unit/test_compose_static.py -q`.
