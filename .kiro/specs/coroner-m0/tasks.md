@@ -421,14 +421,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: implemented and covered by those tests.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-  - [ ] 4.4 Write Probe unit tests (Docker-free, network-free)
+  - [x] 4.4 Write Probe unit tests (Docker-free, network-free)
     - Readers (fake `/proc` content), container-id source selection, null-with-reason, interval config boundary examples (99, 100, 60000, 60001, text), Event_Loop_Delay with a fake loop clock, sender deadline and busy handling with a fake `Transport`, delivery starts promptly, no real sockets.
     - Files: `tests/unit/probe/test_probe_units.py`.
     - Verify: `python -m pytest tests/unit/probe/test_probe_units.py -q`.
     - Done when: passes with output recorded.
     - _Requirements: 2.2, 2.3, 2.5, 2.6, 2.9, 2.11, 3.1, 3.5, 3.6, 13.1_
 
-  - [ ] 4.5 Write Property 15 test (Probe Samples well formed, never fabricated)
+  - [x] 4.5 Write Property 15 test (Probe Samples well formed, never fabricated)
     - **Property 15: Probe Samples are well formed and never fabricated** with injected reader failures and values; each output validates against `evidence.schema.validate_sample`.
     - Files: `tests/unit/probe/test_prop_sample_wellformed.py`.
     - Verify: `python -m pytest tests/unit/probe/test_prop_sample_wellformed.py -q`.
@@ -436,7 +436,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.9, 7.6**
     - _Requirements: 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.9, 7.6_
 
-  - [ ] 4.6 Write Property 18 test (dropped counter accounting)
+  - [x] 4.6 Write Property 18 test (dropped counter accounting)
     - **Property 18: Dropped counter accounting** over delivery-outcome lists (`ack`, `error`, `timeout`, `busy`), including saturation.
     - Files: `tests/unit/probe/test_prop_dropped_counter.py`.
     - Verify: `python -m pytest tests/unit/probe/test_prop_dropped_counter.py -q`.
@@ -460,7 +460,7 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 2.8, 2.11**
     - _Requirements: 2.8, 2.11_
 
-  - [ ] 4.9 Write Probe static and size tests
+  - [x] 4.9 Write Probe static and size tests
     - Sum of non-blank lines over `coroner/probe/**/*.py` is at most 300; stdlib-only imports; no `random` in `probe` and `demo_app`; no `atexit` or `signal` use in the Probe; Probe output validates against `validate_sample` (drift guard).
     - Files: `tests/unit/probe/test_probe_static.py`.
     - Verify: `python -m pytest tests/unit/probe/test_probe_static.py -q`.

@@ -669,6 +669,54 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794992688274
       }
+    ],
+    "4.4 Write Probe unit tests (Docker-free, network-free)": [
+      {
+        "executionId": "c2285e55-49aa-4630-a31e-b16c6f222284",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794994234095
+      },
+      {
+        "executionId": "c2285e55-49aa-4630-a31e-b16c6f222284",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794997913603
+      }
+    ],
+    "4.5 Write Property 15 test (Probe Samples well formed, never fabricated)": [
+      {
+        "executionId": "ac6b1f92-567f-467b-8e80-88363596fe00",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794998089939
+      },
+      {
+        "executionId": "ac6b1f92-567f-467b-8e80-88363596fe00",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794998897376
+      }
+    ],
+    "4.6 Write Property 18 test (dropped counter accounting)": [
+      {
+        "executionId": "c0a3153e-c2d5-4b74-b591-6a175fae65e6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794999104092
+      },
+      {
+        "executionId": "c0a3153e-c2d5-4b74-b591-6a175fae65e6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794999760035
+      }
+    ],
+    "4.9 Write Probe static and size tests": [
+      {
+        "executionId": "e5c79031-ad13-4b16-87d8-4bc033989417",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795000128414
+      },
+      {
+        "executionId": "e5c79031-ad13-4b16-87d8-4bc033989417",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795000753267
+      }
     ]
   }
 }
