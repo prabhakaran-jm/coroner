@@ -623,6 +623,52 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1794954969578
       }
+    ],
+    "4.1 Implement Probe config and real readers (`probe/probe.py`, part 1)": [
+      {
+        "executionId": "89139017-0911-4824-bc69-9a3ef9b10fba",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794955540165
+      },
+      {
+        "executionId": "89139017-0911-4824-bc69-9a3ef9b10fba",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794956596433
+      }
+    ],
+    "4.2 Implement `build_sample` and the sampler loop (`probe/probe.py`, part 2)": [
+      {
+        "executionId": "25e5e340-8061-4cc0-b79e-dc26de059d99",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794986089602
+      },
+      {
+        "executionId": "25e5e340-8061-4cc0-b79e-dc26de059d99",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794989902100
+      }
+    ],
+    "4.3 (PRIORITY) Implement the sender thread, transport, and dropped counter (`probe/probe.py`, part 3)": [
+      {
+        "executionId": "75de2eba-e8c3-499f-aa6a-f1552f5b06c5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794990295162
+      },
+      {
+        "executionId": "75de2eba-e8c3-499f-aa6a-f1552f5b06c5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794991757895
+      },
+      {
+        "executionId": "0bffc1c6-e6ba-46c0-a65e-40dc0b1142f6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794992167142
+      },
+      {
+        "executionId": "0bffc1c6-e6ba-46c0-a65e-40dc0b1142f6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794992688274
+      }
     ]
   }
 }

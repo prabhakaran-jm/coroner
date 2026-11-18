@@ -400,21 +400,21 @@ These rules apply to every task and are part of the completion criteria.
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 3, 4, 5, 7, 14, and the Collector half of 28 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 16 November 2026.
 
 - [ ] 4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests
-  - [ ] 4.1 Implement Probe config and real readers (`probe/probe.py`, part 1)
+  - [x] 4.1 Implement Probe config and real readers (`probe/probe.py`, part 1)
     - `ProbeConfig`, `load_config(env, warn)` (invalid `CORONER_SAMPLE_INTERVAL_MS` gives 500 and exactly one warning; default run id `manual-<8 hex>`), `read_rss_bytes()` from `/proc/self/statm` times page size (current RSS, not `getrusage` peak; raises where `/proc` is missing), `read_container_id()` (mountinfo, then cgroup, then `HOSTNAME`, with `container_id_source`). Stdlib only. No synthetic fallback.
     - Files: `coroner/probe/probe.py`, `coroner/probe/__init__.py`.
     - Verify: covered by 4.4.
     - Done when: implemented and covered by 4.4.
     - _Requirements: 2.3, 2.6, 2.8, 2.11, 7.1, 7.3, 7.6_
 
-  - [ ] 4.2 Implement `build_sample` and the sampler loop (`probe/probe.py`, part 2)
+  - [x] 4.2 Implement `build_sample` and the sampler loop (`probe/probe.py`, part 2)
     - Absolute deadlines (`t0 + k*interval`), Event_Loop_Delay `max(0, loop.time() - deadline)`, skip-forward without bursting, `seq` +1 per produced Sample, null fields carry reasons (1 to 200 characters) with no substitution, `request_count` via `count_request()`, `state` property.
     - Files: `coroner/probe/probe.py`.
     - Verify: covered by 4.4, 4.5, 4.7.
     - Done when: implemented and covered by those tests.
     - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.7, 2.9, 7.2, 7.6_
 
-  - [ ] 4.3 (PRIORITY) Implement the sender thread, transport, and dropped counter (`probe/probe.py`, part 3)
+  - [x] 4.3 (PRIORITY) Implement the sender thread, transport, and dropped counter (`probe/probe.py`, part 3)
     - One daemon sender thread with a one-slot handoff (offer returns well under 10 ms), 200 ms hard deadline, only HTTP 200 counts as acknowledged, no queue, no retry, counter saturates at 4,294,967,295 and is reduced by the carried value only on acknowledgement. No `atexit`, no signal handler, no shutdown-dependent flush.
     - Files: `coroner/probe/probe.py`.
     - Verify: covered by 4.4, 4.6, 4.9.
