@@ -107,3 +107,32 @@ The wheel and the `build/` and `coroner.egg-info` directories it created were de
 
 - Pins were resolved on Windows. A Linux-only transitive dependency would not appear in the freeze; the container install on 3.12.8 produced the same 24 packages, so none was found.
 - Pip index availability can change; pins reproduce only while these files remain on PyPI.
+
+## M0.5 image build verification (task 5.5)
+Real output from `docker build` and `docker run --rm --entrypoint python <image> -m pip ...` on 2026-11-18. Raw files are in the gitignored `runs/m05-docker/` (`build_collector.txt`, `build_demo.txt`, `freeze_collector.txt`, `freeze_demo_app.txt`, `verify.txt`, `preflight.txt`).
+- Base: `python:3.12.8-slim-bookworm`, resolved to `sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0`. This equals the digest recorded in `docker-prereqs.md` (no tag drift). Both build logs show `FROM ...python:3.12.8-slim-bookworm@sha256:2199a628...`.
+- Builds: `docker build -f docker/collector.Dockerfile -t coroner-collector:m0 .` and `docker build -f docker/demo_app.Dockerfile -t coroner-demo-app:m0 .` both exited 0 (same files and context as `compose.yaml`).
+- Image IDs (containerd image-index digests): `coroner-collector:m0` = `sha256:cd9126e565333da7b76cb3f16ad494c94e2bcc9102e0cc8980e64eb55bf0420e`; `coroner-demo-app:m0` = `sha256:23571625f7319525505816774be12f752854b04608b9b0912ef9d1e1b5ca2c52`.
+- `pip check` during build (Dockerfile step): "No broken requirements found." for both. Re-run in each built image: exit 0, "No broken requirements found." (pip also printed a harmless cache-directory warning because user 10001 has no writable home).
+- `pip freeze` in each image: 12 packages. Compared with `requirements/collector.txt` and `requirements/demo_app.txt` (12 exact pins each): identical names and versions, no extras, none missing. No pin change is needed.
+- Python in both images: 3.12.8 (GCC 12.2.0), Debian 12.9.
+
+| Package | Version in both images |
+| --- | --- |
+| annotated-types | 0.8.0 |
+| anyio | 4.16.0 |
+| click | 8.5.1 |
+| fastapi | 0.115.6 |
+| h11 | 0.16.0 |
+| idna | 3.20 |
+| pydantic | 2.14.3 |
+| pydantic_core | 2.50.4 |
+| starlette | 0.41.3 |
+| typing-inspection | 0.4.5 |
+| typing_extensions | 4.16.0 |
+| uvicorn | 0.34.0 |
+
+The "image-build `pip check` pending" note in the earlier sections is now resolved by this section.
+
+## M0.5 acceptance re-check (task 5.8)
+On 2026-11-18 the images were re-checked by listing, not rebuilt. `docker image ls` still shows `coroner-collector:m0` (`cd9126e56533`), `coroner-demo-app:m0` (`23571625f731`) and `python:3.12.8-slim-bookworm` (`2199a62885a1`), which are the IDs and base recorded above, so the `pip check` and `pip freeze` results in the image build section still describe the images that the Docker integration tests ran against (34 passed). No file under `requirements/` changed (`git diff --stat HEAD -- requirements/` is empty), no pin changed, and no new dependency was installed. The image-build `pip check` was run once, in task 5.5; it was not repeated in 5.8. Docker Desktop on Windows only; a Linux host was not used.

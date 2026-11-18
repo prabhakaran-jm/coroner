@@ -507,7 +507,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 4.15 Checkpoint - M0.4 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts and the measured Probe line count, confirm Properties 15, 18, 19, 20 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 17 November 2026.
 
-- [ ] 5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume
+- [x] 5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume
   - [x] 5.1 Write `docker/collector.Dockerfile` with non-root UID/GID 10001 and image-baked volume ownership
     - Base image is the pinned tag verified in task 1.4. Create group and user with UID/GID 10001 (`groupadd -g 10001`, `useradd -u 10001 -g 10001 --no-create-home`). Create `/data/evidence` in the image and `chown 10001:10001` it with mode `0750`, so a fresh named volume mounted there inherits that ownership on first use (Docker initialises an empty named volume from the image directory). Install `requirements/collector.txt` with `pip install --no-cache-dir -r` and then `pip check`. Copy only `coroner/common`, `coroner/evidence`, `coroner/collector`. `USER 10001:10001`. Exec-form `CMD` for one uvicorn worker. If the image-baked approach fails in task 5.6 (for example on Docker Desktop), STOP and ask before switching to an init step.
     - Files: `docker/collector.Dockerfile`, `.dockerignore`.
@@ -537,14 +537,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: passes with output recorded. These tests do not call Docker.
     - _Requirements: 8.3, 8.5, 8.6, 8.7, 8.9, 8.10, 8.11, 8.13, 13.8_
 
-  - [ ] 5.5 Build both images and verify dependencies inside the images
+  - [x] 5.5 Build both images and verify dependencies inside the images
     - `docker compose build`, then run `pip check` and `pip freeze` inside each built image and compare the frozen versions with `requirements/*.txt`. Resolve any mismatch (STOP and ask if a pin must change). Record image ids and the digest of the base image actually used.
     - Files: `docs/m0-results/dependency-verification.md` (append the image-build section).
     - Verify: `docker compose build; docker run --rm --entrypoint python coroner-collector:m0 -m pip check; docker run --rm --entrypoint python coroner-demo-app:m0 -m pip check; docker run --rm --entrypoint python coroner-collector:m0 -m pip freeze`.
     - Done when: real build output, `pip check` output (expected "No broken requirements found."), and freeze comparison are recorded.
     - _Requirements: 14.5, 8.9_
 
-  - [ ] 5.6 (PRIORITY) Verify named-volume ownership and real persistence under UID/GID 10001
+  - [x] 5.6 (PRIORITY) Verify named-volume ownership and real persistence under UID/GID 10001
     - Write a `docker_integration` test and also run it manually: (1) stop the stack with `docker compose down` (no `-v`) and check whether the project volume exists; if a fresh volume is needed, remove only the named Coroner volume by following Execution Rule 11 (verify name and label, list contents and count run files, archive evidence to `runs/archive/`, obtain the user's explicit approval); otherwise use a uniquely named test volume; (2) start the Collector; (3) `docker compose exec collector id` shows `uid=10001 gid=10001`; (4) `stat -c '%u:%g %a' /data/evidence` shows `10001:10001`; (5) healthz returns `storage_ok: true` (a real write plus fsync probe as non-root); (6) POST a valid Sample, confirm a `.jsonl` file exists and holds the record; (7) `docker compose restart collector`, wait for health, read the evidence back through `GET /v1/runs/{id}/evidence` and confirm the record is unchanged and not duplicated. Also confirm a read-only root filesystem does not break writes to the volume.
     - Files: `tests/docker_integration/test_volume_persistence.py`, `docs/m0-results/volume-ownership.md`.
     - Expected: ownership and persistence work without root.
@@ -552,14 +552,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real command output and test results are recorded. If the volume is not writable by 10001, STOP, record, and ask which fix (image-baked directory vs init step) to apply.
     - _Requirements: 4.3, 4.13, 5.1, 5.3, 8.12_
 
-  - [ ] 5.7 (PRIORITY) Verify Compose isolation and health behavior
+  - [x] 5.7 (PRIORITY) Verify Compose isolation and health behavior
     - `docker_integration` tests plus recorded manual checks: `docker compose up -d --build` reaches running within 60 s; ports are bound to `127.0.0.1` only (`docker compose port`, `docker inspect` `NetworkSettings.Ports`); Collector healthz body has `storage_ok: true`; Demo_App `HostConfig.Memory` equals 134217728 and `MemorySwap` equals `Memory`; Demo_App has no mounts and is not privileged; restart policies are as designed; with the flag unset, `/crash`, `/leak`, and `/error` return 404; an invalid `CORONER_DEMO_MEM_LIMIT` makes Docker reject the Demo_App and leaves the Collector and volume untouched.
     - Files: `tests/docker_integration/test_compose_isolation.py`, `docs/m0-results/compose-checks.md`.
     - Verify: `python -m pytest tests/docker_integration/test_compose_isolation.py --run-docker -q`; `docker compose ps`; `docker inspect <id> --format '{{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.HostConfig.Privileged}} {{json .Mounts}}'`.
     - Done when: real output recorded, `docker compose down` run afterwards (without `-v`).
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6, 8.8, 8.10, 8.11, 8.12, 8.13, 1.10_
 
-  - [ ] 5.8 Checkpoint - M0.5 complete
+  - [x] 5.8 Checkpoint - M0.5 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm 5.5 to 5.7 recorded real Docker output, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 18 November 2026.
 
 - [ ] 6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation

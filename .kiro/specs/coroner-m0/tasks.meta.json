@@ -844,6 +844,61 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795021873529
       }
+    ],
+    "5.5 Build both images and verify dependencies inside the images": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022136698
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022298809
+      }
+    ],
+    "5.6 (PRIORITY) Verify named-volume ownership and real persistence under UID/GID 10001": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022137112
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022791235
+      }
+    ],
+    "5.7 (PRIORITY) Verify Compose isolation and health behavior": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022137605
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795023798276
+      }
+    ],
+    "5.8 Checkpoint - M0.5 complete": [
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795028780698
+      },
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029727574
+      }
+    ],
+    "5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume": [
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029728140
+      }
     ]
   }
 }
