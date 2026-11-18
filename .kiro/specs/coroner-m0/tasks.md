@@ -593,14 +593,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 8.3, 8.4, 9.6, 9.10, 9.11, 10.4, 10.6, 10.9, 11.5, 11.6, 11.12, 11.15**
     - _Requirements: 8.3, 8.4, 9.6, 9.10, 9.11, 10.4, 10.6, 10.9, 11.5, 11.6_
 
-  - [ ] 6.5 Implement `evaluate.py` part 2 (Experiment B timing)
+  - [x] 6.5 Implement `evaluate.py` part 2 (Experiment B timing)
     - `SampleView`, `BTiming`, `classify_b_samples(samples, sigkill_sent, finished_at, tolerance_ms=250, clock_offset_ms=0)` and `evaluate_experiment_b`. Constant `CLOCK_TOLERANCE_MS = 250` (never above 250; do not change it without asking the user). Classification by offset-corrected Capture_Time only; `pre_kill_late_received` counted and valid; `after_container_stop` flagged independently.
     - Files: `coroner/runner/evaluate.py`.
     - Verify: covered by 6.6.
     - Done when: implemented and covered by 6.6.
     - _Requirements: 10.8, 10.10, 10.11, 10.12, 10.13_
 
-  - [ ] 6.6 Write Property 27 test and Experiment B timing examples
+  - [x] 6.6 Write Property 27 test and Experiment B timing examples
     - **Property 27: Experiment B Sample timing classification**. Examples: pre-kill capture received after the kill accepted and counted; no pre-kill Sample fails; capture at kill + 250 ms within tolerance; kill + 251 ms fails and is listed; capture after `FinishedAt` reported as an anomaly; Receive_Time never changes the category.
     - Files: `tests/unit/runner/test_prop_b_timing.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_b_timing.py -q`.
@@ -608,14 +608,14 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 10.8, 10.10, 10.11, 10.12, 10.13**
     - _Requirements: 10.8, 10.10, 10.11, 10.12, 10.13, 13.16_
 
-  - [ ] 6.7 Implement `evaluate.py` part 3 (Experiment C verdict and diagnostics)
+  - [x] 6.7 Implement `evaluate.py` part 3 (Experiment C verdict and diagnostics)
     - `diagnostic_metrics` (`rss_monotonic_tail` over the last min(5, n) Samples, `peak_rss_ratio_of_limit`, `sample_count`), `evaluate_experiment_c` using only the six mandatory checks (the verdict function never reads Diagnostic_Metrics), `sampling_limitations` builder (always the three statements). "First Sample" is the first with non-null RSS.
     - Files: `coroner/runner/evaluate.py`.
     - Verify: covered by 6.8.
     - Done when: implemented and covered by 6.8.
     - _Requirements: 11.10, 11.11, 11.13, 11.14, 11.17, 11.18, 11.19, 11.20_
 
-  - [ ] 6.8 Write Properties 22 and 26 tests and Experiment C evaluation examples
+  - [x] 6.8 Write Properties 22 and 26 tests and Experiment C evaluation examples
     - **Property 22: Experiment C verdict depends only on mandatory conditions**; **Property 26: Diagnostic metrics and sampling limitations are recorded**. Examples: each mandatory condition failing alone fails (OOMKilled false, exit 138, health 200 with `storage_ok` false or absent, no pre-crash Sample, flat or all-null RSS, incomplete inspect record); non-monotonic tail and peak ratio 0.01 still pass; manifest holds `diagnostics` and `sampling_limitations` on pass and fail.
     - Files: `tests/unit/runner/test_prop_c_verdict.py`, `tests/unit/runner/test_prop_c_diagnostics.py`.
     - Verify: `python -m pytest tests/unit/runner/test_prop_c_verdict.py tests/unit/runner/test_prop_c_diagnostics.py -q`.
