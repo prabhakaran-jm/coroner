@@ -653,35 +653,35 @@ These rules apply to every task and are part of the completion criteria.
     - **Validates: Requirements 8.7, 8.8, 8.14, 9.8, 10.7, 11.10**
     - _Requirements: 8.7, 8.8, 8.14, 13.16_
 
-  - [ ] 6.13 (PRIORITY) Implement `runner/experiments/base.py` (common preamble and shared checks)
+  - [x] 6.13 (PRIORITY) Implement `runner/experiments/base.py` (common preamble and shared checks)
     - Preamble: Docker availability (exit 2), run id, Collector readiness (60 s) with `durability` and `clock_offset_ms` recorded, start Demo_App with env overrides, container id (64 hex), wait for `/health`, wait for a first Sample, manifest created and rewritten atomically after each phase and on every failure (Requirement 12.7). Shared: leak driver, evidence fetch via the Collector, termination post, survival check, growth check (`growth >= 0.5 * cumulative_bytes` using the first Sample at least 1 s after the last leak and the last Sample before the first leak), `durability_matches_run_metadata` check, `cause_label` derived from the observed state.
     - Files: `coroner/runner/experiments/base.py`.
     - Verify: covered by 6.17.
     - Done when: implemented and covered by 6.17.
     - _Requirements: 4.16, 7.4, 8.7, 8.14, 9.1, 9.2, 12.1, 12.7_
 
-  - [ ] 6.14 (PRIORITY) Implement `runner/experiments/exp_a.py` (controlled fatal process exit)
+  - [x] 6.14 (PRIORITY) Implement `runner/experiments/exp_a.py` (controlled fatal process exit)
     - Leak for at least 5 s (abort without crashing on a failed or over-5-s leak call), record `crash_request_time`, POST `/crash` (a dropped connection is the expected outcome), poll inspect up to 30 s, expect exit 1 and OOMKilled false, survival check within 5 s, at least one Sample before the crash request time (offset-corrected). Description string: "controlled fatal process exit via os._exit(1)". Never uses the word exception for it.
     - Files: `coroner/runner/experiments/exp_a.py`.
     - Verify: covered by 6.17.
     - Done when: implemented and covered by 6.17.
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10, 9.11, 9.12_
 
-  - [ ] 6.15 (PRIORITY) Implement `runner/experiments/exp_b.py` (SIGKILL)
+  - [x] 6.15 (PRIORITY) Implement `runner/experiments/exp_b.py` (SIGKILL)
     - Leak at least 5 s, record `sigkill_sent_time` immediately before `docker kill --signal=KILL <full id>`, poll inspect every 200 ms up to 10 s, expect exit 137 and OOMKilled false, record `State.FinishedAt`, classify Samples with `classify_b_samples`, survival check, `no_shutdown_handler_records` check.
     - Files: `coroner/runner/experiments/exp_b.py`.
     - Verify: covered by 6.17.
     - Done when: implemented and covered by 6.17.
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.13_
 
-  - [ ] 6.16 (PRIORITY) Implement `runner/experiments/exp_c.py` (genuine Docker OOM kill)
+  - [x] 6.16 (PRIORITY) Implement `runner/experiments/exp_c.py` (genuine Docker OOM kill)
     - No `kill`, no `/crash`, no simulated exit code. Wait up to 30 s for running; leak 4 MiB chunks (`--leak-chunk-bytes`) at intervals of at most 1 s until the container stops or 120 s elapse (on timeout: stop leaking, fail, leave the container running, record `container_left_running: true`); inspect within 5 s (poll 250 ms); save raw `docker_inspect.json`; record the five inspect values plus `inspect_time`; `memory_limit_bytes` equals `HostConfig.Memory`; `highest_rss_bytes`; evaluate with `evaluate_experiment_c`; always write `diagnostics` and `sampling_limitations`.
     - Files: `coroner/runner/experiments/exp_c.py`.
     - Verify: covered by 6.17.
     - Done when: implemented and covered by 6.17.
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 11.10, 11.11, 11.12, 11.13, 11.14, 11.17, 11.18, 11.19, 11.20_
 
-  - [ ] 6.17 Write scripted experiment-flow tests with fake DockerPort and fake Collector client
+  - [x] 6.17 Write scripted experiment-flow tests with fake DockerPort and fake Collector client
     - Cover every row of the design's Error Handling table that concerns the runner: Docker unavailable (exit 2, no manifest), collector unhealthy, storage not healthy (Demo_App never started), Demo_App not healthy in 30 s, leak failure aborts A and B without crash or kill, timeouts, wrong exit code, OOMKilled mismatch, inspect failure, 120 s timeout, evidence fetch failure, survival failure; a manifest is written on every failure; Experiment C never calls `kill` and never posts to `/crash`; wording rule for Experiment A (no "exception"); manifest field sets are identical across A, B, C records.
     - Files: `tests/unit/runner/test_experiment_flows.py`.
     - Verify: `python -m pytest tests/unit/runner/test_experiment_flows.py -q`.

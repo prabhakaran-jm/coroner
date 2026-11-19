@@ -1091,6 +1091,106 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795041342891
       }
+    ],
+    "6.13 (PRIORITY) Implement `runner/experiments/base.py` (common preamble and shared checks)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795041754279
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077356324
+      }
+    ],
+    "6.14 (PRIORITY) Implement `runner/experiments/exp_a.py` (controlled fatal process exit)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071863395
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077356658
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118584552
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685010
+      }
+    ],
+    "6.15 (PRIORITY) Implement `runner/experiments/exp_b.py` (SIGKILL)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071863966
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077357049
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118585131
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685598
+      }
+    ],
+    "6.16 (PRIORITY) Implement `runner/experiments/exp_c.py` (genuine Docker OOM kill)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071864362
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077357891
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118585549
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685945
+      }
+    ],
+    "6.17 Write scripted experiment-flow tests with fake DockerPort and fake Collector client": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071864924
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077358738
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118729809
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123686615
+      }
     ]
   }
 }
