@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Coroner M0
+runs/
+.venv*/
+spike/

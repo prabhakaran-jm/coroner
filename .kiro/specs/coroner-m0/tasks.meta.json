@@ -1,0 +1,1406 @@
+{
+  "pbtResults": {
+    "2.14 Write Property 2 test (reader quarantine) and repair/reader example tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1794699308578
+    },
+    "2.17 Write Property 13 test (run summary consistent with records)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794738879856
+    },
+    "3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)": {
+      "status": "passed",
+      "lastRunTimestamp": 1794862525224
+    },
+    "3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1794930526973
+    },
+    "6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1795030130173
+    },
+    "6.2 Write Property 29 test and runner static scan": {
+      "status": "passed",
+      "lastRunTimestamp": 1795030132844
+    }
+  },
+  "executionHistory": {
+    "1.1 Verify toolchain and repository hygiene (.gitignore, .kiro tracked)": [
+      {
+        "executionId": "2944dcc3-c8f6-4eff-afec-5797c8ca9464",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794648075103
+      },
+      {
+        "executionId": "2944dcc3-c8f6-4eff-afec-5797c8ca9464",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794648113466
+      }
+    ],
+    "1.4 (PRIORITY) Verify Docker prerequisites and Python base-image availability": [
+      {
+        "executionId": "f3bfc79d-fa07-4f95-8046-3c00e63cc9a7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794648781174
+      },
+      {
+        "executionId": "f3bfc79d-fa07-4f95-8046-3c00e63cc9a7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794648955588
+      }
+    ],
+    "1.2 Create Python packaging and package skeleton (no pytest yet)": [
+      {
+        "executionId": "1d8369b1-4c25-4906-84a3-07cad3585d0f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649530496
+      },
+      {
+        "executionId": "1d8369b1-4c25-4906-84a3-07cad3585d0f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649737875
+      }
+    ],
+    "1.5 (PRIORITY) Verify dependency compatibility and finalise exact pins": [
+      {
+        "executionId": "444c8b96-0231-40cc-833d-ff47969b3967",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794649980022
+      },
+      {
+        "executionId": "444c8b96-0231-40cc-833d-ff47969b3967",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651042182
+      }
+    ],
+    "1.8 (PRIORITY) Create the main `.venv` from the verified pinned requirements": [
+      {
+        "executionId": "334ab6f2-538d-4b3d-8016-9dc400704303",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651186797
+      },
+      {
+        "executionId": "334ab6f2-538d-4b3d-8016-9dc400704303",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651449246
+      }
+    ],
+    "1.3 Implement pytest opt-in, markers, and Docker-free/network-free guards with tests": [
+      {
+        "executionId": "68a189bf-9543-48eb-b749-eeba94ee44cd",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794651683046
+      },
+      {
+        "executionId": "68a189bf-9543-48eb-b749-eeba94ee44cd",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652168644
+      }
+    ],
+    "1.6 Add structure tests: import graph, fresh-interpreter import, exact pins": [
+      {
+        "executionId": "fc651613-9f29-49c9-9a68-a01f3ddd1674",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652447883
+      },
+      {
+        "executionId": "fc651613-9f29-49c9-9a68-a01f3ddd1674",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652787414
+      }
+    ],
+    "1.7 Checkpoint - M0.1 verification gate (toolchain, dependencies, Docker, tests)": [
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652930948
+      }
+    ],
+    "1.9 Create the disposable OOM-survival spike (code only, `spike/`)": [
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794652977363
+      },
+      {
+        "executionId": "71afd1cf-088e-4d00-9839-197d26ac84e0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794653344726
+      }
+    ],
+    "1.10 (PRIORITY) Run the spike and record real results in `docs/m0-results/oom-spike.md`": [
+      {
+        "executionId": "cdc5a045-03ed-4ddb-bd39-829db569804f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794653526170
+      },
+      {
+        "executionId": "cdc5a045-03ed-4ddb-bd39-829db569804f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794654140263
+      }
+    ],
+    "1.11 Propose the baseline specification commit and verify remote privacy (propose only)": [
+      {
+        "executionId": "d91ec103-04b9-42b0-8e83-cf869d33685c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794654240526
+      },
+      {
+        "executionId": "d91ec103-04b9-42b0-8e83-cf869d33685c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659254198
+      }
+    ],
+    "1.12 Checkpoint - M0.1 complete (including spike)": [
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659659494
+      },
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659964595
+      }
+    ],
+    "1. M0.1 Repository setup, Python packaging, Docker prerequisites and dependency verification": [
+      {
+        "executionId": "0c855597-6e7e-426d-857f-2b774c725c55",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794659964842
+      }
+    ],
+    "2.1 Implement `coroner.common` helpers with unit tests": [
+      {
+        "executionId": "c52b31f8-d32d-4dc8-ac47-d8d82ca20d7f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794660814523
+      },
+      {
+        "executionId": "c52b31f8-d32d-4dc8-ac47-d8d82ca20d7f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661156261
+      }
+    ],
+    "2.2 Implement `evidence/schema.py`": [
+      {
+        "executionId": "29e6429f-55bd-40c3-8bca-6f7a7d3b5541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661372022
+      },
+      {
+        "executionId": "29e6429f-55bd-40c3-8bca-6f7a7d3b5541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661693311
+      }
+    ],
+    "2.3 Write schema unit tests": [
+      {
+        "executionId": "2e79a922-0a7b-4e0e-b554-206b226a8f4f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794661922374
+      },
+      {
+        "executionId": "2e79a922-0a7b-4e0e-b554-206b226a8f4f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794662267983
+      }
+    ],
+    "2.4 (PRIORITY) Implement `evidence/writer.py`": [
+      {
+        "executionId": "e9cf7d8b-f049-403d-ae02-b51a3db9f295",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794662750409
+      },
+      {
+        "executionId": "e9cf7d8b-f049-403d-ae02-b51a3db9f295",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794663484257
+      }
+    ],
+    "2.5 Write writer unit tests and Property 6 (durability configuration parsing)": [
+      {
+        "executionId": "b290cf10-d71c-48fc-abc0-c49fb5cca56e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794666187379
+      },
+      {
+        "executionId": "b290cf10-d71c-48fc-abc0-c49fb5cca56e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794666900477
+      }
+    ],
+    "2.6 Implement `evidence/gaps.py`": [
+      {
+        "executionId": "647be7da-60d7-4f91-8429-a162892b1f60",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667177370
+      },
+      {
+        "executionId": "647be7da-60d7-4f91-8429-a162892b1f60",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667637987
+      }
+    ],
+    "2.7 Write Property 10 test (sequence anomalies classified exactly and separately)": [
+      {
+        "executionId": "95e2607b-5eca-41c7-85eb-9881d9bf8278",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794667949657
+      },
+      {
+        "executionId": "95e2607b-5eca-41c7-85eb-9881d9bf8278",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794668254710
+      }
+    ],
+    "2.8 Write Property 11 test (drop range derivation and reconciliation fields)": [
+      {
+        "executionId": "146c575f-a508-4a0c-8142-8eee60ec3a01",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794672781917
+      },
+      {
+        "executionId": "146c575f-a508-4a0c-8142-8eee60ec3a01",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794673125571
+      }
+    ],
+    "2.9 Write Property 12 test (gap accounting) and the five worked examples": [
+      {
+        "executionId": "0c03681a-9eac-4057-bb28-fcf4fb6f880a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794680128997
+      },
+      {
+        "executionId": "0c03681a-9eac-4057-bb28-fcf4fb6f880a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794680924080
+      }
+    ],
+    "2.10 (PRIORITY) Implement `evidence/repair.py`": [
+      {
+        "executionId": "4f73e252-2dbd-4662-b76e-047453798ee5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794681871601
+      },
+      {
+        "executionId": "4f73e252-2dbd-4662-b76e-047453798ee5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794683368672
+      },
+      {
+        "executionId": "839edc4b-1132-447b-99c6-8ae86d1f0118",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794733812062
+      },
+      {
+        "executionId": "839edc4b-1132-447b-99c6-8ae86d1f0118",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794736476462
+      }
+    ],
+    "2.11 (PRIORITY) Implement `evidence/reader.py` (`read_evidence`)": [
+      {
+        "executionId": "327b293f-8e2f-4e4a-835d-b3b25b58b0d6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794683821785
+      },
+      {
+        "executionId": "327b293f-8e2f-4e4a-835d-b3b25b58b0d6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794684977998
+      }
+    ],
+    "2.12 Implement `summarize` and `RunSummary` in `reader.py`": [
+      {
+        "executionId": "14f0d737-2029-4c3a-bccd-22d123c60151",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794685652073
+      },
+      {
+        "executionId": "14f0d737-2029-4c3a-bccd-22d123c60151",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794696837988
+      }
+    ],
+    "2.13 Write Property 1 test (record framing and round trip)": [
+      {
+        "executionId": "07dab876-2ce3-4c9a-a7d3-af829a994f2f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794696959696
+      },
+      {
+        "executionId": "07dab876-2ce3-4c9a-a7d3-af829a994f2f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794698199824
+      }
+    ],
+    "2.14 Write Property 2 test (reader quarantine) and repair/reader example tests": [
+      {
+        "executionId": "9ad4c962-a070-4ad2-bccf-f949fb2d8338",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794698418369
+      },
+      {
+        "executionId": "9ad4c962-a070-4ad2-bccf-f949fb2d8338",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794699327045
+      }
+    ],
+    "2.15 Write Property 8 test (repair never loses or alters bytes)": [
+      {
+        "executionId": "5314b840-82b4-4c4b-af13-4a0987b37d38",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794731852886
+      },
+      {
+        "executionId": "5314b840-82b4-4c4b-af13-4a0987b37d38",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794732585403
+      }
+    ],
+    "2.16 Write Property 9 test (repair idempotent and file stays readable)": [
+      {
+        "executionId": "b090637e-fbd5-4d4a-87e0-fdb3addd1541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794732703827
+      },
+      {
+        "executionId": "b090637e-fbd5-4d4a-87e0-fdb3addd1541",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794733517969
+      }
+    ],
+    "2.17 Write Property 13 test (run summary consistent with records)": [
+      {
+        "executionId": "6ded9235-12c6-4eff-b63f-c69e6ead1e4a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794738012206
+      },
+      {
+        "executionId": "6ded9235-12c6-4eff-b63f-c69e6ead1e4a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794738909842
+      }
+    ],
+    "2.19 Follow-up (tracked): define and validate the payload contracts of the six non-sample record types": [
+      {
+        "executionId": "e0489a4e-c5e2-40e1-9890-66f0959dd14e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794740002147
+      },
+      {
+        "executionId": "e0489a4e-c5e2-40e1-9890-66f0959dd14e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794744081419
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794763267362
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794765787527
+      }
+    ],
+    "2.18 Checkpoint - M0.2 complete": [
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794765793192
+      },
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794766710414
+      }
+    ],
+    "2. M0.2 Evidence schema, JSONL writer, reader, persistence and repair, with unit tests": [
+      {
+        "executionId": "8c06d116-aed9-44b1-bece-59387bbb6dc3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794766710720
+      }
+    ],
+    "3.1 Implement `collector/config.py` with tests": [
+      {
+        "executionId": "f2029872-6336-4348-895d-d96b3f13e59a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794767518528
+      },
+      {
+        "executionId": "f2029872-6336-4348-895d-d96b3f13e59a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794767872071
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768451372
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768754441
+      }
+    ],
+    "3.2 Implement `collector/state.py` (RunState, RunRegistry)": [
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794768755149
+      },
+      {
+        "executionId": "f7c775c3-fccb-4c5d-8674-8fb1053c8024",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794769787737
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773284513
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773613151
+      }
+    ],
+    "3.3 (PRIORITY) Implement `collector/storage_probe.py`": [
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794773618961
+      },
+      {
+        "executionId": "e3f81c04-acc8-40ae-af4d-05692a332afc",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794774386691
+      }
+    ],
+    "3.4 Write Property 28 test, Collector half (`storage_ok` requires a successful probe)": [
+      {
+        "executionId": "d1b06b17-4ed8-46b7-b6c2-6a76857224e3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794782566532
+      },
+      {
+        "executionId": "d1b06b17-4ed8-46b7-b6c2-6a76857224e3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794783510015
+      }
+    ],
+    "3.5 (PRIORITY) Implement `collector/service.py` (IngestService)": [
+      {
+        "executionId": "605d3001-d39f-42bf-b390-4b0d83560ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794811891855
+      },
+      {
+        "executionId": "605d3001-d39f-42bf-b390-4b0d83560ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794853473119
+      }
+    ],
+    "3.6 Write Properties 3 and 5 tests (stored exactly as received; per-run isolation)": [
+      {
+        "executionId": "23f2a6c2-22c0-4cd4-8df1-e6fffb863a52",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794854236919
+      },
+      {
+        "executionId": "23f2a6c2-22c0-4cd4-8df1-e6fffb863a52",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794855515315
+      }
+    ],
+    "3.7 Write Property 4 test (invalid input rejected, never stored as a Sample)": [
+      {
+        "executionId": "a579fe45-2376-414e-a0d9-d450e062a7f3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794858268814
+      },
+      {
+        "executionId": "a579fe45-2376-414e-a0d9-d450e062a7f3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794896037162
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794920515497
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794922649230
+      }
+    ],
+    "3.8 Write Property 7 test (persistence precedes acknowledgement) and ordering tests": [
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794922653576
+      },
+      {
+        "executionId": "68a8df66-f8b2-4809-82cc-c93826133e12",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794930555194
+      }
+    ],
+    "3.9 Implement `collector/watchdog.py` (SilenceWatchdog)": [
+      {
+        "executionId": "88ed95a0-e127-4f17-b786-95129b78aef7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794932043337
+      },
+      {
+        "executionId": "88ed95a0-e127-4f17-b786-95129b78aef7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794933002645
+      }
+    ],
+    "3.10 Write Property 14 test (one silence gap per silence period)": [
+      {
+        "executionId": "69d0e756-cc37-44b9-9338-8d6832443094",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794934453377
+      },
+      {
+        "executionId": "1a598b81-d538-4fd1-9216-df42f2afbf4b",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794937190596
+      }
+    ],
+    "3.11 (PRIORITY) Implement `collector/app.py` and `collector/main.py` (HTTP API and startup)": [
+      {
+        "executionId": "87174e6b-b9e1-4408-b1bc-463a70c02879",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794938593506
+      },
+      {
+        "executionId": "87174e6b-b9e1-4408-b1bc-463a70c02879",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794939377290
+      }
+    ],
+    "3.12 Write Collector route tests (TestClient, Docker-free)": [
+      {
+        "executionId": "e4440fd7-70db-4fa7-be4d-0ad9ab52aec9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794940261033
+      },
+      {
+        "executionId": "e4440fd7-70db-4fa7-be4d-0ad9ab52aec9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794941191184
+      }
+    ],
+    "3.13 Write Collector persistence tests (Docker-free)": [
+      {
+        "executionId": "f47a87bf-157e-4044-9240-644e3a42edf3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794951873018
+      },
+      {
+        "executionId": "f47a87bf-157e-4044-9240-644e3a42edf3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794953401672
+      }
+    ],
+    "3.15 Checkpoint - M0.3 complete": [
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954220534
+      },
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954969367
+      }
+    ],
+    "3. M0.3 Independent collector, ingestion API, storage health checks, and persistence tests": [
+      {
+        "executionId": "1117065c-41e3-48fa-900b-aa73a77bcc35",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794954969578
+      }
+    ],
+    "4.1 Implement Probe config and real readers (`probe/probe.py`, part 1)": [
+      {
+        "executionId": "89139017-0911-4824-bc69-9a3ef9b10fba",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794955540165
+      },
+      {
+        "executionId": "89139017-0911-4824-bc69-9a3ef9b10fba",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794956596433
+      }
+    ],
+    "4.2 Implement `build_sample` and the sampler loop (`probe/probe.py`, part 2)": [
+      {
+        "executionId": "25e5e340-8061-4cc0-b79e-dc26de059d99",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794986089602
+      },
+      {
+        "executionId": "25e5e340-8061-4cc0-b79e-dc26de059d99",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794989902100
+      }
+    ],
+    "4.3 (PRIORITY) Implement the sender thread, transport, and dropped counter (`probe/probe.py`, part 3)": [
+      {
+        "executionId": "75de2eba-e8c3-499f-aa6a-f1552f5b06c5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794990295162
+      },
+      {
+        "executionId": "75de2eba-e8c3-499f-aa6a-f1552f5b06c5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794991757895
+      },
+      {
+        "executionId": "0bffc1c6-e6ba-46c0-a65e-40dc0b1142f6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794992167142
+      },
+      {
+        "executionId": "0bffc1c6-e6ba-46c0-a65e-40dc0b1142f6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794992688274
+      }
+    ],
+    "4.4 Write Probe unit tests (Docker-free, network-free)": [
+      {
+        "executionId": "c2285e55-49aa-4630-a31e-b16c6f222284",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794994234095
+      },
+      {
+        "executionId": "c2285e55-49aa-4630-a31e-b16c6f222284",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794997913603
+      }
+    ],
+    "4.5 Write Property 15 test (Probe Samples well formed, never fabricated)": [
+      {
+        "executionId": "ac6b1f92-567f-467b-8e80-88363596fe00",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794998089939
+      },
+      {
+        "executionId": "ac6b1f92-567f-467b-8e80-88363596fe00",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794998897376
+      }
+    ],
+    "4.6 Write Property 18 test (dropped counter accounting)": [
+      {
+        "executionId": "c0a3153e-c2d5-4b74-b591-6a175fae65e6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794999104092
+      },
+      {
+        "executionId": "c0a3153e-c2d5-4b74-b591-6a175fae65e6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1794999760035
+      }
+    ],
+    "4.9 Write Probe static and size tests": [
+      {
+        "executionId": "e5c79031-ad13-4b16-87d8-4bc033989417",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795000128414
+      },
+      {
+        "executionId": "e5c79031-ad13-4b16-87d8-4bc033989417",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795000753267
+      }
+    ],
+    "4.10 Implement `demo_app/leak.py` and `demo_app/counting.py`": [
+      {
+        "executionId": "6f46c9c0-2356-436d-888e-53068fb09d1a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003021347
+      },
+      {
+        "executionId": "6f46c9c0-2356-436d-888e-53068fb09d1a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003607178
+      }
+    ],
+    "4.11 (PRIORITY) Implement `demo_app/app.py` and `demo_app/main.py`": [
+      {
+        "executionId": "019526eb-34f6-437d-914d-27d2852042b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795003876379
+      },
+      {
+        "executionId": "019526eb-34f6-437d-914d-27d2852042b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795007517405
+      }
+    ],
+    "4.12 Write Property 19 test (leak accumulates exactly or changes nothing)": [
+      {
+        "executionId": "38b16cb8-63c9-487b-9b71-8bbf5da85574",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795008434917
+      },
+      {
+        "executionId": "38b16cb8-63c9-487b-9b71-8bbf5da85574",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009739995
+      }
+    ],
+    "4.13 Write Property 20 test (destructive endpoints routed only when flag is exactly 1)": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009888638
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010981838
+      }
+    ],
+    "4.14 Write Demo_App unit tests including the ordinary HTTP 500 in-process test": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795009888814
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010982875
+      }
+    ],
+    "4.15 Checkpoint - M0.4 complete": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010117443
+      },
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010984334
+      }
+    ],
+    "4. M0.4 Python telemetry probe and FastAPI demo application incl. controlled destructive endpoints and unit tests": [
+      {
+        "executionId": "4166eb5d-3ce5-4e0b-8ed3-176214c4d2de",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795010984935
+      }
+    ],
+    "5.1 Write `docker/collector.Dockerfile` with non-root UID/GID 10001 and image-baked volume ownership": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011930797
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021871744
+      }
+    ],
+    "5.2 Write `docker/demo_app.Dockerfile`": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011931297
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021872628
+      }
+    ],
+    "5.3 (PRIORITY) Write `compose.yaml`": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011931825
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021872997
+      }
+    ],
+    "5.4 Write static Compose and Dockerfile tests (Docker-free)": [
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795011932261
+      },
+      {
+        "executionId": "41b5191c-a676-448b-b7ae-6b3dd4200b37",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795021873529
+      }
+    ],
+    "5.5 Build both images and verify dependencies inside the images": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022136698
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022298809
+      }
+    ],
+    "5.6 (PRIORITY) Verify named-volume ownership and real persistence under UID/GID 10001": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022137112
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022791235
+      }
+    ],
+    "5.7 (PRIORITY) Verify Compose isolation and health behavior": [
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795022137605
+      },
+      {
+        "executionId": "5755ac3a-e794-4d15-b4f1-f736266c9b81",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795023798276
+      }
+    ],
+    "5.8 Checkpoint - M0.5 complete": [
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795028780698
+      },
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029727574
+      }
+    ],
+    "5. M0.5 Docker Compose environment with container isolation, health checks, persistent evidence volume": [
+      {
+        "executionId": "205bf1cf-e66c-48f7-ab5f-ff624ba22be6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029728140
+      }
+    ],
+    "6.1 (PRIORITY) Implement `runner/docker_port.py` (`DockerPort`, `DockerCli`, `build_child_env`)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029969840
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031526122
+      },
+      {
+        "executionId": "7d36e11c-7279-4da1-b3f6-98dd09f84c73",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795180039593
+      },
+      {
+        "executionId": "7d36e11c-7279-4da1-b3f6-98dd09f84c73",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795180977065
+      }
+    ],
+    "6.3 Implement `runner/evaluate.py` part 1 (`parse_mem_size` and container-state evaluation)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029970502
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031527340
+      }
+    ],
+    "6.9 Implement `runner/manifest.py` and run id generation": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029970927
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031528192
+      }
+    ],
+    "6.11 Implement `runner/collector_client.py` (health, evidence, termination) and clock offset estimation": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029974208
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031529242
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031986952
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032081827
+      }
+    ],
+    "6.2 Write Property 29 test and runner static scan": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029982228
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031526807
+      }
+    ],
+    "6.4 Write Properties 23 and 21 tests (memory size parsing; container state evaluation)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029982753
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031527778
+      }
+    ],
+    "6.10 Write Properties 24 and 25 tests (run id uniqueness; manifest and inspect fidelity)": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029983107
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031528614
+      }
+    ],
+    "6.12 Write Property 28 runner-side test, readiness examples, and clock offset tests": [
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795029983688
+      },
+      {
+        "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031529939
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795031987613
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032082463
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795032088371
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038923882
+      }
+    ],
+    "6.5 Implement `evaluate.py` part 2 (Experiment B timing)": [
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038969823
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795040392273
+      }
+    ],
+    "6.6 Write Property 27 test and Experiment B timing examples": [
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038970354
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795040392895
+      }
+    ],
+    "6.7 Implement `evaluate.py` part 3 (Experiment C verdict and diagnostics)": [
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038970923
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795040393470
+      }
+    ],
+    "6.8 Write Properties 22 and 26 tests and Experiment C evaluation examples": [
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795038971305
+      },
+      {
+        "executionId": "945602ea-3e08-4e63-896a-3a998e681ce8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795040394252
+      },
+      {
+        "executionId": "a3dfab2f-5a61-45b4-ace8-db5609e51e02",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795040769969
+      },
+      {
+        "executionId": "a3dfab2f-5a61-45b4-ace8-db5609e51e02",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795041342891
+      }
+    ],
+    "6.13 (PRIORITY) Implement `runner/experiments/base.py` (common preamble and shared checks)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795041754279
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077356324
+      }
+    ],
+    "6.14 (PRIORITY) Implement `runner/experiments/exp_a.py` (controlled fatal process exit)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071863395
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077356658
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118584552
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685010
+      }
+    ],
+    "6.15 (PRIORITY) Implement `runner/experiments/exp_b.py` (SIGKILL)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071863966
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077357049
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118585131
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685598
+      }
+    ],
+    "6.16 (PRIORITY) Implement `runner/experiments/exp_c.py` (genuine Docker OOM kill)": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071864362
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077357891
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118585549
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123685945
+      }
+    ],
+    "6.17 Write scripted experiment-flow tests with fake DockerPort and fake Collector client": [
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795071864924
+      },
+      {
+        "executionId": "852714cf-ecf9-48ad-b67b-ba05fc759372",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795077358738
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795118729809
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123686615
+      }
+    ],
+    "6.18 (PRIORITY) Implement `runner/cli.py` and `runner/summary.py` (including `clock-check`)": [
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123712347
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795130470435
+      }
+    ],
+    "6.19 Write CLI and summary tests": [
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123712827
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795130472680
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795157748448
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795159287176
+      }
+    ],
+    "6.21 Checkpoint - M0.6 complete": [
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164397057
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164965406
+      }
+    ],
+    "6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation": [
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164965876
+      }
+    ],
+    "7.1 (PRIORITY) Preflight: clean build, readiness, and host-vs-container clock offset measurement": [
+      {
+        "executionId": "df30cb21-7b4d-4a1e-8df1-910686da47c4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795170866781
+      },
+      {
+        "executionId": "df30cb21-7b4d-4a1e-8df1-910686da47c4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795171226235
+      }
+    ],
+    "7.2 Write and run the ordinary HTTP 500 non-termination integration test": [
+      {
+        "executionId": "2531ea04-3849-4078-828d-d0648a062be9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795171402155
+      },
+      {
+        "executionId": "2531ea04-3849-4078-828d-d0648a062be9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795172341910
+      }
+    ],
+    "7.3 (PRIORITY) Write, execute, and validate Experiment A (fatal exit via `os._exit(1)`)": [
+      {
+        "executionId": "5b5c7bb0-b8f7-4f1a-ba0f-5da02ae717e5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795181587940
+      },
+      {
+        "executionId": "5b5c7bb0-b8f7-4f1a-ba0f-5da02ae717e5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795182912040
+      }
+    ],
+    "7.4 (PRIORITY) Write, execute, and validate Experiment B (SIGKILL)": [
+      {
+        "executionId": "6cd77150-c126-449e-82a6-5cbf021beb5b",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795184434215
+      },
+      {
+        "executionId": "aff10c69-81c7-450a-98d0-3b55c33f738f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196404990
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196796970
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196838255
+      }
+    ],
+    "7.5 (PRIORITY) Write, execute, and validate Experiment C (genuine Docker OOM kill)": [
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196856836
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197138314
+      }
+    ],
+    "7.6 (PRIORITY) Cross-validate results and write the experiment results note": [
+      {
+        "executionId": "4495b08b-51b1-427c-a952-f651bd509d15",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197414677
+      },
+      {
+        "executionId": "4495b08b-51b1-427c-a952-f651bd509d15",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197622707
+      }
+    ],
+    "7.10 Checkpoint - M0.7 complete": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795199386733
+      },
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795202443680
+      }
+    ],
+    "8.1 Write `README.md` (reproduction, limitations, Windows section)": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795199392127
+      },
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203006682
+      },
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203519024
+      },
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203606994
+      }
+    ],
+    "7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795202444183
+      }
+    ],
+    "8.2 Write documentation phrase tests": [
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203618950
+      },
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795204319171
+      }
+    ],
+    "8.3 (PRIORITY) Run the full acceptance suites and record real results": [
+      {
+        "executionId": "91a9af1c-a1d5-4b9c-b4ac-733c439fabd6",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795204712117
+      },
+      {
+        "executionId": "cf71bf1d-11bd-4369-8df1-1c495af025c3",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795209658262
+      }
+    ]
+  }
+}

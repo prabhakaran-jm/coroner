@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coroner"
+version = "0.0.0"
+description = "Coroner: crash forensics for containers (milestone M0, crash evidence survival)"
+readme = "README.md"
+# Verified on Python 3.12.10 (host) and 3.12.8 (image). Pinned dependencies declare >=3.10,
+# but 3.10 and 3.11 were not tested, so they are not claimed (task 1.5).
+requires-python = ">=3.12"
+# Runtime dependencies are pinned per image in requirements/*.txt (task 1.5).
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["coroner*"]
