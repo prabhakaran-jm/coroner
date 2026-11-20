@@ -2,11 +2,20 @@
 
 Crash forensics workstation for Python containers, built with Kiro for Kiroween 2026.
 
-> **Status.** Verified on Windows with Docker Desktop (Linux containers, WSL2), on a single host. Native Linux hosts are not
-> verified. Experiment A, Experiment B and Experiment C are **verified** from real runs (see section 13). Experiment C was
-> a real Docker OOM kill (run `c-20261120T174958Z-94f4225c`). Experiment B and Experiment C each have one verified real
-> execution and Experiment A has four. There is no repeat-consistency proof. Every result below is taken from
-> `docs/m0-results/`.
+
+> **Status.** There is no repeat-consistency proof across different hosts or operating systems.
+> Verified on Windows with Docker Desktop (Linux containers, WSL2),
+> on a single host. Native Linux hosts are not verified. Experiments A, B and C
+> are verified from real runs (see section 13). Experiment C included a real
+> Docker OOM kill (`c-20261120T174958Z-94f4225c`).
+>
+> Experiments A, B and C passed their recorded M0.7 runs, isolated Task 8.3
+> acceptance tests, and fresh-checkout Task 8.4 reproduction. The fresh-checkout
+> runs used separately built Docker images and isolated evidence storage.
+> These results demonstrate reproducibility on the tested Windows/Docker Desktop
+> host, not repeatability across different hosts or operating systems.
+> The recorded results are documented in `docs/m0-results/`.
+
 
 ## 1. What Coroner M0 is
 

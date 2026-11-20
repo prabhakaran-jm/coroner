@@ -779,7 +779,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 7.10 Checkpoint - M0.7 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), confirm the experiment results note contains real run data for A, B, C, and the ordinary 500 test, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 20 November 2026.
 
-- [ ] 8. M0.8 Final M0 acceptance tests, documentation (incl. Windows section), reproducibility checks, Git commit preparation
+- [x] 8. M0.8 Final M0 acceptance tests, documentation (incl. Windows section), reproducibility checks, Git commit preparation
   - [x] 8.1 Write `README.md` (reproduction, limitations, Windows section)
     - Prerequisites with minimum versions (use the verified versions), Compose start commands, how to run each experiment, how to inspect evidence, expected exit codes and OOMKilled per experiment (A: 1/false, B: 137/false, C: 137/true), known limitations (the 15 items in the design, including the unobserved interval and the Experiment C Sampling_Limitations), Durability_Levels and `CORONER_DURABILITY` with the fsync caveat, Experiment A is a controlled fatal process exit using `os._exit(1)`, destructive endpoints disabled unless `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1` and for local use only, `storage_ok` semantics (HTTP 200 alone is not proof), the Experiment B capture versus receive note with the documented 250 ms tolerance and the measured clock offset from 7.1, default pytest is Docker-free and network-free with the opt-in commands. Windows section: Docker Desktop with Linux containers and WSL2, minimum Python, PowerShell verification commands, how to confirm the memory limit is enforced, WSL2 caveats.
     - Files: `README.md`.
@@ -803,7 +803,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real outputs, exit codes, counts and run ids are recorded for the default suite and for all 53 Docker-enabled tests. Any failure is reported, not hidden. Do not mark this task complete without the user's approval.
     - _Requirements: 13.4, 13.6, 13.7, 13.9, 13.10, 13.11_
 
-  - [ ] 8.4 Reproducibility check from a clean state
+  - [x] 8.4 Reproducibility check from a clean state
     - Work in a fresh checkout: `git clone` into `C:\Users\prabh\Projects\coroner-repro` at the verified commit, then create a separate virtual environment `.venv-repro` there from `requirements/dev.txt` and run `pip check`. Explicit user approval is required before the clone, before the build and before each real execution.
     - Isolation: use the Compose project `coroner-repro` (evidence volume `coroner-repro_coroner_evidence`) with environment `CORONER_COMPOSE_PROJECT=coroner-repro` and `COMPOSE_PROJECT_NAME=coroner-repro`, and scrub other `COMPOSE_*` and `CORONER_*` variables. Use alternate host ports `CORONER_COLLECTOR_PORT=18081` and `CORONER_DEMO_PORT=18080`. Use dedicated image tags `coroner-collector:repro` and `coroner-demo-app:repro` through an untracked `compose.override.yaml` in the clone, created with a file-edit tool. Never run a `docker compose build` that retags the `:m0` images, and verify afterwards that the `:m0` image IDs are unchanged (`cd9126e565333da7b76cb3f16ad494c94e2bcc9102e0cc8980e64eb55bf0420e` for the collector, `23571625f7319525505816774be12f752854b04608b9b0912ef9d1e1b5ca2c52` for the demo app).
     - Compose override resolution: the Runner calls Compose without `-f`, so the `compose.override.yaml` in the working directory is merged automatically. Explicit commands must omit `-f` or use `-f compose.yaml -f compose.override.yaml`; `-f compose.yaml` alone ignores the override. Verify that `docker compose -p coroner-repro config` equals the two-file form and shows the `:repro` tags, the `coroner-repro` volume and the alternate ports.
@@ -814,14 +814,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real outputs and run ids are recorded, the `:m0` image IDs are verified unchanged, and the clone, `.venv-repro` and the volume are left in place unless the user approves their removal. Do not mark this task complete without the user's approval.
     - _Requirements: 14.7, 12.4, 8.2_
 
-  - [ ] 8.5 Prepare the Git commit (do not commit)
+  - [x] 8.5 Prepare the Git commit (do not commit)
     - Confirm `.kiro/` is tracked and not ignored (`git check-ignore -v .kiro/specs/coroner-m0/tasks.md` prints nothing), confirm `runs/` (including `runs/archive/`), `.venv*`, `spike/`, and `__pycache__` are ignored, review `git status --short` and `git diff --stat`, list the files that would be staged (specific paths, including `.kiro/specs/coroner-m0/`, `docs/m0-results/`, source, tests, `requirements/`, `docker/`, `compose.yaml`, `README.md`, `pyproject.toml`, `pytest.ini`, `.gitignore`, `.dockerignore`), flag any file that may hold secrets, and draft a commit message. Confirm the branch is `feat/coroner-m0`. Verify the GitHub remote is private (`git remote -v; gh repo view --json visibility,url`, or ask the user to confirm) and record the result; if it is public or unknown, do not push and ask. Never change visibility. Present the list, message, and the real test counts from 8.3 to the user and wait for explicit approval. Do NOT run `git commit` or `git push` in this task; a push needs its own explicit approval.
     - Files: none modified (prepare only).
     - Verify: `git status --short; git diff --stat; git check-ignore -v .kiro/specs/coroner-m0/tasks.md`.
     - Done when: the staging list and draft message are shown to the user and approval is awaited.
     - _Requirements: 14.1_
 
-  - [ ] 8.6 Final checkpoint - M0 complete
+  - [x] 8.6 Final checkpoint - M0 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), confirm the recorded results of 7.x and 8.3 are real, summarise any open deviations or unresolved questions, and ask the user for approval to commit. Then propose (do not perform) the final tested milestone commit per Execution Rule 9, after the remote privacy check of task 8.5. Target date: 20 November 2026.
 
 ## Schedule and Priorities
