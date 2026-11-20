@@ -734,7 +734,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: the run id, exit code, OOMKilled, status, inspect time, health result, and Sample counts are copied from the real manifest and an independent `docker inspect` into the results note.
     - _Requirements: 9.1, 9.3, 9.5, 9.6, 9.8, 9.9, 9.10, 9.11, 9.12, 13.4_
 
-  - [ ] 7.4 (PRIORITY) Write, execute, and validate Experiment B (SIGKILL)
+  - [x] 7.4 (PRIORITY) Write, execute, and validate Experiment B (SIGKILL)
     - `tests/docker_integration/test_experiment_b.py` plus a real run: `python -m coroner.runner run b`. Assert exit code 137, OOMKilled false, at least one Sample with Capture_Time before `sigkill_sent_time`, no Sample beyond kill + 250 ms, late-received pre-kill Samples counted in the manifest (the test does not require that every Sample arrives before the kill), Collector healthy with `storage_ok=true`.
     - Files: `tests/docker_integration/test_experiment_b.py`, `docs/m0-results/experiment-results.md`.
     - Verify: `python -m coroner.runner run b; python -m pytest tests/docker_integration/test_experiment_b.py --run-docker -q`.

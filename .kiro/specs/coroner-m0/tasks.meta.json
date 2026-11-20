@@ -1290,6 +1290,28 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795182912040
       }
+    ],
+    "7.4 (PRIORITY) Write, execute, and validate Experiment B (SIGKILL)": [
+      {
+        "executionId": "6cd77150-c126-449e-82a6-5cbf021beb5b",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795184434215
+      },
+      {
+        "executionId": "aff10c69-81c7-450a-98d0-3b55c33f738f",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196404990
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196796970
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196838255
+      }
     ]
   }
 }

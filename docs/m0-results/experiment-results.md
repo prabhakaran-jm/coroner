@@ -128,3 +128,85 @@ No production code, acceptance criterion or tolerance was changed to obtain the 
 - The Demo App container was inspected after the Runner finished, once per run, from a container that still existed (exited). It was removed only after the inspect output was saved.
 - Evidence files of the four runs remain in `coroner-m07_coroner_evidence` next to `m07-500-76640824.jsonl` (117534 bytes, unchanged). The volume and the `m07-verify` images were left in place.
 - Experiments B and C, SIGKILL and OOM were not run.
+
+## Experiment B (Task 7.4): SIGKILL sent by the Runner
+
+One real Runner run, an independent `docker inspect` of the Demo App container, and the integration test `tests/docker_integration/test_experiment_b.py`. All values come from real output saved in `runs/m07-74/` (gitignored) and the run directory `runs/b-20261120T173541Z-3fa52342/` (`manifest.json`, `docker_inspect.json`, `evidence.jsonl`). Host UTC date 2026-11-20. Git: branch `feat/coroner-m0`, HEAD `c6404ced5b06a93be8f3968d5bc3bbacd492ce1a`. Docker Engine 29.9.3, Compose v5.7.0, Docker Desktop, Linux containers. Exactly one SIGKILL was sent, only by the Runner through `DockerPort.kill` (`docker kill --signal KILL <full 64-hex id>`). Nothing else sent a signal, and no `/crash` request was made.
+
+### Result
+
+| Item | Value |
+|---|---|
+| Run id | `b-20261120T173541Z-3fa52342` |
+| Command | `.\.venv\Scripts\python.exe -m pytest tests/docker_integration/test_experiment_b.py --run-docker -q -s -p no:cacheprovider -rA` (env `CORONER_KEEP_STACK=1`; no `COMPOSE_*` or other `CORONER_*` variables; `DOCKER_HOST` and `DOCKER_CONTEXT` unset), 2026-11-20T17:35:36.146Z to 17:35:53.604Z |
+| Runner command line started by the test | `python -m coroner.runner run b --runs-dir <repo>/runs`, with `CORONER_COMPOSE_PROJECT=coroner-m07` in the subprocess env only |
+| pytest exit code | 0 (`6 passed in 16.51s`) |
+| Runner process exit code | 0 (distinct from the Docker exit code). Output: `Experiment B b-20261120T173541Z-3fa52342: PASSED - Experiment B: all 7 mandatory checks passed`. Manifest `outcome` `passed`, `failure` null, `finished` true, `container_left_running` false |
+| Container id (full) | `d8f19b8abc9191dd5aaf34f272e08d079cb68bc61c5e677d0c690050b07dc917`, name `coroner-m07-demo_app-1` |
+| `sigkill_sent_time` (manifest, host clock, taken immediately before the kill call) | 2026-11-20T17:35:51.702Z |
+| `State.FinishedAt` (real `docker inspect`) | 2026-11-20T17:35:51.865093887Z (manifest `container_finished_at` 17:35:51.865Z) |
+| Docker state | `Status` `exited`, `ExitCode` 137, `OOMKilled` false, `RestartCount` 0 |
+| Clock offset used | +6 ms, uncertainty 8.469 ms (Runner preamble; positive means the Collector clock is ahead of the host) |
+| Tolerance | `CLOCK_TOLERANCE_MS` 250 (unchanged) |
+
+### Setup, isolation and clock gate
+
+- Compose project `coroner-m07`, file `compose.yaml`, explicit `-p coroner-m07 -f compose.yaml` on every compose command. Images `coroner-collector:m0` (`cd9126e56533...`) and `coroner-demo-app:m0` (`23571625f731...`) were not built, tagged or removed. No container, network or volume of project `coroner` was created, and the two protected volumes were not mounted.
+- Single-run gate (Docker-free, `runs/m07-74/gate_output.txt`): default `--collect-only` shows `no tests collected (6 deselected)`; with `--run-docker` 6 tests are collected. An AST check found exactly one `subprocess.run` that starts `coroner.runner`, inside the module-scoped fixture `experiment` (line 236); `evidence` and `demo_info` are module-scoped and read only; no test calls the Runner, a kill, or `/crash`; no parametrization, rerun or retry; `pytest-rerunfailures` and `xdist` are not installed. `DockerPort.kill` is called from one place (`exp_b.py`, after the leak), and the Runner has no retry around it. The fixture fails early if any `coroner-m07` container or network exists, so the clock-gate Collector was removed with `down` (no `-v`) before pytest, and the test started its own Collector.
+- Clock gate (`runs/m07-74/clock_check_out.txt`, exit 0): 20 of 20 usable, best offset +0 ms with uncertainty 2.6 ms, median +9 ms, range +0 to +31 ms (spread 31 ms), round trip min 5.1 / median 24.1 / max 65.2 ms. Conservative bound: 9 + 65.2 / 2 = 41.6 ms, below the 125 ms limit.
+- Collector (gate instance): healthy, label `coroner-m07`, single mount `coroner-m07_coroner_evidence` at `/data/evidence` (rw), user 10001:10001, `8081/tcp` bound to `127.0.0.1` only, `GET /healthz` HTTP 200 `{"status":"ok","durability":"crash",...,"storage_ok":true}`.
+
+### Independent inspect compared with the Runner (`runs/m07-74/demo_inspect_independent_bytes.json`, taken 2026-11-20T17:37:30.268Z)
+
+| Field | Independent `docker inspect <full id>` | Runner raw inspect / manifest |
+|---|---|---|
+| `Id` | `d8f19b8a...7dc917` (64 hex) | same (`container_id`) |
+| `Name`, project label, service | `/coroner-m07-demo_app-1`, `coroner-m07`, `demo_app` | same raw inspect |
+| `State.Status` / `Running` | `exited` / false | `exited` |
+| `State.ExitCode` / `OOMKilled` | 137 / false | 137 / false |
+| `State.StartedAt` | 2026-11-20T17:35:42.119258226Z | same (raw inspect) |
+| `State.FinishedAt` | 2026-11-20T17:35:51.865093887Z | same (raw inspect); manifest 17:35:51.865Z (0.093 ms rounding) |
+| `RestartCount` | 0 | same |
+| `HostConfig.Memory` / `MemorySwap` | 134217728 / 134217728 | `host_config_memory_bytes` 134217728 |
+| Image, user, mounts | `coroner-demo-app:m0` (`sha256:23571625...c2c52`), `10001:10001`, none | same |
+
+The independent inspect output is byte-identical to the Runner's saved `docker_inspect.json` (9853 bytes). A first independent capture through PowerShell redirection (`demo_inspect_independent.json`, taken 17:36:47.82Z) was UTF-16 encoded and was kept unchanged next to the byte-exact capture.
+
+SIGKILL timeline, from real values: `sigkill_sent_time` 17:35:51.702Z; `State.FinishedAt` 17:35:51.865093887Z, which is 163.093 ms later; the Runner recorded phase `sigkill_sent` (the `docker kill` call had returned) at 17:35:52.116Z, 414 ms after `sigkill_sent_time`; first inspect showing `exited` at 17:35:52.226Z. So `FinishedAt` is not before `sigkill_sent_time` (difference +163.093 ms, larger than the measured offsets of +6 ms used by the Runner and +0 to +31 ms in the clock gate). The time between the timestamp and the exit is the `docker kill` CLI start-up and daemon latency, which this run did not separate from clock offset. `FinishedAt` is a Docker daemon time, `sigkill_sent_time` is a host time; the comparison assumes the daemon (VM) clock and the host clock agree within the measured offset.
+
+### Samples, timing and memory
+
+Evidence read back three ways was byte-identical (7319 bytes): the Runner's `evidence.jsonl`, the Collector's stored file read (read-only) from `coroner-m07_coroner_evidence` (`b-20261120T173541Z-3fa52342.jsonl`, sha256 `00e8f5df59de237c4c4c95951917d5cd5b9a855a0e7e2d52840de5dd18150b94`), and `GET /v1/runs/<run_id>/evidence`. 17 records: 1 `run_metadata`, 15 `sample`, 1 `termination`; no gap, anomaly, rejection or repair records, no record type outside the known set (no shutdown-handler records), 0 malformed lines.
+
+| Item | Value |
+|---|---|
+| Sample `seq` | 0 to 14, consecutive; `ts` ascending, spacing about 500 ms |
+| Capture time (`ts` minus 6 ms) before the kill | 15 of 15 (independent recomputation equals the manifest) |
+| Late-received (pre-kill capture, received after the kill) | 0 |
+| Within tolerance (kill to kill + 250 ms inclusive) | 0 |
+| Beyond tolerance (must be 0) | 0 |
+| After container stop (informational, `FinishedAt` available) | 0 |
+| Last Sample | `seq` 14, `ts` 17:35:51.393Z, corrected capture 17:35:51.387Z, 315 ms before `sigkill_sent_time` and 478 ms before `FinishedAt`; received at 17:35:51.401Z (307 ms before the kill) |
+| RSS first / peak | 46903296 / 74399744 bytes (+27496448; leaked 25165824 in 6 requests of 4194304 bytes over 5.031 s; check needed at least 12582912); manifest `highest_rss_bytes` 74399744 |
+| Termination record | present, `cause_label` `sigkill_sent_by_runner`, container state `exited` / 137 / false, `observed_time` 17:35:52.226Z, note that the interval to the real termination is unobserved |
+| Durability | `crash` in `run_metadata` and in the manifest |
+| `summary <run_id> --runs-dir runs` | exit 0: Outcome passed, Samples 15, Gaps 0, Unreconciled 0, Malformed 0, `sample timing: pre_kill=15 (late_received=0) within_tolerance=0 beyond_tolerance=0 after_container_stop=0 tolerance_ms=250 clock_offset_ms=6` |
+
+All 10 manifest checks passed: `exit_code_137`, `oom_killed_false`, `stopped_within_10s`, `collector_survival`, `at_least_one_sample_captured_before_kill`, `no_sample_captured_after_kill_beyond_tolerance`, `no_shutdown_handler_records`, `termination_recorded`, `durability_matches_run_metadata`, `memory_growth_matches_leak`.
+
+### Collector survival
+
+Runner check at 17:35:52.308Z: HTTP 200, `storage_ok` true, 20.796 ms. Test check at 17:35:52.584Z: HTTP 200, `storage_ok` true, `durability` `crash`. Independent read after the run (2026-11-20T17:36:58Z): HTTP 200, `storage_ok` true, uptime 77 s. The Collector container was running with `RestartCount` 0.
+
+### Integration test
+
+`6 passed in 16.51s`: `test_01` Runner exit 0 and manifest outcome, `test_02` independent inspect equals manifest, `test_03` pre-kill Samples and none beyond tolerance, `test_04` memory growth and no shutdown records, `test_05` termination record, `test_06` Collector healthy and isolated. The test ran once, with no retry. Output: `runs/m07-74/pytest_stdout.txt`.
+
+### Limitations and notes
+
+- Docker Desktop on Windows (Linux VM). One run in one Docker Desktop session. Not a statement about other hosts or Docker versions.
+- The Samples are 500 ms apart, so the interval between the last Sample (478 ms before `FinishedAt`) and the actual termination is unobserved. A process that was killed between Samples leaves no data about that interval.
+- `sigkill_sent_time` is taken before the `docker kill` CLI starts; the 163 ms to `FinishedAt` includes CLI start-up and daemon latency. The clock domains (host, Docker daemon VM, Collector) are assumed to agree within the measured offset; the daemon-versus-host offset was not measured separately.
+- The manifest field `memory` is null in this run (memory is recorded in `container_state.host_config_memory_bytes` and `highest_rss_bytes`).
+- The evidence volume `coroner-m07_coroner_evidence` now also holds `b-20261120T173541Z-3fa52342.jsonl` (7319 bytes). The four Experiment A files and `m07-500-76640824.jsonl` (117534 bytes) have unchanged sizes and sha256 hashes (compared before and after the run).
+- Experiment C and any OOM were not run.
