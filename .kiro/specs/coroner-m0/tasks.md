@@ -787,7 +787,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: every statement about results matches `docs/m0-results/` and no result is claimed that was not recorded.
     - _Requirements: 14.1, 14.2, 14.3, 14.8, 14.9, 14.10, 14.11, 14.12, 16.4_
 
-  - [ ] 8.2 Write documentation phrase tests
+  - [x] 8.2 Write documentation phrase tests
     - Docker-free test that README contains the required statements (expected codes per experiment, destructive endpoint note, `storage_ok`, durability levels, opt-in commands, 250 ms tolerance, Windows section items) and does not describe the Crash_Endpoint as an exception.
     - Files: `tests/unit/test_docs.py`.
     - Verify: `python -m pytest tests/unit/test_docs.py -q`.
