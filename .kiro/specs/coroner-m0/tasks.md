@@ -741,14 +741,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: run id, send time, exit code, OOMKilled, `FinishedAt`, timing classification counts, and offset used are recorded from real output. If an anomaly occurs, record it and STOP and ask before touching any tolerance.
     - _Requirements: 10.1, 10.3, 10.4, 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.13, 13.4_
 
-  - [ ] 7.5 (PRIORITY) Write, execute, and validate Experiment C (genuine Docker OOM kill)
+  - [x] 7.5 (PRIORITY) Write, execute, and validate Experiment C (genuine Docker OOM kill)
     - `tests/docker_integration/test_experiment_c.py` plus a real run with the default 128 MiB limit: `python -m coroner.runner run c`. Independently run `docker inspect` and assert equality with the manifest for `State.OOMKilled`, `State.ExitCode`, `State.Status`, container id, and `HostConfig.Memory` (must equal 134217728); container id matches Sample `container_id` where reported (prefix match if source is `hostname`); Collector survival, at least one pre-crash Sample, peak RSS above first RSS; `diagnostics` and `sampling_limitations` present (values not asserted). If OOMKilled is not true, report the failure honestly, do not fake, retry with a different tactic, or relax checks, and STOP and ask.
     - Files: `tests/docker_integration/test_experiment_c.py`, `docs/m0-results/experiment-results.md`.
     - Verify: `python -m coroner.runner run c; python -m pytest tests/docker_integration/test_experiment_c.py --run-docker -q; $id = docker compose -p coroner ps -a -q demo_app; docker inspect $id --format '{{.State.OOMKilled}} {{.State.ExitCode}} {{.State.Status}} {{.HostConfig.Memory}}'`.
     - Done when: real run id, `OOMKilled`, `ExitCode`, `Status`, full container id, `HostConfig.Memory`, highest RSS, Diagnostic_Metrics, and Sampling_Limitations are recorded from real output.
     - _Requirements: 11.1, 11.3, 11.4, 11.5, 11.10, 11.11, 11.12, 11.13, 11.14, 11.15, 11.16, 11.17, 11.18, 11.19, 11.20, 13.5_
 
-  - [ ] 7.6 (PRIORITY) Cross-validate results and write the experiment results note
+  - [x] 7.6 (PRIORITY) Cross-validate results and write the experiment results note
     - Confirm the three results table (A: 1/false, B: 137/false, C: 137/true) from real data, confirm Collector survival after each run, evidence files readable with `Get-Content`, `Select-String`, and `(Get-Content file).Count` (standard tools, Requirement 12.3), and the summary command output for each run id. Record any anomaly or deviation without reinterpreting it.
     - Files: `docs/m0-results/experiment-results.md`.
     - Verify: `Get-Content runs\<run_id>\evidence.jsonl -TotalCount 3; (Get-Content runs\<run_id>\evidence.jsonl).Count; python -m coroner.runner summary <run_id>`.

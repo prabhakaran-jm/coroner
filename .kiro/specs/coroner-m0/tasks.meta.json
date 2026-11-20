@@ -1312,6 +1312,30 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795196838255
       }
+    ],
+    "7.5 (PRIORITY) Write, execute, and validate Experiment C (genuine Docker OOM kill)": [
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795196856836
+      },
+      {
+        "executionId": "664a01bc-ac54-4aa9-a9b7-41287e9bde7e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197138314
+      }
+    ],
+    "7.6 (PRIORITY) Cross-validate results and write the experiment results note": [
+      {
+        "executionId": "4495b08b-51b1-427c-a952-f651bd509d15",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197414677
+      },
+      {
+        "executionId": "4495b08b-51b1-427c-a952-f651bd509d15",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795197622707
+      }
     ]
   }
 }

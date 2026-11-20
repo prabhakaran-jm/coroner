@@ -3,9 +3,9 @@
 Crash forensics workstation for Python containers, built with Kiro for Kiroween 2026.
 
 > **DRAFT (Task 8.1 is still pending).** This README is written from results recorded in `docs/m0-results/`.
-> Experiment A and Experiment B are **verified** from real runs. The real result for Experiment C is **PENDING** (see
-> "Verified results"). Nothing in this file claims that Experiment C passed. Test totals will be re-verified before this
-> draft is finalised.
+> Experiment A, Experiment B and Experiment C are **verified** from real runs (see "Verified results"). Experiment C was
+> a real Docker OOM kill (run `c-20261120T174958Z-94f4225c`). Each of B and C was executed once, A four times, on one Docker
+> Desktop session. Test totals will be re-verified before this draft is finalised.
 
 ## 1. What Coroner M0 is
 
@@ -221,8 +221,8 @@ The Runner accepts the Compose project name from `CORONER_COMPOSE_PROJECT` (`doc
 | Pre-validation order (first error wins) | `--mem-limit`, `--leak-chunk-bytes`, `CORONER_COLLECTOR_PORT`, `CORONER_DEMO_PORT`, `CORONER_COMPOSE_PROJECT` |
 
 The M0.7 Experiment A and the ordinary-500 test used project `coroner-m07`, so their evidence is in
-`coroner-m07_coroner_evidence` and does not touch the M0.5 volume. Experiment B also used `coroner-m07` (run `b-20261120T173541Z-3fa52342`, evidence file in the same volume). Experiment C
-**will** use `coroner-m07` as well, but it is pending and has not been run. The form for Experiment A:
+`coroner-m07_coroner_evidence` and does not touch the M0.5 volume. Experiment B also used `coroner-m07` (run `b-20261120T173541Z-3fa52342`, evidence file in the same volume). Experiment C also
+used `coroner-m07` (run `c-20261120T174958Z-94f4225c`, evidence file in the same volume). The form for Experiment A:
 
 ```powershell
 $env:CORONER_COMPOSE_PROJECT = 'coroner-m07'
@@ -448,9 +448,10 @@ Every row below comes from `docs/m0-results/experiment-results.md` (host UTC 202
 | Experiment A (Task 7.3), real Runner run | **PASS**. Exit 0, `outcome: passed`. Final run `a-20261120T134321Z-a5e5a30e`, container `e5dcb355e4d6d47ea1a2a3068db3c3f0a28ed8e39f3e1642d6c3aee96ea3363a`: `docker inspect` `exited`, exit code 1, `OOMKilled` false, `Memory` 134217728, `RestartCount` 0. 15 Samples (seq 0 to 14, consecutive), 17 evidence records, one `termination` record. First run `a-20261120T133934Z-6d2f2350`: 14 Samples, `FinishedAt` 83 ms after the crash request. Four runs matched an independent `docker inspect`. Integration test `test_experiment_a.py`: `4 passed in 15.94s` (after three executions with defects in the test itself, not the code under test). | `experiment-results.md` |
 | HTTP 500 does not terminate the Demo App (Task 7.2) | **PASS**. `GET /error` returned 500, `GET /health` returned 200 0.016 s later, host `State.Pid` unchanged (3164), `RestartCount` 0, `seq` 0..5 consecutive. Run `m07-500-76640824`. `2 passed in 13.17s`. | `experiment-results.md` |
 | Experiment B (Task 7.4), real SIGKILL sent by the Runner | **VERIFIED**. Run `b-20261120T173541Z-3fa52342`, container `d8f19b8abc9191dd5aaf34f272e08d079cb68bc61c5e677d0c690050b07dc917`, project `coroner-m07`. Runner exit 0, `outcome: passed`, all 7 mandatory checks passed. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` false, `RestartCount` 0. 15 Samples (seq 0 to 14): pre-kill 15, late-received 0, within-tolerance 0, beyond-tolerance 0, after-container-stop 0. Clock offset used +6 ms (uncertainty 8.469 ms), tolerance 250 ms unchanged. `FinishedAt` was 163.093 ms after `sigkill_sent_time`; the `docker kill` call returned 414 ms after it. Collector `storage_ok` true after the kill. Integration test `test_experiment_b.py`: `6 passed in 16.51s`. | `experiment-results.md` |
-| Experiment C real result | **PENDING** | not yet run; will use project `coroner-m07` once separately authorised |
+| Experiment C (Task 7.5), real Docker OOM kill | **VERIFIED**. Run `c-20261120T174958Z-94f4225c`, container `42a89ff3f2a6f7907cd12913feae448f541ecefc67703e613ec94ff5c20fed44`, project `coroner-m07`. Runner exit 0, `outcome: passed`. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` true, `HostConfig.Memory` 134217728, `MemorySwap` 134217728. The Runner sent no signal and made no `/crash` call. 46 Samples (seq 0 to 45, consecutive), first RSS 46362624, highest RSS 138522624. Collector `storage_ok` true after the kill. Integration test `test_experiment_c.py`: `7 passed in 31.81s`. | `experiment-results.md` |
 
-No result for Experiment C is claimed here. This table will be updated from the recorded output after that run.
+Experiment C ran once and Experiment B ran once; neither is a statement about repeat consistency, other Docker versions or a
+Linux host. The Experiment C diagnostics are informational only (section 8).
 
 ## 14. Known limitations
 
