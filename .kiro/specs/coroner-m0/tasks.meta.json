@@ -1191,6 +1191,40 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795123686615
       }
+    ],
+    "6.18 (PRIORITY) Implement `runner/cli.py` and `runner/summary.py` (including `clock-check`)": [
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123712347
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795130470435
+      }
+    ],
+    "6.19 Write CLI and summary tests": [
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795123712827
+      },
+      {
+        "executionId": "23f85cbb-738b-4e85-9a15-4ef985166d86",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795130472680
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795157748448
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795159287176
+      }
     ]
   }
 }

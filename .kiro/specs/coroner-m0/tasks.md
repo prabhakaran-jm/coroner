@@ -688,14 +688,14 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: passes with output recorded.
     - _Requirements: 9.2, 9.4, 9.7, 9.12, 10.5, 11.2, 11.7, 11.8, 11.9, 12.7, 13.16_
 
-  - [ ] 6.18 (PRIORITY) Implement `runner/cli.py` and `runner/summary.py` (including `clock-check`)
+  - [x] 6.18 (PRIORITY) Implement `runner/cli.py` and `runner/summary.py` (including `clock-check`)
     - `python -m coroner.runner run a|b|c` (`--runs-dir`, `--mem-limit`, `--leak-chunk-bytes`), exit codes 0, 1, 2; `summary RUN_ID` prints sample count, gap count, last sample time, Container_State, unreconciled drops, malformed lines, durability, and (C only) diagnostics and limitations; Experiment B prints the timing classification; missing or unparseable run exits 2 and writes nothing. `clock-check` command: measure host-to-container offset (Collector `server_time` over N round trips) and print offset and uncertainty. Pre-validates `--mem-limit` with `parse_mem_size`.
     - Files: `coroner/runner/cli.py`, `coroner/runner/__main__.py`, `coroner/runner/summary.py`.
     - Verify: covered by 6.19.
     - Done when: implemented and covered by 6.19.
     - _Requirements: 8.4, 11.20, 12.5, 12.6, 16.1_
 
-  - [ ] 6.19 Write CLI and summary tests
+  - [x] 6.19 Write CLI and summary tests
     - Exit codes, argument handling, summary output for each experiment with fixture manifests and evidence, unknown run id exits 2 without modifying files, unparseable evidence exits 2, no network and no Docker.
     - Files: `tests/unit/runner/test_cli_summary.py`.
     - Verify: `python -m pytest tests/unit/runner/test_cli_summary.py -q`.
