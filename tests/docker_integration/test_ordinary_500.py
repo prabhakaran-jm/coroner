@@ -7,7 +7,10 @@ The process keeps its PID, the container keeps running (no restart), `/health` a
 Probe keeps sending Samples with the same `pid` and a `seq` that grows by exactly 1 per Sample.
 
 Rules this module follows:
-- Compose project `coroner-m07`, file compose.yaml, always passed explicitly. Never the default project.
+- Isolated Compose project from $env:CORONER_TEST_PROJECT (the task 8.3 run uses `coroner-t83`; no default, a missing
+  or protected project such as `coroner`, `coroner-m07`, `coroner-spike` fails before any Docker call, see
+  tests/docker_integration/_isolation.py), file compose.yaml, always passed explicitly. Evidence volume
+  `<project>_coroner_evidence`.
 - Images coroner-collector:m0 and coroner-demo-app:m0 must already exist; nothing is built (`--no-build`).
 - Teardown is `docker compose down` WITHOUT `-v` (skipped when CORONER_KEEP_STACK=1). No volume is removed,
   no prune is run. A unique run id is used, so no existing evidence file is touched.
@@ -28,14 +31,16 @@ from pathlib import Path
 
 import pytest
 
+from tests.docker_integration._isolation import M07_VAR, evidence_volume, gate, selected_project
+
 pytestmark = pytest.mark.docker_integration
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO_ROOT / "compose.yaml"
-PROJECT = "coroner-m07"
+PROJECT = selected_project(M07_VAR)  # raw value, validated by gate() before any live use
 COLLECTOR_IMAGE = "coroner-collector:m0"
 DEMO_IMAGE = "coroner-demo-app:m0"
-EVIDENCE_VOLUME = f"{PROJECT}_coroner_evidence"
+EVIDENCE_VOLUME = evidence_volume(PROJECT)
 EVIDENCE_MOUNT = "/data/evidence"
 DEMO_PORT = 8080
 COLLECTOR_PORT = 8081
@@ -141,6 +146,7 @@ def _env_map(info: dict) -> dict[str, str]:
 def stack():
     """Start collector and demo_app from prebuilt images with the destructive flag on (it only enables the route
     set; this test calls only /error). Tear down without removing volumes unless CORONER_KEEP_STACK=1."""
+    gate(M07_VAR)
     run_id = f"m07-500-{uuid.uuid4().hex[:8]}"
     env = {k: v for k, v in os.environ.items() if k not in _SCRUBBED_ENV}
     env.update({"CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS": "1", "CORONER_RUN_ID": run_id})

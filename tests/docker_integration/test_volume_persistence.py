@@ -1,7 +1,9 @@
 """Named-volume ownership and persistence under UID/GID 10001 (task 5.6; Docker integration, opt-in).
 
-Runs only with --run-docker or CORONER_RUN_DOCKER=1. Starts ONLY the `collector` service of compose project
-`coroner` (`up -d --no-deps collector`; the image `coroner-collector:m0` must already be built), checks the
+Runs only with --run-docker or CORONER_RUN_DOCKER=1. Starts ONLY the `collector` service of the isolated compose
+project named by $env:CORONER_TEST_M05_PROJECT (the task 8.3 run uses `coroner-t83-m05`; no default, a missing or
+protected project fails before any Docker call, see _isolation.py) with `up -d --no-deps collector` (the image
+`coroner-collector:m0` must already be built). All writes go to the volume `<project>_coroner_evidence`. It checks the
 volume ownership and mode, ingests a Sample, restarts the container, and reads the evidence back through the
 read-only API.
 
@@ -9,6 +11,9 @@ Safety: this module never removes anything. Teardown is `docker compose stop col
 `down -v`, `volume rm` or any prune. A fresh volume is guaranteed by the coordinator's preflight absence check
 (Execution Rule 11), not by this module. On a failure the diagnostics (inspect output, logs) are printed, nothing
 is deleted. Every Sample uses a unique run id `m05-vol-<uuid8>`, so a reused volume is not disturbed.
+
+Lifecycle: teardown only STOPS the Collector and leaves a stopped container. Before test_collector_readonly_rootfs.py
+the coordinator must run `docker compose -p coroner-t83-m05 -f compose.yaml down` (never -v). Run strictly sequentially.
 
 Run live:  python -m pytest tests/docker_integration/test_volume_persistence.py --run-docker -q
 """
@@ -24,12 +29,15 @@ from typing import Any
 
 import pytest
 
+from tests.docker_integration._isolation import M05_VAR, evidence_volume, gate, selected_project
+
 pytestmark = pytest.mark.docker_integration
 
 REPO = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO / "compose.yaml"
 DOCKERFILE = REPO / "docker" / "collector.Dockerfile"
-PROJECT = "coroner"
+PROJECT = selected_project(M05_VAR)  # raw value, validated by gate() before any live use
+EVIDENCE_VOLUME = evidence_volume(PROJECT)
 SERVICE = "collector"
 IMAGE = "coroner-collector:m0"
 EVIDENCE_DIR = "/data/evidence"
@@ -149,8 +157,9 @@ class Stack:
 
 @pytest.fixture(scope="module")
 def stack():
+    gate(M05_VAR)
     if _run(["docker", "image", "inspect", IMAGE], check=False).returncode != 0:
-        pytest.fail(f"image {IMAGE} is missing. Build it first (docker compose -p coroner build collector); this test does not build.")
+        pytest.fail(f"image {IMAGE} is missing. Build it first (this test does not build and never retags it).")
     _compose("up", "-d", "--no-deps", SERVICE)
     cid = _container_id()
     try:
@@ -187,6 +196,7 @@ def test_02_evidence_dir_owner_and_mode_match_dockerfile(stack: Stack) -> None:
     assert mode == _dockerfile_mode(), f"{EVIDENCE_DIR} mode is {mode}, Dockerfile says {_dockerfile_mode()}"
     mounts = [m for m in _inspect(stack.cid)["Mounts"] if m["Destination"] == EVIDENCE_DIR]
     assert mounts and mounts[0]["Type"] == "volume" and mounts[0]["RW"] is True, mounts
+    assert mounts[0]["Name"] == EVIDENCE_VOLUME, f"collector mounts {mounts[0]['Name']}, expected {EVIDENCE_VOLUME}"
 
 
 def test_03_healthz_reports_storage_ok(stack: Stack) -> None:

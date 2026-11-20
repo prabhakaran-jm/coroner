@@ -10,8 +10,15 @@ existed beforehand is byte-identical afterwards.
 
 Safety: the only object this module removes is its own container `coroner-ro-test-<uuid8>` (`docker stop`,
 `docker rm`). It never uses `-v`, `down`, `volume rm` or any prune, and mounts the volume read-only for its
-snapshots. Unique run id `m05-ro-<uuid8>`, so an existing volume is not disturbed. The Compose project `coroner`
-must be down (no other container may use the volume) or the module fails before starting anything.
+snapshots. Unique run id `m05-ro-<uuid8>`, so an existing volume is not disturbed.
+
+Isolation: the volume is `<project>_coroner_evidence` of the project in $env:CORONER_TEST_M05_PROJECT (the task 8.3
+run uses `coroner-t83-m05`; no default, a missing or protected project fails before any Docker call, see
+_isolation.py). BOTH the read-only snapshot mounts and the writable container mount use that volume only.
+Module order: it needs that volume to exist (created by test_compose_isolation.py / test_volume_persistence.py in the
+same project) and no container may use it. test_volume_persistence.py leaves a stopped container, so the coordinator
+must first run `docker compose -p coroner-t83-m05 -f compose.yaml down` (never -v); otherwise this module fails
+before starting anything.
 
 Run live:  python -m pytest tests/docker_integration/test_collector_readonly_rootfs.py --run-docker -q
 """
@@ -26,11 +33,14 @@ from typing import Any
 
 import pytest
 
+from tests.docker_integration._isolation import M05_VAR, evidence_volume, gate, selected_project
+
 pytestmark = pytest.mark.docker_integration
 
 REPO = Path(__file__).resolve().parents[2]
 IMAGE = "coroner-collector:m0"
-VOLUME = "coroner_coroner_evidence"
+PROJECT = selected_project(M05_VAR)  # raw value, validated by gate() before any live use
+VOLUME = evidence_volume(PROJECT)
 EVIDENCE_DIR = "/data/evidence"
 UID_GID = "10001:10001"
 HEALTHY_TIMEOUT_S = 60
@@ -152,12 +162,19 @@ def _cleanup(name: str) -> None:
 
 @pytest.fixture(scope="module")
 def box():
+    gate(M05_VAR)
     if _run(["docker", "image", "inspect", IMAGE], check=False).returncode != 0:
         pytest.fail(f"image {IMAGE} is missing. Build it first; this test does not build.")
     if _run(["docker", "volume", "inspect", VOLUME], check=False).returncode != 0:
-        pytest.fail(f"volume {VOLUME} does not exist; this test does not create or recreate it.")
+        pytest.fail(
+            f"volume {VOLUME} does not exist; this test does not create or recreate it. Run test_compose_isolation.py "
+            f"and test_volume_persistence.py with the same CORONER_TEST_M05_PROJECT={PROJECT} first (module order)."
+        )
     users = _volume_users()
-    assert not users, f"other containers use {VOLUME}: {users}. Run `docker compose -p coroner down` (no -v) first."
+    assert not users, (
+        f"other containers use {VOLUME}: {users}. test_volume_persistence.py leaves a stopped container; run "
+        f"`docker compose -p {PROJECT} -f compose.yaml down` (no -v) first."
+    )
     before = _snapshot()
     name = f"coroner-ro-test-{uuid.uuid4().hex[:8]}"
     run_id = f"m05-ro-{uuid.uuid4().hex[:8]}"

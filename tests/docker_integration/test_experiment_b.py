@@ -12,27 +12,30 @@ SIGKILL SAFETY
 - This test never sends a kill or any other signal and never calls `/crash` or `/leak`.
 
 Rules this module follows (same as test_experiment_a.py):
-- Compose project `coroner-m07`, file compose.yaml, always passed explicitly to every compose command the test
-  issues. The Runner gets the project only through `CORONER_COMPOSE_PROJECT=coroner-m07` in the SUBPROCESS env
-  (os.environ is never changed). The project `coroner` is never targeted.
+- Isolated Compose project from $env:CORONER_TEST_PROJECT (the task 8.3 run uses `coroner-t83`; no default, a missing
+  or protected project fails before any Docker call, see _isolation.py), file compose.yaml, always passed explicitly
+  to every compose command the test issues. The Runner gets the project only through
+  `CORONER_COMPOSE_PROJECT=<selected project>` in the SUBPROCESS env (os.environ is never changed). The protected
+  projects `coroner`, `coroner-m07` and `coroner-spike` are never targeted.
 - Images coroner-collector:m0 and coroner-demo-app:m0 must already exist; nothing is built, tagged or removed.
-- No coroner-m07 container or network may exist at the start; otherwise the fixture fails early and cleans up
-  nothing. The labelled evidence volume `coroner-m07_coroner_evidence` legitimately persists between runs and is
-  tolerated. Run sequentially, never in parallel with another coroner-m07 test.
-- Teardown is `docker compose -p coroner-m07 -f compose.yaml down` WITHOUT `-v`, skipped when CORONER_KEEP_STACK=1
+- No container or network of the selected project may exist at the start; otherwise the fixture fails early and
+  cleans up nothing. The labelled evidence volume `<project>_coroner_evidence` legitimately persists between runs
+  and is tolerated. Run sequentially, never in parallel with another test of the same project.
+- Teardown is `docker compose -p <project> -f compose.yaml down` WITHOUT `-v`, skipped when CORONER_KEEP_STACK=1
   so independent `docker inspect` evidence can be taken first. No volume is removed and no prune is run. The Runner
   creates a unique run id each time, so no existing evidence file is touched or overwritten.
 - Set CORONER_OBSERVATIONS_PATH to also write the recorded observations as JSON to that file.
 
 MANUAL REAL-RUN STEPS (run only after separate authorisation; the Runner sends the SIGKILL)
 1. Confirm the images exist: `docker image inspect coroner-collector:m0 coroner-demo-app:m0`.
-2. Confirm no coroner-m07 container exists: `docker ps -a --filter label=com.docker.compose.project=coroner-m07`.
-   If one does: `docker compose -p coroner-m07 -f compose.yaml down` (no -v), then re-check.
+2. Select the isolated project: `$env:CORONER_TEST_PROJECT = 'coroner-t83'` (PowerShell). Confirm no container of it
+   exists: `docker ps -a --filter label=com.docker.compose.project=coroner-t83`.
+   If one does: `docker compose -p coroner-t83 -f compose.yaml down` (no -v), then re-check.
 3. From the repository root, with the virtual environment active (or `.\\.venv\\Scripts\\python.exe -m pytest`):
    `$env:CORONER_KEEP_STACK = '1'` (PowerShell; optional, keeps the exited Demo_App for manual `docker inspect`), then
    `python -m pytest tests/docker_integration/test_experiment_b.py --run-docker -v -s -p no:cacheprovider`
-4. Afterwards, if the stack was kept: `docker inspect coroner-m07-demo_app-1`, then
-   `docker compose -p coroner-m07 -f compose.yaml down` (no -v).
+4. Afterwards, if the stack was kept: `docker inspect coroner-t83-demo_app-1`, then
+   `docker compose -p coroner-t83 -f compose.yaml down` (no -v).
 """
 from __future__ import annotations
 
@@ -49,17 +52,24 @@ from pathlib import Path
 
 import pytest
 
+from tests.docker_integration._isolation import (
+    FORBIDDEN_PROJECTS,
+    M07_VAR,
+    PROTECTED_VOLUMES,
+    evidence_volume,
+    gate,
+    selected_project,
+)
+
 pytestmark = pytest.mark.docker_integration
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO_ROOT / "compose.yaml"
 RUNS_DIR = REPO_ROOT / "runs"
-PROJECT = "coroner-m07"
-FORBIDDEN_PROJECT = "coroner"
+PROJECT = selected_project(M07_VAR)  # raw value, validated by gate() before any live use
 COLLECTOR_IMAGE = "coroner-collector:m0"
 DEMO_IMAGE = "coroner-demo-app:m0"
-EVIDENCE_VOLUME = f"{PROJECT}_coroner_evidence"
-PROTECTED_VOLUMES = ("coroner_coroner_evidence", "coroner-spike_coroner_spike_evidence")
+EVIDENCE_VOLUME = evidence_volume(PROJECT)
 EVIDENCE_MOUNT = "/data/evidence"
 COLLECTOR_NAME = f"{PROJECT}-collector-1"
 DEMO_NAME = f"{PROJECT}-demo_app-1"
@@ -193,6 +203,7 @@ def experiment():
     """Start the Collector, run Experiment B through the real Runner, and yield what was observed.
 
     Teardown is `down` without `-v` unless CORONER_KEEP_STACK=1."""
+    gate(M07_VAR)
     env = {k: v for k, v in os.environ.items() if k not in _SCRUBBED_ENV}
     runner_env = dict(env)
     runner_env["CORONER_COMPOSE_PROJECT"] = PROJECT  # subprocess env only; os.environ is never changed
@@ -497,9 +508,10 @@ def test_06_collector_healthy_and_isolated(experiment) -> None:
     assert demo["Mounts"] == []  # the Demo_App has no evidence mount
     assert not {m.get("Name") for m in demo["Mounts"]} & set(PROTECTED_VOLUMES)
 
-    # Nothing was created in project `coroner`, and no new volume appeared (the labelled evidence volume persists).
-    forbidden = _project_resources(env, FORBIDDEN_PROJECT)
-    assert not forbidden["containers"] and not forbidden["networks"], forbidden
+    # Nothing was created in any protected project, and no new volume appeared (the labelled evidence volume persists).
+    for forbidden_project in FORBIDDEN_PROJECTS:
+        forbidden = _project_resources(env, forbidden_project)
+        assert not forbidden["containers"] and not forbidden["networks"], (forbidden_project, forbidden)
     new_volumes = _volume_names(env) - experiment["volumes_before"]
     assert not new_volumes, f"new volumes appeared: {new_volumes}"
     names = set(_lines(_run(["docker", "ps", "-a", "--format", "{{.Names}}"], env=env)))

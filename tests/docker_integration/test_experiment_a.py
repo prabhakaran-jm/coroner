@@ -7,14 +7,16 @@ The test starts its own Collector, then launches the real Experiment_Runner
 (`POST /crash` -> `os._exit(1)`) against an independent `docker inspect` of the Demo_App container.
 
 Rules this module follows:
-- Compose project `coroner-m07`, file compose.yaml, always passed explicitly to every compose command the test
-  issues. The Runner gets the project only through `CORONER_COMPOSE_PROJECT=coroner-m07` in the SUBPROCESS env.
-  The project `coroner` is never targeted.
+- Isolated Compose project from $env:CORONER_TEST_PROJECT (the task 8.3 run uses `coroner-t83`; no default, a missing
+  or protected project fails before any Docker call, see _isolation.py), file compose.yaml, always passed explicitly
+  to every compose command the test issues. The Runner gets the project only through
+  `CORONER_COMPOSE_PROJECT=<selected project>` in the SUBPROCESS env. The protected projects `coroner`,
+  `coroner-m07` and `coroner-spike` are never targeted.
 - Images coroner-collector:m0 and coroner-demo-app:m0 must already exist; the test starts the Collector with
   `--no-build` and never builds, tags or removes an image.
-- No coroner-m07 container may exist at the start (the Runner recreates the Demo_App; a previous exited container
+- No container of the selected project may exist at the start (the Runner recreates the Demo_App; a previous exited container
   would be replaced, so the test refuses to start over one). Run sequentially, never in parallel.
-- Teardown is `docker compose -p coroner-m07 -f compose.yaml down` WITHOUT `-v`, skipped when
+- Teardown is `docker compose -p <project> -f compose.yaml down` WITHOUT `-v`, skipped when
   CORONER_KEEP_STACK=1 so independent `docker inspect` evidence can be taken first. No volume is removed and no
   prune is run. The Runner creates a unique run id each time, so no existing evidence file is touched.
 - Only the Runner calls `/crash`. This test never sends it, and nothing is killed.
@@ -35,17 +37,24 @@ from pathlib import Path
 
 import pytest
 
+from tests.docker_integration._isolation import (
+    FORBIDDEN_PROJECTS,
+    M07_VAR,
+    PROTECTED_VOLUMES,
+    evidence_volume,
+    gate,
+    selected_project,
+)
+
 pytestmark = pytest.mark.docker_integration
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO_ROOT / "compose.yaml"
 RUNS_DIR = REPO_ROOT / "runs"
-PROJECT = "coroner-m07"
-FORBIDDEN_PROJECT = "coroner"
+PROJECT = selected_project(M07_VAR)  # raw value, validated by gate() before any live use
 COLLECTOR_IMAGE = "coroner-collector:m0"
 DEMO_IMAGE = "coroner-demo-app:m0"
-EVIDENCE_VOLUME = f"{PROJECT}_coroner_evidence"
-PROTECTED_VOLUMES = ("coroner_coroner_evidence", "coroner-spike_coroner_spike_evidence")
+EVIDENCE_VOLUME = evidence_volume(PROJECT)
 EVIDENCE_MOUNT = "/data/evidence"
 COLLECTOR_PORT = 8081
 STARTUP_TIMEOUT_S = 90
@@ -142,6 +151,7 @@ def experiment():
     """Start the Collector, run Experiment A through the real Runner, and yield what was observed.
 
     Teardown is `down` without `-v` unless CORONER_KEEP_STACK=1."""
+    gate(M07_VAR)
     env = {k: v for k, v in os.environ.items() if k not in _SCRUBBED_ENV}
     runner_env = dict(env)
     runner_env["CORONER_COMPOSE_PROJECT"] = PROJECT  # subprocess env only; os.environ is never changed
@@ -326,18 +336,20 @@ def test_03_collector_healthy_and_isolated(experiment) -> None:
     bindings = collector["HostConfig"]["PortBindings"]
     assert [b["HostIp"] for b in bindings["8081/tcp"]] == ["127.0.0.1"], bindings
 
-    # Nothing was created in project `coroner`, and no new volume appeared.
-    # (Volumes are checked by name below: the existing, labelled `coroner_coroner_evidence` is expected to persist.)
-    forbidden = _project_resources(env, FORBIDDEN_PROJECT)
-    assert not forbidden["containers"] and not forbidden["networks"], forbidden
-    assert forbidden["volumes"] == [f"{FORBIDDEN_PROJECT}_coroner_evidence"] or not forbidden["volumes"], forbidden
+    # Nothing was created in any protected project, and no new volume appeared.
+    # (Volumes are checked by name below: existing labelled protected volumes are expected to persist.)
+    for forbidden_project in FORBIDDEN_PROJECTS:
+        forbidden = _project_resources(env, forbidden_project)
+        assert not forbidden["containers"] and not forbidden["networks"], (forbidden_project, forbidden)
+        assert set(forbidden["volumes"]) <= set(PROTECTED_VOLUMES), (forbidden_project, forbidden)
     new_volumes = _volume_names(env) - experiment["volumes_before"]
     assert not new_volumes, f"new volumes appeared: {new_volumes}"
     for protected in PROTECTED_VOLUMES:
         assert protected not in {m.get("Name") for m in collector["Mounts"]}
-    names = set(_lines(_run(["docker", "ps", "-a", "--format", "{{.Names}}"], env=env)))
-    # Exactly the two containers of project coroner-m07 exist; none is named like a `coroner` project container
-    # (`coroner-collector-1`, `coroner-demo_app-1`).
+    # Scoped to the selected project (other projects on the daemon are not observed): exactly its two containers
+    # exist, by exact name.
+    label = f"label=com.docker.compose.project={PROJECT}"
+    names = set(_lines(_run(["docker", "ps", "-a", "--filter", label, "--format", "{{.Names}}"], env=env)))
     assert names == {f"{PROJECT}-collector-1", f"{PROJECT}-demo_app-1"}, names
 
 

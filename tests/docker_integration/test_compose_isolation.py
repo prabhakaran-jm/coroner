@@ -3,8 +3,12 @@
 Runs only with --run-docker or CORONER_RUN_DOCKER=1 (see tests/conftest.py).
 
 Rules this module follows:
-- Project `coroner`, file compose.yaml. Images coroner-collector:m0 and coroner-demo-app:m0 must already
-  exist; nothing is built or pruned here.
+- Isolated project taken from $env:CORONER_TEST_M05_PROJECT (the task 8.3 run uses `coroner-t83-m05`), file
+  compose.yaml. There is no default: without the variable (or with a protected project such as `coroner`,
+  `coroner-m07`, `coroner-spike`) every live test fails before any Docker call (tests/docker_integration/_isolation.py).
+  All writes go to the derived volume `<project>_coroner_evidence`. Images coroner-collector:m0 and
+  coroner-demo-app:m0 must already exist; nothing is built or pruned here.
+- Lifecycle: this is the first M0.5 module; run the modules strictly one at a time, see _isolation.py.
 - Teardown is `docker compose down` WITHOUT `-v`. No volume is ever removed, no prune is ever run.
 - Assertions read the actual running containers through `docker inspect`, not compose.yaml.
 - /crash is never called when the destructive flag could be enabled; no OOM experiment is run.
@@ -24,14 +28,16 @@ from pathlib import Path
 
 import pytest
 
+from tests.docker_integration._isolation import M05_VAR, evidence_volume, gate, selected_project
+
 pytestmark = pytest.mark.docker_integration
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO_ROOT / "compose.yaml"
-PROJECT = "coroner"
+PROJECT = selected_project(M05_VAR)  # raw value, validated by gate() before any live use
 COLLECTOR_IMAGE = "coroner-collector:m0"
 DEMO_IMAGE = "coroner-demo-app:m0"
-EVIDENCE_VOLUME = "coroner_coroner_evidence"
+EVIDENCE_VOLUME = evidence_volume(PROJECT)
 EVIDENCE_MOUNT = "/data/evidence"
 DEFAULT_MEMORY = 134217728
 STARTUP_TIMEOUT_S = 60
@@ -144,9 +150,16 @@ def _evidence_snapshot(cid: str) -> dict[str, int]:
 # ---------------------------------------------------------------- fixtures
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _selected_project():
+    """Refuse every test in this module (including those without the stack) unless the project is isolated."""
+    gate(M05_VAR)
+
+
 @pytest.fixture(scope="module")
 def stack():
     """Bring both services up from prebuilt images; tear down without removing volumes."""
+    gate(M05_VAR)
     for image in (COLLECTOR_IMAGE, DEMO_IMAGE):
         proc = _run(["docker", "image", "inspect", image])
         if proc.returncode != 0:
