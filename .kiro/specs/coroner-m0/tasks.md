@@ -712,7 +712,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 6.21 Checkpoint - M0.6 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 21 to 29 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 19 November 2026.
 
-- [ ] 7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test
+- [x] 7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test
   - [x] 7.1 (PRIORITY) Preflight: clean build, readiness, and host-vs-container clock offset measurement
     - `docker compose down` (no `-v`) and, only if a fresh volume is really required, the protected removal of Execution Rule 11 (verify the volume name `coroner_coroner_evidence` and label `com.docker.compose.project=coroner`, list contents and count run files, archive evidence to `runs/archive/<UTC timestamp>/`, obtain the user's explicit approval at that moment, remove only that volume), `docker compose build`, `docker compose up -d collector`. Run `python -m coroner.runner clock-check` (at least 20 round trips) and also compare `docker exec <collector> date -u +%s.%N` against the host UTC time to measure the offset between the host clock and the container (Docker Desktop VM) clock. Record offset, spread, and round-trip uncertainty. The documented 250 ms tolerance stays unchanged. If the measured offset plus uncertainty approaches or exceeds 250 ms, STOP, record, and ask the user; never change the constant silently. If testing shows a better-justified bound, document the measurement and propose it to the user.
     - Files: `docs/m0-results/clock-offset.md`.
@@ -776,11 +776,11 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: real measurements recorded.
     - _Requirements: 2.10, 4.3_
 
-  - [ ] 7.10 Checkpoint - M0.7 complete
+  - [x] 7.10 Checkpoint - M0.7 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), confirm the experiment results note contains real run data for A, B, C, and the ordinary 500 test, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 20 November 2026.
 
 - [ ] 8. M0.8 Final M0 acceptance tests, documentation (incl. Windows section), reproducibility checks, Git commit preparation
-  - [ ] 8.1 Write `README.md` (reproduction, limitations, Windows section)
+  - [x] 8.1 Write `README.md` (reproduction, limitations, Windows section)
     - Prerequisites with minimum versions (use the verified versions), Compose start commands, how to run each experiment, how to inspect evidence, expected exit codes and OOMKilled per experiment (A: 1/false, B: 137/false, C: 137/true), known limitations (the 15 items in the design, including the unobserved interval and the Experiment C Sampling_Limitations), Durability_Levels and `CORONER_DURABILITY` with the fsync caveat, Experiment A is a controlled fatal process exit using `os._exit(1)`, destructive endpoints disabled unless `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1` and for local use only, `storage_ok` semantics (HTTP 200 alone is not proof), the Experiment B capture versus receive note with the documented 250 ms tolerance and the measured clock offset from 7.1, default pytest is Docker-free and network-free with the opt-in commands. Windows section: Docker Desktop with Linux containers and WSL2, minimum Python, PowerShell verification commands, how to confirm the memory limit is enforced, WSL2 caveats.
     - Files: `README.md`.
     - Verify: `Get-Content README.md | Select-String "os._exit","storage_ok","250","WSL2","run-docker"`.

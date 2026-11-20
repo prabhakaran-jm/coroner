@@ -2,10 +2,11 @@
 
 Crash forensics workstation for Python containers, built with Kiro for Kiroween 2026.
 
-> **DRAFT (Task 8.1 is still pending).** This README is written from results recorded in `docs/m0-results/`.
-> Experiment A, Experiment B and Experiment C are **verified** from real runs (see "Verified results"). Experiment C was
-> a real Docker OOM kill (run `c-20261120T174958Z-94f4225c`). Each of B and C was executed once, A four times, on one Docker
-> Desktop session. Test totals will be re-verified before this draft is finalised.
+> **Status.** Verified on Windows with Docker Desktop (Linux containers, WSL2), on a single host. Native Linux hosts are not
+> verified. Experiment A, Experiment B and Experiment C are **verified** from real runs (see section 13). Experiment C was
+> a real Docker OOM kill (run `c-20261120T174958Z-94f4225c`). Experiment B and Experiment C each have one verified real
+> execution and Experiment A has four. There is no repeat-consistency proof. Every result below is taken from
+> `docs/m0-results/`.
 
 ## 1. What Coroner M0 is
 
@@ -16,13 +17,13 @@ honestly what it does and does not show? It is a crash-evidence telemetry pipeli
 |---|---|---|
 | Probe | `coroner/probe` | Runs inside the Demo App. Samples process data (including RSS) every `CORONER_SAMPLE_INTERVAL_MS` (default 500 ms) and posts each Sample to the Collector. A Sample that cannot be delivered is counted as dropped, not retried. |
 | Collector | `coroner/collector` | FastAPI service. Stores acknowledged Samples as JSON Lines evidence files on a named volume, detects gaps, serves `GET /healthz` and `GET /v1/runs/<run_id>/evidence`. |
-| Demo App | `coroner/demo_app` | Small FastAPI app with the Probe. Destructive endpoints (`POST /leak`, `POST /crash`, `GET /error`) exist only when `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS` is exactly `1`. Local use only. |
+| Demo App | `coroner/demo_app` | Small FastAPI app with the Probe. Destructive endpoints (`POST /leak`, `POST /crash`, `GET /error`) exist only when `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS` is exactly `1`. For local testing only; must not be exposed beyond localhost. |
 | Runner | `coroner/runner` | Host-side CLI. Starts the Demo App with Docker Compose, causes one termination, reads `docker inspect`, fetches evidence, evaluates mandatory checks and writes a run manifest. |
 
 Shared code lives in `coroner/common` and `coroner/evidence` (schema, writer, reader, gap accounting).
 
 M0 does not claim to explain why a process died. It reports what the Runner observed from Docker and what the
-Samples show, plus the limitations in section 13.
+Samples show, plus the limitations in section 14.
 
 ## 2. Architecture overview
 
@@ -59,10 +60,11 @@ Sources: `compose.yaml`, `docs/m0-results/volume-ownership.md`, `coroner/runner/
 | Tool | Verified version | Source |
 |---|---|---|
 | Windows | Windows 11, PowerShell | `docs/m0-results/docker-prereqs.md` |
-| Python (host) | 3.12.10 (`requires-python = ">=3.12"` in `pyproject.toml`; 3.10 and 3.11 are not tested and not claimed) | `pyproject.toml`, `docs/m0-results/clock-offset.md` (host `.venv` 3.12.x), requirements headers |
+| Python (host) | Minimum 3.12; verified 3.12.10 (`requires-python = ">=3.12"` in `pyproject.toml`; 3.10 and 3.11 are not tested and not claimed) | `docs/m0-results/dependency-verification.md`, `docs/m0-results/environment.md` |
+| Git | 2.55.0.windows.5 (needed to clone the repository) | `docs/m0-results/environment.md` |
 | Docker Desktop | 4.99.0 (245822), Linux containers, WSL2 backend | `docs/m0-results/docker-prereqs.md` |
 | Docker Engine / client | 29.9.3 (API 1.56), context `desktop-linux` | same |
-| Docker Compose | v5.7.0 | same |
+| Docker Compose (v2 plugin, `docker compose`) | v5.7.0 | same |
 | Buildx | v0.38.1 | same |
 | Base image | `python:3.12.8-slim-bookworm`, digest `sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0` (linux/amd64) | same, `docker/*.Dockerfile` |
 
@@ -118,12 +120,13 @@ docker info
 After an experiment the Demo App container is stopped, not removed. Check what Docker actually applied:
 
 ```powershell
-$id = docker compose -p coroner ps -a -q demo_app
+$id = docker compose -p coroner-m07 -f compose.yaml ps -a -q demo_app
 docker inspect $id --format '{{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.State.OOMKilled}} {{.State.ExitCode}}'
 ```
 
-(The design's command form, `.kiro/specs/coroner-m0/design.md`, "Windows Setup and Verification".) Use the Compose
-project that the run used, for example `-p coroner-m07` if you set `CORONER_COMPOSE_PROJECT`. Read the result as follows:
+(The design's command form, `.kiro/specs/coroner-m0/design.md`, "Windows Setup and Verification".) Do this **before**
+`docker compose -p coroner-m07 -f compose.yaml down`, because `down` removes the stopped container and its inspect data.
+Use the Compose project that the run used (`coroner-m07` in the examples here). Read the result as follows:
 
 - `HostConfig.Memory` must equal the limit in bytes: `134217728` for `128m`. `0` means no limit, and Experiment C would not
   be a genuine OOM kill.
@@ -161,28 +164,35 @@ container, `docs/m0-results/docker-prereqs.md`). That shows the limit is applied
 The Demo App depends on the Collector being healthy. If `CORONER_RUN_ID` is empty, the Probe generates `manual-<8 hex>`,
 so every manual `docker compose up` of `demo_app` writes a new run file.
 
-Build and start (command forms below were not copied from a recorded run; the recorded Compose results are in
-`docs/m0-results/m0.5-docker.md` and `docs/m0-results/compose-checks.md`, which this draft does not quote):
+Start the Collector from the existing images in the isolated project `coroner-m07`. Always pass `-p` and `-f`. A command
+without `-p` targets the project `coroner` and mounts the protected volume `coroner_coroner_evidence`:
 
 ```powershell
-docker compose build
-docker compose up -d collector
-docker compose ps
+docker compose -p coroner-m07 -f compose.yaml up -d --no-deps --no-build collector
+docker compose -p coroner-m07 -f compose.yaml ps
 Invoke-RestMethod http://127.0.0.1:8081/healthz
 ```
 
 Stop the stack **without** `-v`:
 
 ```powershell
-docker compose down
+docker compose -p coroner-m07 -f compose.yaml down
 ```
 
+**Building images (one-time step on a fresh clone only).** The images `coroner-collector:m0` and `coroner-demo-app:m0`
+must exist before the commands above. On a fresh clone, `docker compose build` creates them. Do not rebuild on a machine
+that holds the recorded results: a rebuild retags `coroner-collector:m0` and `coroner-demo-app:m0`, the images the recorded
+results refer to. A plain build for `coroner-m07` is not a recorded result. The original image build is recorded in
+`docs/m0-results/m0.5-docker.md`. The clean-build verification used separate `:m07-verify` tags and is recorded in
+`docs/m0-results/clock-offset.md`.
+
 The Runner starts only the Demo App (`up -d --no-deps --force-recreate demo_app`) and expects the Collector to be ready.
-Start the Collector yourself first, in the same Compose project the Runner will use. The Runner sets
+Start the Collector yourself first (command above), in the same Compose project the Runner will use. The Runner sets
 `CORONER_RUN_ID`, `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1` and `CORONER_DEMO_MEM_LIMIT` for the Demo App itself.
 
-> The destructive endpoints are for local experiments only. They are disabled (404) unless
-> `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1`. Do not publish the Demo App port beyond `127.0.0.1`.
+> The destructive endpoints (the Destructive_Endpoints: `POST /crash`, `POST /leak`, `GET /error`) are for local testing
+> only. They are disabled (404) unless `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1` is set, and they must not be exposed beyond
+> localhost. Do not publish the Demo App port beyond `127.0.0.1`.
 
 ## 5. Evidence persistence
 
@@ -201,10 +211,28 @@ Start the Collector yourself first, in the same Compose project the Runner will 
 - **Never run `docker compose down -v`**, `docker volume rm` or `docker system prune` against an evidence volume.
 - **Protected volumes** (recorded as existing and untouched in `docs/m0-results/`): `coroner_coroner_evidence` (M0.5) and
   `coroner-spike_coroner_spike_evidence` (spike). Do not mount, modify or remove them.
-- Inspect evidence read-only. Use `python -m coroner.runner summary RUN_ID`, the host copy `runs/<run_id>/evidence.jsonl`,
+- Inspect evidence read-only. Use `python -m coroner.runner summary <run id>`, the host copy `runs/<run_id>/evidence.jsonl`,
   or `GET http://127.0.0.1:8081/v1/runs/<run_id>/evidence` while the Collector runs. Where a volume must be read directly,
   the recorded procedure used a snapshot container with the volume mounted `:ro` and no network
   (`docs/m0-results/volume-ownership.md`).
+
+#### Inspecting evidence in PowerShell
+
+The examples use the recorded Experiment A run id `a-20261120T134321Z-a5e5a30e`. Replace it with your own run id.
+
+```powershell
+Get-Content runs\a-20261120T134321Z-a5e5a30e\evidence.jsonl -TotalCount 3
+Select-String -Path runs\a-20261120T134321Z-a5e5a30e\evidence.jsonl -Pattern '"record_type":"termination"'
+(Invoke-WebRequest http://127.0.0.1:8081/v1/runs/a-20261120T134321Z-a5e5a30e/evidence).Content
+python -m coroner.runner summary a-20261120T134321Z-a5e5a30e
+```
+
+- `jq` is not assumed on Windows. Use the PowerShell commands above or Python.
+- The `Select-String` pattern assumes compact JSON without spaces. If it matches nothing, search for `termination` instead.
+- Do not use `>` redirection to copy evidence or `docker inspect` output in Windows PowerShell 5.1. It writes UTF-16. The
+  independent capture of the Experiment B inspect output made this mistake once (`docs/m0-results/experiment-results.md`).
+  For a scratch copy **outside** the repository evidence, pipe through `Set-Content -Encoding utf8`. When you read a file
+  that may be UTF-16, use `Get-Content -Encoding Unicode`.
 - Volumes accumulate run files. Each run adds a file. M0 has no cleanup command.
 
 ## 6. Compose project isolation
@@ -228,6 +256,7 @@ used `coroner-m07` (run `c-20261120T174958Z-94f4225c`, evidence file in the same
 $env:CORONER_COMPOSE_PROJECT = 'coroner-m07'
 docker compose -p coroner-m07 -f compose.yaml up -d --no-deps --no-build collector
 python -m coroner.runner run a
+Remove-Item Env:CORONER_COMPOSE_PROJECT
 ```
 
 Two projects cannot run at once because the host ports are fixed. The Runner's `compose up` has no `--no-build`, so a
@@ -279,15 +308,17 @@ Expected container state per experiment (`coroner/runner/evaluate.py`, `EXPECTED
 ```powershell
 $env:CORONER_COMPOSE_PROJECT = 'coroner-m07'
 python -m coroner.runner run a
-python -m coroner.runner summary <RUN_ID>
+python -m coroner.runner summary a-20261120T134321Z-a5e5a30e
+Remove-Item Env:CORONER_COMPOSE_PROJECT
 ```
 
-Experiments B and C use the same form (`run b`, `run c`) only when separately authorised; see Safety gates.
+(Use the run id that `run a` printed instead of the recorded example id.) Experiments B and C use the same form
+(`run b`, `run c`); read the safety gates first.
 
-**Safety gates.** Experiment B sends a real SIGKILL and Experiment C triggers a genuine OOM kill. Both run only through the
-Runner and only when the project owner has separately authorised them. A bare `python -m coroner.runner run a|b|c` without
-`CORONER_COMPOSE_PROJECT` targets the default project `coroner` and its protected volume `coroner_coroner_evidence`. Always
-set the variable first, as in the example above.
+**Safety gates.** Experiment B sends a real SIGKILL and Experiment C causes a real OOM kill of the Demo App container. Run
+them only where you accept that. A bare `python -m coroner.runner run a|b|c` without `CORONER_COMPOSE_PROJECT` targets the
+default project `coroner` and its protected volume `coroner_coroner_evidence`. Always set the variable first, as in the
+example above.
 
 Each run starts from the common preamble: Docker available, run directory created, Collector ready (`/healthz` 200 with
 `storage_ok` true, up to 60 s), clock offset measured, Demo App started. A run fails if `/healthz` returns 200 without
@@ -296,12 +327,13 @@ Each run starts from the common preamble: Docker available, run directory create
 ### Experiment A: controlled fatal process exit
 
 The Runner leaks memory for at least 5 seconds, then calls `POST /crash`. The Demo App ends the process with
-`os._exit(1)`. This is a **controlled fatal process exit**. It is not an exception and not an HTTP 500: no exception is
-raised, no handler runs and nothing is flushed. The ordinary-exception case is a separate endpoint, `GET /error`, which
-returns HTTP 500 while the process keeps running.
+`os._exit(1)`. This is a **controlled fatal process exit**. It is not an application error and not an HTTP 500 response. No
+Python shutdown or cleanup handlers run and buffered Python output is not flushed. The separate endpoint `GET /error`
+returns HTTP 500 while the process keeps running: an ordinary HTTP 500 does not terminate the Demo App (verified, section 13).
 
 Checked: exit code 1, `OOMKilled` false, at least one Sample before the crash request, the Collector healthy within 5 s with
-`storage_ok` true. The manifest termination description is exactly `controlled fatal process exit via os._exit(1)`.
+`storage_ok` true. The Runner requires `storage_ok` true both before the experiment and again after the termination
+(`collector_survival`; Requirement 14.11). The manifest termination description is exactly `controlled fatal process exit via os._exit(1)`.
 
 ### Experiment B: SIGKILL
 
@@ -325,19 +357,24 @@ The verdict comes from exactly six mandatory checks: `oom_killed_true`, `exit_co
 
 The Diagnostic_Metrics (`rss_monotonic_tail`, `peak_rss_ratio_of_limit`, Sample count) are recorded and printed, and are
 **informational**: they never decide pass or fail. The Sampling_Limitations statements are always recorded and printed
-(section 13). Use only the default 128 MiB limit to limit host impact.
+(section 14, item 11). Use only the default 128 MiB limit to limit host impact. The OOM kill is taken from Docker
+inspection (`OOMKilled` true, exit code 137), never inferred from RSS or timing. `storage_ok` must also be true after the
+termination (`collector_survival`), so the Collector survives all three failure modes: A, B and C.
 
 ## 9. Durability semantics
 
 `CORONER_DURABILITY` is read by the Collector. Unset or empty means `crash`. Valid values are `process` and `crash`; anything
 else stops the Collector with a configuration error (exit 2). `compose.yaml` passes `${CORONER_DURABILITY:-crash}`.
 
+There are two Durability_Levels, `Process_Durable` and `Crash_Durable`. The M0 default is `Crash_Durable`.
+
 | Level | What the Collector does before acknowledging a Sample |
 |---|---|
-| `process` | Write and flush to the operating system. Survives a Collector or Demo App crash. Not necessarily an OS crash. |
-| `crash` (default) | Write, flush, `fsync` the file, and `fsync` the directory when the file was created. |
+| `Process_Durable` (`CORONER_DURABILITY=process`) | Write and flush to the operating system. Survives a Collector or Demo App crash. Not necessarily an OS crash. |
+| `Crash_Durable` (`CORONER_DURABILITY=crash`, the M0 default) | Write, flush, `fsync` the file, and `fsync` the directory when the file was created. |
 
-The `fsync` caveat: `crash` means `fsync` was performed. Whether the data survives a host or OS crash depends on the Docker
+The `fsync` caveat: `Crash_Durable` means `fsync` was performed. The `fsync` guarantees depend on the Docker volume and the
+underlying host filesystem and storage. Whether the data survives a host or OS crash depends on the Docker
 volume driver, the host filesystem, the Docker Desktop VM layer and the storage hardware. M0 never tests a host crash and
 makes no claim beyond "fsync was performed". On Windows, the writer's directory `fsync` is a documented no-op, but the
 Collector always runs in a Linux container. No atomicity is claimed: after a failed write a partial line can remain, and
@@ -351,7 +388,7 @@ manifest. A mismatch between `/healthz` and the evidence fails the `durability_m
 `GET /healthz` returns `status`, `durability`, `server_time`, `uptime_s` and `storage_ok`. **HTTP 200 alone is not proof of
 healthy storage.** The Collector stays at 200 and reports `storage_ok: false` when the volume is unusable. Every consumer
 (the Compose healthcheck, the Runner's readiness check and the survival checks) requires the JSON value `storage_ok is true`;
-a missing field counts as unhealthy. `storage_ok` is a point-in-time probe (cached up to 1 s). It does not prove that later
+a missing field counts as unhealthy. The Runner requires `storage_ok` true before and after each experiment. `storage_ok` is a point-in-time probe (cached up to 1 s). It does not prove that later
 writes succeed or that data survives a host crash.
 
 ## 10. Clock tolerance
@@ -401,12 +438,21 @@ The default suite is Docker-free and network-free:
 python -m pytest -q
 ```
 
-The current default collection is 4407 collected of 4460, with 53 deselected: 40 earlier Docker integration tests, plus 6 in
-`tests/docker_integration/test_experiment_b.py` and 7 in `test_experiment_c.py`. The last FULL default run (4402 passed,
-5 skipped, 40 deselected, 1 known warning) predates `test_experiment_b.py` and `test_experiment_c.py`, so the totals **will be
-re-verified**. `docs/m0-results/m0.7-runner-project-isolation.md` records 36 deselected for the same 4402 passed.
+Latest recorded full default run (a historical verified run: Task 7.10, `docs/m0-results/m0.7-acceptance.md`, 2026-11-20,
+at commit `c3c9428`): **4402 passed, 0 failed, 5 skipped, 53 deselected, 1 known warning**, exit code 0, about 424 s
+(423.70 s by pytest). The warning is the starlette `testclient` anyio `BlockingPortal` DeprecationWarning. The 53 deselected
+tests are the Docker integration tests, which the default run skips. This is not a permanently current count: counts change
+as tests are added, so rerun `python -m pytest -q` to confirm.
 
-Docker integration tests are opt-in. Only the exact value `1` of the environment variable (or the `--run-docker` flag) opts in.
+Earlier runs, kept for history only: before `test_experiment_b.py` and `test_experiment_c.py` existed, a full default run
+gave 4402 passed, 5 skipped, 40 deselected; before `test_experiment_a.py` existed it gave 36 deselected
+(`docs/m0-results/m0.7-runner-project-isolation.md`). The history adds up: 36 + 4 (`test_experiment_a.py`) = 40, then
++ 6 (`test_experiment_b.py`) + 7 (`test_experiment_c.py`) = 53.
+
+The default `python -m pytest` command runs only Docker-free, network-free unit tests.
+
+Docker integration tests are opt-in (`--run-docker` or `CORONER_RUN_DOCKER=1`). Their Docker prerequisites are the ones in
+section 3.4 (Docker Desktop running with Linux containers) and the two built images named below. Only the exact value `1` of the environment variable (or the `--run-docker` flag) opts in.
 
 **WARNING: never run `--run-docker` (or `CORONER_RUN_DOCKER=1`) without a file path.** An unscoped run would execute every
 Docker test, including the M0.5 tests and the destructive B and C tests. These files belong to the M0.5 project `coroner` and
@@ -416,24 +462,33 @@ the protected volume `coroner_coroner_evidence`, and must not be rerun casually 
 - `tests/docker_integration/test_compose_isolation.py`
 - `tests/docker_integration/test_collector_readonly_rootfs.py`
 
-Explicit per-file commands for the project `coroner-m07` modules:
+Also never run `--run-docker` over the whole `tests/docker_integration` directory.
+
+The per-file tests for `test_ordinary_500.py`, `test_experiment_a.py`, `test_experiment_b.py` and `test_experiment_c.py`
+use the project `coroner-m07` internally. They hard-code it and pass it to every `docker compose` call, and
+`CORONER_COMPOSE_PROJECT` in your shell has no effect on them (the tests set it only for the Runner subprocess). They tear the
+stack down with `docker compose -p coroner-m07 -f compose.yaml down` (no `-v`), unless `CORONER_KEEP_STACK=1` is set. They need
+the images `coroner-collector:m0` and `coroner-demo-app:m0` to exist and do not build.
+
+The fixtures of `test_experiment_b.py` and `test_experiment_c.py` fail early, without changing anything, if any `coroner-m07`
+container already exists. Run this first:
 
 ```powershell
-$env:CORONER_COMPOSE_PROJECT = 'coroner-m07'
-python -m pytest tests/docker_integration/test_ordinary_500.py --run-docker -q
-python -m pytest tests/docker_integration/test_experiment_a.py --run-docker -q
+docker compose -p coroner-m07 -f compose.yaml down
 ```
 
-`test_experiment_b.py` (real SIGKILL) and `test_experiment_c.py` (genuine OOM kill) must only be run with separate explicit
-authorisation from the project owner, one file at a time, with the same variable set first:
+Run one named file per command. Experiment B sends a real SIGKILL and Experiment C causes a real OOM kill of the Demo App
+container, so run those two only where you accept that:
 
 ```powershell
-$env:CORONER_COMPOSE_PROJECT = 'coroner-m07'
 python -m pytest tests/docker_integration/test_experiment_b.py --run-docker -q
-python -m pytest tests/docker_integration/test_experiment_c.py --run-docker -q
 ```
 
-Clear the variable afterwards with `Remove-Item Env:CORONER_COMPOSE_PROJECT`.
+The environment variable form works for one explicitly named file as well:
+
+```powershell
+$env:CORONER_RUN_DOCKER='1'; python -m pytest tests/docker_integration/test_experiment_c.py -q; Remove-Item Env:CORONER_RUN_DOCKER
+```
 
 These tests start real containers and, for the experiment tests, destroy the Demo App container as designed. Read each test
 file before running it. If Docker is unavailable, opted-in integration tests are skipped or fail with a message that Docker is
@@ -445,13 +500,15 @@ Every row below comes from `docs/m0-results/experiment-results.md` (host UTC 202
 
 | Item | Result | Evidence |
 |---|---|---|
-| Experiment A (Task 7.3), real Runner run | **PASS**. Exit 0, `outcome: passed`. Final run `a-20261120T134321Z-a5e5a30e`, container `e5dcb355e4d6d47ea1a2a3068db3c3f0a28ed8e39f3e1642d6c3aee96ea3363a`: `docker inspect` `exited`, exit code 1, `OOMKilled` false, `Memory` 134217728, `RestartCount` 0. 15 Samples (seq 0 to 14, consecutive), 17 evidence records, one `termination` record. First run `a-20261120T133934Z-6d2f2350`: 14 Samples, `FinishedAt` 83 ms after the crash request. Four runs matched an independent `docker inspect`. Integration test `test_experiment_a.py`: `4 passed in 15.94s` (after three executions with defects in the test itself, not the code under test). | `experiment-results.md` |
-| HTTP 500 does not terminate the Demo App (Task 7.2) | **PASS**. `GET /error` returned 500, `GET /health` returned 200 0.016 s later, host `State.Pid` unchanged (3164), `RestartCount` 0, `seq` 0..5 consecutive. Run `m07-500-76640824`. `2 passed in 13.17s`. | `experiment-results.md` |
-| Experiment B (Task 7.4), real SIGKILL sent by the Runner | **VERIFIED**. Run `b-20261120T173541Z-3fa52342`, container `d8f19b8abc9191dd5aaf34f272e08d079cb68bc61c5e677d0c690050b07dc917`, project `coroner-m07`. Runner exit 0, `outcome: passed`, all 7 mandatory checks passed. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` false, `RestartCount` 0. 15 Samples (seq 0 to 14): pre-kill 15, late-received 0, within-tolerance 0, beyond-tolerance 0, after-container-stop 0. Clock offset used +6 ms (uncertainty 8.469 ms), tolerance 250 ms unchanged. `FinishedAt` was 163.093 ms after `sigkill_sent_time`; the `docker kill` call returned 414 ms after it. Collector `storage_ok` true after the kill. Integration test `test_experiment_b.py`: `6 passed in 16.51s`. | `experiment-results.md` |
-| Experiment C (Task 7.5), real Docker OOM kill | **VERIFIED**. Run `c-20261120T174958Z-94f4225c`, container `42a89ff3f2a6f7907cd12913feae448f541ecefc67703e613ec94ff5c20fed44`, project `coroner-m07`. Runner exit 0, `outcome: passed`. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` true, `HostConfig.Memory` 134217728, `MemorySwap` 134217728. The Runner sent no signal and made no `/crash` call. 46 Samples (seq 0 to 45, consecutive), first RSS 46362624, highest RSS 138522624. Collector `storage_ok` true after the kill. Integration test `test_experiment_c.py`: `7 passed in 31.81s`. | `experiment-results.md` |
+| Experiment A (Task 7.3), real Runner run | **PASS**. Exit 0, `outcome: passed`. Final run `a-20261120T134321Z-a5e5a30e`, container `e5dcb355e4d6d47ea1a2a3068db3c3f0a28ed8e39f3e1642d6c3aee96ea3363a`: `docker inspect` `exited`, exit code 1, `OOMKilled` false, `Memory` 134217728, `RestartCount` 0. 15 Samples (seq 0 to 14, consecutive), 17 evidence records, one `termination` record. First run `a-20261120T133934Z-6d2f2350`: 14 Samples, `FinishedAt` 83 ms after the crash request. For all four runs the Runner's manifest matched an independent `docker inspect` (captured at run time and compared byte for byte with the Runner's saved copy). Integration test `test_experiment_a.py`, historical result recorded in Task 7.3: `4 passed in 15.94s` (after three executions with defects in the test itself, not the code under test). | `experiment-results.md` |
+| HTTP 500 does not terminate the Demo App (Task 7.2) | **PASS**. `GET /error` returned 500, `GET /health` returned 200 0.016 s later, host `State.Pid` unchanged (3164), `RestartCount` 0, `seq` 0..5 consecutive. Run `m07-500-76640824`. Historical result recorded in Task 7.2: `2 passed in 13.17s`. | `experiment-results.md` |
+| Experiment B (Task 7.4), real SIGKILL sent by the Runner | **VERIFIED**. Run `b-20261120T173541Z-3fa52342`, container `d8f19b8abc9191dd5aaf34f272e08d079cb68bc61c5e677d0c690050b07dc917`, project `coroner-m07`. Runner exit 0, `outcome: passed`, all 7 mandatory checks passed. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` false, `RestartCount` 0. 15 Samples (seq 0 to 14): pre-kill 15, late-received 0, within-tolerance 0, beyond-tolerance 0, after-container-stop 0. Clock offset used +6 ms (uncertainty 8.469 ms), tolerance 250 ms unchanged. `FinishedAt` was 163.093 ms after `sigkill_sent_time`; the `docker kill` call returned 414 ms after it. Collector `storage_ok` true after the kill. Integration test `test_experiment_b.py`, historical result recorded in Task 7.4: `6 passed in 16.51s`. | `experiment-results.md` |
+| Experiment C (Task 7.5), real Docker OOM kill | **VERIFIED**. Run `c-20261120T174958Z-94f4225c`, container `42a89ff3f2a6f7907cd12913feae448f541ecefc67703e613ec94ff5c20fed44`, project `coroner-m07`. Runner exit 0, `outcome: passed`. `docker inspect`: `Status` `exited`, `ExitCode` 137, `OOMKilled` true, `HostConfig.Memory` 134217728, `MemorySwap` 134217728. The Runner sent no signal and made no `/crash` call. 46 Samples (seq 0 to 45, consecutive), first RSS 46362624, highest RSS 138522624. The peak Sample RSS is 1.032 times the cgroup limit; RSS inside the container and cgroup accounting are different measures, so the verdict rests on `OOMKilled` true and exit code 137 only. The leak made 23 requests; the 23rd ended in `RemoteDisconnected`, which is the kill itself. The RSS series has one dip (132308992 to 129662976, `seq` 40 to 41). It lies outside the 5-Sample diagnostic tail, so `rss_monotonic_tail` is true. Collector `storage_ok` true after the kill. Single Docker Desktop (WSL2) session on one Windows host. Integration test `test_experiment_c.py`, historical result recorded in Task 7.5: `7 passed in 31.81s`. | `experiment-results.md` |
 
-Experiment C ran once and Experiment B ran once; neither is a statement about repeat consistency, other Docker versions or a
-Linux host. The Experiment C diagnostics are informational only (section 8).
+Experiment B and Experiment C each have one verified real execution (Experiment A has four). This is not a statement about
+repeat consistency, other Docker versions or a Linux host, and there is no native Linux-host verification. The Experiment C
+diagnostics are informational only (section 8). The `N passed in X s` figures above are historical results recorded in the
+named tasks, not a current run. The latest full default run is in section 12.
 
 ## 14. Known limitations
 
@@ -465,7 +522,7 @@ Linux host. The Experiment C diagnostics are informational only (section 8).
 5. **fsync guarantees are only as strong as the stack beneath** (section 9).
 6. **Ack-lost duplication.** A persisted Sample whose acknowledgement is lost is counted as dropped by the Probe; stored
    evidence is then a superset and the drop is reported as unreconciled.
-7. **One process incarnation per run id.** A restart inside a run shows up as duplicates or resets.
+7. **One process incarnation per run id.** A restart inside a run shows up as duplicates or resets, not as a new incarnation.
 8. **Clock skew.** The Runner estimates the offset; the correction is approximate (section 11).
 9. **Container id discovery.** The Probe parses `/proc` and may fall back to the 12-character `HOSTNAME`;
    `container_id_source` says which.
@@ -475,8 +532,10 @@ Linux host. The Experiment C diagnostics are informational only (section 8).
     understate the memory limit. Diagnostic_Metrics never decide pass or fail.
 12. **Experiment B capture versus receive time** (section 8). Classification uses an estimated offset and the 250 ms tolerance.
 13. **Unreconciled drops.** A Probe-reported drop whose range cannot be established is reported with an uncertainty flag.
-14. **Malformed lines remain in evidence files.** Only the Evidence_Reader quarantines them.
-15. **`storage_ok` is a point-in-time probe** (section 9).
+14. **Malformed lines remain in evidence files.** Append-only repair keeps the fragment for audit, so standard text tools show
+    it. Only the Evidence_Reader quarantines them.
+15. **`storage_ok` is a point-in-time probe** (section 9). It shows the volume was writable at probe time (cached up to 1 s).
+    It does not prove that later writes succeed or that data survives a host crash.
 
 (Items 1 to 15 are the design's list, `.kiro/specs/coroner-m0/design.md`, "Limitations and uncertainty reporting".) Further
 limits recorded in the results:
@@ -502,7 +561,7 @@ limits recorded in the results:
 - Never use `docker compose down -v`, `docker volume rm`, `docker volume prune` or `docker system prune` on this project.
 - Never mount or modify `coroner_coroner_evidence` or `coroner-spike_coroner_spike_evidence`. Use `CORONER_COMPOSE_PROJECT` to
   keep new evidence in a separate volume.
-- Destructive Demo App endpoints stay disabled unless `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1`, for local use only.
+- Destructive Demo App endpoints stay disabled unless `CORONER_ENABLE_DESTRUCTIVE_ENDPOINTS=1`. They are for local testing only and must not be exposed beyond localhost.
 - Do not change `CLOCK_TOLERANCE_MS` (250) without the project owner's approval.
 - Publish ports on `127.0.0.1` only (as `compose.yaml` does).
 - The `summary` command is read-only.

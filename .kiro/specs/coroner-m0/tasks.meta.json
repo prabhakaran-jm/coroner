@@ -1336,6 +1336,47 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795197622707
       }
+    ],
+    "7.10 Checkpoint - M0.7 complete": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795199386733
+      },
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795202443680
+      }
+    ],
+    "8.1 Write `README.md` (reproduction, limitations, Windows section)": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795199392127
+      },
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203006682
+      },
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203519024
+      },
+      {
+        "executionId": "0fd92488-8019-4bed-adfd-1ec742b089a4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795203606994
+      }
+    ],
+    "7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test": [
+      {
+        "executionId": "7cc42e36-9e80-4a88-abbf-84bf3b68d3a5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795202444183
+      }
     ]
   }
 }
