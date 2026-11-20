@@ -1225,6 +1225,25 @@
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795159287176
       }
+    ],
+    "6.21 Checkpoint - M0.6 complete": [
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164397057
+      },
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164965406
+      }
+    ],
+    "6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation": [
+      {
+        "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795164965876
+      }
     ]
   }
 }

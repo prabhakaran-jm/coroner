@@ -562,7 +562,7 @@ These rules apply to every task and are part of the completion criteria.
   - [x] 5.8 Checkpoint - M0.5 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm 5.5 to 5.7 recorded real Docker output, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 18 November 2026.
 
-- [ ] 6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation
+- [x] 6. M0.6 Windows-compatible experiment runner, run manifests, Docker inspection and failure evaluation
   - [x] 6.1 (PRIORITY) Implement `runner/docker_port.py` (`DockerPort`, `DockerCli`, `build_child_env`)
     - Every call is `subprocess.run(argv_list, env=build_child_env(os.environ, overrides), capture_output=True, timeout=..., check=False)`: no `shell=True`, no inline `VAR=value`, `docker_exe` from `shutil.which("docker")`, injectable `run`. Methods: `compose_up` (`-p coroner up -d --no-deps --force-recreate demo_app`), `container_id` (`ps -a -q demo_app`, must be 64 hex), `inspect` (raw bytes, parsed JSON, UTC inspect time), `kill`, `available`. Never mutates `os.environ`.
     - Files: `coroner/runner/docker_port.py`.
@@ -709,7 +709,7 @@ These rules apply to every task and are part of the completion criteria.
     - Done when: passes with output recorded.
     - _Requirements: 12.4_
 
-  - [ ] 6.21 Checkpoint - M0.6 complete
+  - [x] 6.21 Checkpoint - M0.6 complete
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 21 to 29 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 19 November 2026.
 
 - [ ] 7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test
