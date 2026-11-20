@@ -18,10 +18,15 @@ from datetime import datetime, timezone
 from typing import Any, Protocol
 
 COMPOSE_PROJECT = "coroner"
+DEFAULT_COMPOSE_PROJECT = COMPOSE_PROJECT
+MAX_COMPOSE_PROJECT_LEN = 63
 DEFAULT_TIMEOUT_S = 60.0
 COMPOSE_UP_TIMEOUT_S = 300.0
 
 _CONTAINER_ID_RE = re.compile(r"[0-9a-f]{64}")
+# Docker Compose: lowercase letters, digits, hyphens, underscores; starts with a lowercase letter or digit. Compose
+# documents no length limit; 63 (one DNS label) is this runner's own conservative cap.
+_COMPOSE_PROJECT_RE = re.compile(r"[a-z0-9][a-z0-9_-]*")
 _SIGNAL_RE = re.compile(r"[A-Za-z0-9]{1,16}")
 
 
@@ -93,8 +98,26 @@ def _validate_container_id(value: object) -> str:
     return value
 
 
+def validate_compose_project(name: object) -> str:
+    """Return `name` if it is a valid Docker Compose project name; otherwise raise ValueError (never falls back)."""
+    if (
+        not isinstance(name, str)
+        or len(name) > MAX_COMPOSE_PROJECT_LEN
+        or _COMPOSE_PROJECT_RE.fullmatch(name) is None
+        or not name.isascii()
+    ):
+        raise ValueError(
+            f"invalid Docker Compose project name {name!r}: use 1 to {MAX_COMPOSE_PROJECT_LEN} lowercase letters, "
+            "digits, hyphens or underscores, starting with a lowercase letter or digit (for example 'coroner-m07')"
+        )
+    return name
+
+
 class DockerCli:
-    """`DockerPort` over the docker CLI. `run` is injectable (a `subprocess.run` replacement)."""
+    """`DockerPort` over the docker CLI. `run` is injectable (a `subprocess.run` replacement).
+
+    `project` is the Docker Compose project name used by every compose call (default `coroner`).
+    """
 
     def __init__(
         self,
@@ -105,7 +128,9 @@ class DockerCli:
         timeout_s: float = DEFAULT_TIMEOUT_S,
         compose_up_timeout_s: float = COMPOSE_UP_TIMEOUT_S,
         clock: Callable[[], datetime] | None = None,
+        project: str = DEFAULT_COMPOSE_PROJECT,
     ) -> None:
+        self._project = validate_compose_project(project)
         self._run = run
         self._base_env = base_env
         self._docker_exe = docker_exe if docker_exe is not None else shutil.which("docker")
@@ -144,9 +169,12 @@ class DockerCli:
             raise DockerCommandError(argv, result.returncode, _as_text(result.stderr))
         return result
 
-    @staticmethod
-    def _compose(*args: str) -> list[str]:
-        return ["compose", "-p", COMPOSE_PROJECT, *args]
+    @property
+    def project(self) -> str:
+        return self._project
+
+    def _compose(self, *args: str) -> list[str]:
+        return ["compose", "-p", self._project, *args]
 
     def compose_up(self, service: str, *, env: Mapping[str, str], no_deps: bool, recreate: bool) -> None:
         args = ["up", "-d"]

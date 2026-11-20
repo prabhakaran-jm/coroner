@@ -22,7 +22,12 @@ from coroner.common.envparse import ConfigError, parse_mem_size
 from coroner.common.timeutil import format_utc_ms
 from coroner.runner import summary
 from coroner.runner.collector_client import CollectorClient, Transport
-from coroner.runner.docker_port import DockerCli, DockerPort
+from coroner.runner.docker_port import (
+    DEFAULT_COMPOSE_PROJECT,
+    DockerCli,
+    DockerPort,
+    validate_compose_project,
+)
 from coroner.runner.evaluate import CLOCK_TOLERANCE_MS
 from coroner.runner.experiments import exp_a, exp_b, exp_c
 from coroner.runner.experiments.base import (
@@ -43,6 +48,7 @@ DEFAULT_COLLECTOR_PORT = "8081"
 DEFAULT_DEMO_PORT = "8080"
 COLLECTOR_PORT_VAR = "CORONER_COLLECTOR_PORT"
 DEMO_PORT_VAR = "CORONER_DEMO_PORT"
+COMPOSE_PROJECT_VAR = "CORONER_COMPOSE_PROJECT"
 MIN_LEAK_CHUNK_BYTES = 1
 MAX_LEAK_CHUNK_BYTES = 104_857_600
 DEFAULT_CLOCK_COUNT = 20
@@ -103,6 +109,21 @@ def _port(env: Mapping[str, str], name: str, default: str) -> str:
     return value
 
 
+def _compose_project(env: Mapping[str, str]) -> str:
+    """`CORONER_COMPOSE_PROJECT`: unset means the default project; set (even empty) must be a valid project name."""
+    if COMPOSE_PROJECT_VAR not in env:
+        return DEFAULT_COMPOSE_PROJECT
+    value = env[COMPOSE_PROJECT_VAR]
+    try:
+        return validate_compose_project(value)
+    except ValueError:
+        raise _UsageError(
+            f"invalid {COMPOSE_PROJECT_VAR} {value!r} (expected 1 to 63 lowercase letters, digits, hyphens or "
+            "underscores, starting with a lowercase letter or digit, for example 'coroner-m07'; unset it to use "
+            f"'{DEFAULT_COMPOSE_PROJECT}')"
+        ) from None
+
+
 def _validate_run_args(args: argparse.Namespace) -> None:
     try:
         size = parse_mem_size(args.mem_limit)
@@ -133,9 +154,11 @@ def _run_command(
     _validate_run_args(args)
     collector_port = _port(env, COLLECTOR_PORT_VAR, DEFAULT_COLLECTOR_PORT)
     demo_port = _port(env, DEMO_PORT_VAR, DEFAULT_DEMO_PORT)
+    # Pre-validation order (first error wins): --mem-limit, --leak-chunk-bytes, collector port, demo port, compose project.
+    project = _compose_project(env)
     injected = dict(http=http, wall_clock=wall_clock, monotonic=monotonic, sleep=sleep)
     kwargs = {k: v for k, v in injected.items() if v is not None}
-    docker_port = docker if docker is not None else DockerCli()
+    docker_port = docker if docker is not None else DockerCli(project=project)
     collector_client = (
         collector
         if collector is not None

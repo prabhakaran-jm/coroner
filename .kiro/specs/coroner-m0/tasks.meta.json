@@ -918,6 +918,16 @@
         "executionId": "2052f920-311e-49b8-84c8-e1aded002d9a",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795031526122
+      },
+      {
+        "executionId": "7d36e11c-7279-4da1-b3f6-98dd09f84c73",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795180039593
+      },
+      {
+        "executionId": "7d36e11c-7279-4da1-b3f6-98dd09f84c73",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795180977065
       }
     ],
     "6.3 Implement `runner/evaluate.py` part 1 (`parse_mem_size` and container-state evaluation)": [
@@ -1243,6 +1253,42 @@
         "executionId": "85fb539e-e2d2-40a7-9096-55b386edf0b5",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795164965876
+      }
+    ],
+    "7.1 (PRIORITY) Preflight: clean build, readiness, and host-vs-container clock offset measurement": [
+      {
+        "executionId": "df30cb21-7b4d-4a1e-8df1-910686da47c4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795170866781
+      },
+      {
+        "executionId": "df30cb21-7b4d-4a1e-8df1-910686da47c4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795171226235
+      }
+    ],
+    "7.2 Write and run the ordinary HTTP 500 non-termination integration test": [
+      {
+        "executionId": "2531ea04-3849-4078-828d-d0648a062be9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795171402155
+      },
+      {
+        "executionId": "2531ea04-3849-4078-828d-d0648a062be9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795172341910
+      }
+    ],
+    "7.3 (PRIORITY) Write, execute, and validate Experiment A (fatal exit via `os._exit(1)`)": [
+      {
+        "executionId": "5b5c7bb0-b8f7-4f1a-ba0f-5da02ae717e5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795181587940
+      },
+      {
+        "executionId": "5b5c7bb0-b8f7-4f1a-ba0f-5da02ae717e5",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795182912040
       }
     ]
   }

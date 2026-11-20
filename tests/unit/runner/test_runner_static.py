@@ -187,3 +187,12 @@ def test_scan_package_reports_bad_file_among_good_ones(tmp_path):
 
 def test_scanner_reports_syntax_errors_instead_of_passing():
     assert scan_source("def (:\n", "broken")
+
+
+def test_docker_port_has_no_hardcoded_compose_project():
+    """The project must come from the selected value; only the default constant may spell `coroner`."""
+    source = (RUNNER_DIR / "docker_port.py").read_text(encoding="utf-8")
+    assert not re.search(r"""["']-p["']\s*,\s*["']coroner["']""", source)
+    assert source.count('"coroner"') == 1 and 'COMPOSE_PROJECT = "coroner"' in source
+    assert '"-p", self._project' in source
+    assert "@staticmethod\n    def _compose" not in source

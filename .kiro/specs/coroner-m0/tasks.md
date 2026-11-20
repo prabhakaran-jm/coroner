@@ -713,21 +713,21 @@ These rules apply to every task and are part of the completion criteria.
     - Run the default unit tests (`python -m pytest -q`; expected exit code 0 and a passed count not lower than the previous checkpoint, exit code 5 is a FAILURE), record real counts, confirm Properties 21 to 29 passed, and ask the user if questions arise. Then propose (do not perform) a tested milestone commit per Execution Rule 9: show the branch, git status --short, the specific paths, and a draft message, and wait for explicit approval; no commit or push without it. Target date: 19 November 2026.
 
 - [ ] 7. M0.7 Execute and validate Experiments A, B, C and the ordinary HTTP 500 non-termination test
-  - [ ] 7.1 (PRIORITY) Preflight: clean build, readiness, and host-vs-container clock offset measurement
+  - [x] 7.1 (PRIORITY) Preflight: clean build, readiness, and host-vs-container clock offset measurement
     - `docker compose down` (no `-v`) and, only if a fresh volume is really required, the protected removal of Execution Rule 11 (verify the volume name `coroner_coroner_evidence` and label `com.docker.compose.project=coroner`, list contents and count run files, archive evidence to `runs/archive/<UTC timestamp>/`, obtain the user's explicit approval at that moment, remove only that volume), `docker compose build`, `docker compose up -d collector`. Run `python -m coroner.runner clock-check` (at least 20 round trips) and also compare `docker exec <collector> date -u +%s.%N` against the host UTC time to measure the offset between the host clock and the container (Docker Desktop VM) clock. Record offset, spread, and round-trip uncertainty. The documented 250 ms tolerance stays unchanged. If the measured offset plus uncertainty approaches or exceeds 250 ms, STOP, record, and ask the user; never change the constant silently. If testing shows a better-justified bound, document the measurement and propose it to the user.
     - Files: `docs/m0-results/clock-offset.md`.
     - Verify: `python -m coroner.runner clock-check; docker compose exec collector python -c "import time;print(time.time())"; Get-Date -AsUTC -UFormat %s`.
     - Done when: real measured values and the decision on the tolerance are recorded.
     - _Requirements: 10.12, 10.13, 14.12, 8.7_
 
-  - [ ] 7.2 Write and run the ordinary HTTP 500 non-termination integration test
+  - [x] 7.2 Write and run the ordinary HTTP 500 non-termination integration test
     - `tests/docker_integration/test_ordinary_500.py` (non-destructive to the container): start with the flag set, record `pid` and `next_seq`, `GET /error` returns 500, `/health` returns 200 within 1 s with the same `pid`, Samples continue with the same `pid` and `seq` +1 per Sample, `docker inspect` shows `Status=running`.
     - Files: `tests/docker_integration/test_ordinary_500.py`, `docs/m0-results/experiment-results.md` (section).
     - Verify: `python -m pytest tests/docker_integration/test_ordinary_500.py --run-docker -q`.
     - Done when: real result recorded.
     - _Requirements: 13.4, 13.15, 15.1, 15.2, 15.3, 15.4, 15.5_
 
-  - [ ] 7.3 (PRIORITY) Write, execute, and validate Experiment A (fatal exit via `os._exit(1)`)
+  - [x] 7.3 (PRIORITY) Write, execute, and validate Experiment A (fatal exit via `os._exit(1)`)
     - `tests/docker_integration/test_experiment_a.py` plus a real run: `python -m coroner.runner run a`. Assert exit code 1, OOMKilled false, at least one Sample before `crash_request_time`, Collector healthy within 5 s with `storage_ok=true`, manifest fields, and that the description never calls it an exception.
     - Files: `tests/docker_integration/test_experiment_a.py`, `docs/m0-results/experiment-results.md`.
     - Verify: `python -m coroner.runner run a; python -m pytest tests/docker_integration/test_experiment_a.py --run-docker -q; python -m coroner.runner summary <run_id>`.

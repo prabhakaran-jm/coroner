@@ -27,6 +27,7 @@ import socket
 import subprocess
 import sys
 import time
+import types
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -39,6 +40,7 @@ from coroner.runner import collector_client as collector_client_mod
 from coroner.runner import evaluate
 from coroner.runner import summary as summary_mod
 from coroner.runner.collector_client import ClockOffset, CollectorClient, HttpResponse
+from coroner.runner.docker_port import DockerCli as RealDockerCli
 from coroner.runner.experiments import base, exp_a, exp_b, exp_c
 from coroner.runner.manifest import (
     ContainerState,
@@ -1440,3 +1442,143 @@ class TestNegativeControls:
             return 0 if rc == 2 else rc
 
         assert summary_error_problems(mutant, tmp_path)
+
+
+# ================================================================================================ M0.7 compose project
+
+
+class _ProjectFakeRun:
+    """A subprocess.run replacement that records argv lists and never starts a process."""
+
+    def __init__(self) -> None:
+        self.argvs: list[list[str]] = []
+
+    def __call__(self, argv: Any, **kwargs: Any) -> Any:
+        self.argvs.append(list(argv))
+        return types.SimpleNamespace(returncode=0, stdout=(CID + "\n").encode(), stderr=b"")
+
+
+def _install_real_docker_cli(monkeypatch: pytest.MonkeyPatch, *, drop_project: bool = False) -> _ProjectFakeRun:
+    """Build the real DockerCli (fake runner) wherever the CLI would build one; `drop_project` is a mutant."""
+    fake = _ProjectFakeRun()
+
+    def factory(**kwargs: Any) -> Any:
+        if drop_project:
+            kwargs.pop("project", None)
+        return RealDockerCli(run=fake, base_env={}, docker_exe="docker", **kwargs)
+
+    monkeypatch.setattr(cli, "DockerCli", factory)
+    return fake
+
+
+def _project_run(env: dict[str, str], monkeypatch: pytest.MonkeyPatch, *, drop_project: bool = False
+                 ) -> tuple[int, str, str, _ProjectFakeRun, ExpSpy]:
+    fake = _install_real_docker_cli(monkeypatch, drop_project=drop_project)
+    spy = ExpSpy().install(monkeypatch)
+    out, err = io.StringIO(), io.StringIO()
+    rc = cli.main(["run", "a"], collector=FakeCollector(), env=env, out=out, err=err)
+    if spy.calls:
+        ctx = spy.calls[0][1]
+        ctx.docker.compose_up("demo_app", env={}, no_deps=False, recreate=False)
+        ctx.docker.container_id("demo_app")
+    return rc, out.getvalue(), err.getvalue(), fake, spy
+
+
+def project_cli_problems(monkeypatch: pytest.MonkeyPatch, *, drop_project: bool = False) -> list[str]:
+    problems: list[str] = []
+    for env, expected in (({}, "coroner"), ({"CORONER_COMPOSE_PROJECT": "coroner-m07"}, "coroner-m07")):
+        rc, _, _, fake, spy = _project_run(env, monkeypatch, drop_project=drop_project)
+        if rc != 0 or len(spy.calls) != 1:
+            problems.append(f"{env}: rc={rc}")
+            continue
+        for argv in fake.argvs:
+            if argv[1:4] != ["compose", "-p", expected]:
+                problems.append(f"{env}: argv {argv}")
+    return problems
+
+
+class TestComposeProject:
+    def test_unset_uses_the_default_project(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        rc, _, err, fake, spy = _project_run({}, monkeypatch)
+        assert rc == 0 and err == ""
+        assert spy.calls[0][1].docker.project == "coroner"
+        assert fake.argvs == [
+            ["docker", "compose", "-p", "coroner", "up", "-d", "demo_app"],
+            ["docker", "compose", "-p", "coroner", "ps", "-a", "-q", "demo_app"],
+        ]
+
+    def test_m07_project_reaches_the_experiments_docker_cli(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        rc, _, err, fake, spy = _project_run({"CORONER_COMPOSE_PROJECT": "coroner-m07"}, monkeypatch)
+        assert rc == 0 and err == ""
+        assert spy.calls[0][1].docker.project == "coroner-m07"
+        assert fake.argvs == [
+            ["docker", "compose", "-p", "coroner-m07", "up", "-d", "demo_app"],
+            ["docker", "compose", "-p", "coroner-m07", "ps", "-a", "-q", "demo_app"],
+        ]
+
+    def test_project_variable_does_not_touch_ports_or_urls(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        _, _, _, _, spy = _project_run({"CORONER_COMPOSE_PROJECT": "coroner-m07"}, monkeypatch)
+        assert spy.calls[0][1].demo_url == "http://127.0.0.1:8080"
+
+    @pytest.mark.parametrize("value", ["", "Coroner", "-x", "_x", "a b", "a.b", "a/b", "\u00e9", "x" * 64, " coroner"])
+    @pytest.mark.parametrize("letter", ["a", "c"])
+    def test_invalid_or_empty_project_exits_2_before_any_docker_call(self, tmp_path: Path, value: str,
+                                                                     letter: str) -> None:
+        runs = tmp_path / "runs"
+        out = run_main(["run", letter, "--runs-dir", str(runs)], env={"CORONER_COMPOSE_PROJECT": value})
+        assert out.rc == 2 and out.out == ""
+        assert out.err.startswith("error: ") and "CORONER_COMPOSE_PROJECT" in out.err and "lowercase" in out.err
+        assert out.docker.calls == [] and out.collector.calls == []
+        assert not runs.exists() and snapshot(tmp_path) == {}
+
+    def test_invalid_project_never_builds_a_docker_cli(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        fake = _install_real_docker_cli(monkeypatch)
+        built: list[Any] = []
+        inner = cli.DockerCli
+        monkeypatch.setattr(cli, "DockerCli", lambda **kw: built.append(kw) or inner(**kw))
+        out, err = io.StringIO(), io.StringIO()
+        rc = cli.main(["run", "b"], collector=FakeCollector(), env={"CORONER_COMPOSE_PROJECT": "BAD"}, out=out, err=err)
+        assert rc == 2 and built == [] and fake.argvs == []
+
+    def test_error_precedence_is_mem_limit_then_chunk_then_ports_then_project(self) -> None:
+        env = {"CORONER_COMPOSE_PROJECT": "BAD", "CORONER_COLLECTOR_PORT": "x", "CORONER_DEMO_PORT": "y"}
+        assert "--mem-limit" in run_main(["run", "a", "--mem-limit", "z"], env=env).err
+        assert "--leak-chunk-bytes" in run_main(["run", "a", "--leak-chunk-bytes", "0"], env=env).err
+        assert "CORONER_COLLECTOR_PORT" in run_main(["run", "a"], env=env).err
+        env.pop("CORONER_COLLECTOR_PORT")
+        assert "CORONER_DEMO_PORT" in run_main(["run", "a"], env=env).err
+        env.pop("CORONER_DEMO_PORT")
+        assert "CORONER_COMPOSE_PROJECT" in run_main(["run", "a"], env=env).err
+
+    def test_injected_docker_still_validates_the_project(self) -> None:
+        out = run_main(["run", "a"], env={"CORONER_COMPOSE_PROJECT": "BAD"}, docker=FakeDocker())
+        assert out.rc == 2 and "CORONER_COMPOSE_PROJECT" in out.err and out.docker.calls == []
+
+    def test_valid_project_with_injected_docker_changes_nothing(self, spy: ExpSpy) -> None:
+        docker = FakeDocker()
+        out = run_main(["run", "a"], env={"CORONER_COMPOSE_PROJECT": "coroner-m07"}, docker=docker)
+        assert out.rc == 0 and spy.calls[0][1].docker is docker
+
+    def test_summary_and_clock_check_never_read_the_variable(self, tmp_path: Path) -> None:
+        runs = tmp_path / "runs"
+        rid = fixture_a(runs)
+        bad = {"CORONER_COMPOSE_PROJECT": "BAD"}
+        assert summary_of(runs, rid, env=bad).out == summary_of(runs, rid).out
+        assert summary_of(runs, rid, env=bad).rc == 0
+
+        class StrictEnv(dict):  # type: ignore[type-arg]
+            def __contains__(self, key: object) -> bool:
+                assert key != "CORONER_COMPOSE_PROJECT"
+                return super().__contains__(key)
+
+            def __getitem__(self, key: str) -> str:
+                assert key != "CORONER_COMPOSE_PROJECT"
+                return super().__getitem__(key)
+
+        assert run_main(["summary", rid, "--runs-dir", str(runs)], env=StrictEnv(bad)).rc == 0
+        out, _ = clock_check([(10, 2)], 1, env=StrictEnv(bad))
+        assert out.rc == 0 and out.out_lines[3].startswith("Offset:         +10 ms")
+
+    def test_project_negative_controls(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        assert project_cli_problems(monkeypatch) == []
+        assert project_cli_problems(monkeypatch, drop_project=True)  # CLI loses the project: caught
