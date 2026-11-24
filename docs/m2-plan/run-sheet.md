@@ -52,14 +52,14 @@ Fallback port: **8766** (`--port 8766`). Every URL below then uses 8766. Decide 
 | Preserved Samples | 15 | 15 | 45 |
 | Time axis | raw Probe Capture_Time | derived host-equivalent time | raw Probe Capture_Time |
 
-- B: the Runner recorded `SIGKILL sent by the runner (docker kill --signal=KILL)`. The Runner recorded `times.sigkill_sent_time` immediately before issuing `docker kill --signal=KILL`, and the page draws the SIGKILL marker there. The phase log stamp `sigkill_sent` was written after that command returned. Both are Host_Clock. The gap between them (425 ms in the canonical B run) is the duration of the command, not kill latency. The signal's arrival in the container is not recorded. **Do not narrate an exact SIGKILL instant; say only what the page shows.**
+- B: the Runner recorded `SIGKILL sent by the runner (docker kill --signal=KILL)`. The Runner recorded `times.sigkill_sent_time` immediately before issuing `docker kill --signal=KILL`, and the page draws the SIGKILL marker there. The phase log stamp `sigkill_sent` was written after that command returned. Both are Host_Clock. The two stamps are 425 ms apart in the canonical B run; that gap does not measure when the signal reached the container. The signal's arrival in the container is not recorded. **Do not narrate an exact SIGKILL instant; say only what the page shows.**
 - C: highest sampled RSS is above the 128 MiB limit (drawn at its true height). Sampling can miss growth after the last preserved Sample.
 
 ## 4. Demo order and per-screen timing (total 2:45)
 
 | Clock | Screen | Say (matches the screen) | Point at |
 |---|---|---|---|
-| 0:00 to 0:15 (15 s) | Overview `/` | "Coroner reads saved runs. It does not run containers and does not write to `runs/`. Three incidents: A, B, C." | The three cards. |
+| 0:00 to 0:15 (15 s) | Overview `/` | "Two containers can die with the same exit code. Coroner preserves and analyses evidence from container failures. This read-only Viewer starts no containers and does not modify saved runs. Here are three recorded experiments: A, B and C." | The three cards. |
 | 0:15 to 0:30 (15 s) | A | "Experiment A exited with code 1, and Docker recorded OOMKilled false." Then move on. | ExitCode 1, OOMKilled false. |
 | 0:30 to 1:20 (50 s) | B | "B: Docker ExitCode 137, OOMKilled false. The Runner sent SIGKILL; this is the Runner's description, not a Docker OOM." "The time axis reads *Derived host-equivalent time*; it is derived, not independently proven." | ExitCode, OOMKilled, "Termination as described by the Runner", the RSS timeline and its axis title and note, the SIGKILL marker as drawn, "Evidence vs Uncertainty". |
 | 1:20 to 2:05 (45 s) | C | "C: Docker ExitCode 137, OOMKilled true. Docker records an out-of-memory kill: the immediate termination mechanism." "The underlying reason for the memory growth is not established by the recorded evidence." "Sampling can miss memory growth between preserved Samples and after the last preserved Sample." "The axis here is *Raw Probe Capture_Time*; no correction is applied." | ExitCode, OOMKilled, memory limit (128 MiB), the highest sampled RSS above the limit, the oomMechanism sentence, the sampling note, the axis title. |
@@ -86,7 +86,7 @@ The headline appears only when B and C both have ExitCode 137 and OOMKilled diff
 | "Docker recorded an OOM kill." (C) | "C proves a memory leak" or any cause of the growth. |
 | "The Runner sent SIGKILL." (B) | "B was an OOM kill", or who sent the SIGKILL beyond the Runner. |
 | "The Runner recorded the time just before it issued `docker kill --signal=KILL`; the marker is drawn there." (B) | "The marker shows when the signal arrived", or that the `sigkill_sent` phase time is the send time. |
-| "The phase stamp was written after the command returned; the gap is the command's duration." (B, if asked) | "425 ms is the kill latency", or that the two recorded times are equal. |
+| "One timestamp was recorded immediately before the Runner issued the kill command. Another was written after the command returned. They are 425 ms apart; that does not measure when the signal reached the container." (B, if asked) | "That the gap is the command duration or kill latency", or that the two recorded times are equal. |
 | "Arrival of the signal in the container is not recorded." (B) | Any exact SIGKILL instant. |
 | "Experiment A exited with code 1, and Docker recorded OOMKilled false." (A) | Any cause for A's exit, such as "application error". |
 | "Derived, not independently proven." (B's axis and marker) | "B's time is corrected and verified." |

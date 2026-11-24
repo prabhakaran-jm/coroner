@@ -340,6 +340,16 @@
         "executionId": "499ba303-ee66-4105-86f0-fc5eb20704e2",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795550169449
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557914343
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795558881463
       }
     ],
     "2.8 Checkpoint - stop for review (M2.1)": [
@@ -379,6 +389,16 @@
         "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795556361167
+      },
+      {
+        "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557755893
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557913751
       }
     ],
     "3.2 List the fallback screenshots and clips": [
@@ -401,6 +421,11 @@
         "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795556361548
+      },
+      {
+        "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557756421
       }
     ],
     "3.3 HUMAN-ONLY: timed rehearsal": [
@@ -471,6 +496,21 @@
         "executionId": "710c4928-1d53-4dca-96d1-d933509c231d",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795515896900
+      },
+      {
+        "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795556780644
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557913268
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795557914740
       }
     ],
     "5.3 HUMAN-ONLY: repeat the affected checks": [

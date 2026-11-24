@@ -79,28 +79,51 @@ Scroll distances are approximate pixel offsets of the page top, read from 1920x1
 ### Segment 6: Kiro's role, 2:22 to 2:42
 
 - Screen: stay on the compare page, scrolled to the "What these values do not establish" block. No new screen. No code editor, terminal or file explorer is shown (they would show the user profile path; see section 5).
-- Optional: add a plain text title card in Clipchamp ("Built with Kiro: spec workflow, task lists, unit and property-based tests") for the last 8 s. It uses no screenshot of the Kiro window.
+- Optional closing visual (last 8 s): a sanitized view of the real `.kiro` spec directory, captured by the operator during rehearsal (no image is supplied with this document). It must show no local path: use the GitHub repository page for the `.kiro/specs` folder, or an editor file tree with the path bar, title bar and account hidden. Real structure on branch `feat/coroner-m2-demo` (from `git ls-files .kiro`):
+
+```text
+.kiro/
+  specs/
+    coroner-m0/
+      .config.kiro
+      design.md
+      requirements.md
+      tasks.md
+      tasks.meta.json
+    coroner-m1-ui/
+      .config.kiro
+      design.md
+      requirements.md
+      tasks.md
+      tasks.meta.json
+    coroner-m2-demo/
+      .config.kiro
+      tasks.md
+      tasks.meta.json
+```
+
+  Show only this tree. Do not open a file, a chat or an execution log, and do not describe sub-agents or any workflow that is not recorded in these files. If no clean capture is possible, skip the visual and stay on the compare page.
 - End: stop the recording at 2:42. Add no outro.
 
 ## B. Narration draft per screen
 
-Read the words in quotes. The run sheet's say / do-not-say table is binding. The pace target is about 2.3 to 2.6 words per second (about 140 to 155 words per minute) for a calm voice. The drafts below run slower on purpose (1.4 to 2.5 words per second), which leaves room for pointer pauses. All word counts are exact counts of the quoted text (whitespace-separated tokens) and are not measurements of speech.
+Read the words in quotes. The run sheet's say / do-not-say table is binding. The pace target is about 2.3 to 2.6 words per second (about 140 to 155 words per minute) for a calm voice. The drafts below run at 1.4 to 2.53 words per second, with pointer pauses, which leaves room for pointer pauses. All word counts are exact counts of the quoted text (whitespace-separated tokens) and are not measurements of speech.
 
 | Segment | Seconds | Words | Words per second |
 |---|---|---|---|
-| 1 Problem statement | 15 | 37 | 2.47 |
+| 1 Problem statement | 15 | 38 | 2.53 |
 | 2 A baseline | 12 | 17 | 1.42 |
-| 3 B (3a 29 words, 3b 68 words) | 45 | 97 | 2.16 |
+| 3 B (3a 29 words, 3b 73 words) | 45 | 102 | 2.27 |
 | 4 C (4a 21 words, 4b 51 words) | 40 | 72 | 1.80 |
 | 5 Comparison | 30 | 57 | 1.90 |
 | 6 Kiro's role | 20 | 39 | 1.95 |
-| Total | 162 | 319 | 1.97 |
+| Total | 162 | 325 | 2.01 |
 
-No segment is above 2.7 words per second (the highest is segment 1 at 2.47), so no trim was needed. Split rates: 3a 1.93 (15 s), 3b 2.27 (30 s), 4a 1.75 (12 s), 4b 1.82 (28 s). If a segment runs long when read, cut the pointer pauses first, not the "not established" sentences.
+No segment is above 2.6 words per second (the highest is segment 1 at 2.53), so no trim was needed. Split rates: 3a 1.93 (15 s), 3b 2.43 (30 s), 4a 1.75 (12 s), 4b 1.82 (28 s). The total stays at 162 s (2:42), at most 2:50. If a segment runs long when read, cut the pointer pauses first, not the "not established" sentences.
 
-### 1. Problem statement (37 words, 15 s)
+### 1. Problem statement (38 words, 15 s)
 
-"Two containers can die with the same exit code. Coroner reads saved runs and shows what survived. It runs no containers and writes nothing to the runs directory. Here are three saved incidents: A, B and C."
+"Two containers can die with the same exit code. Coroner preserves and analyses evidence from container failures. This read-only Viewer starts no containers and does not modify saved runs. Here are three recorded experiments: A, B and C."
 
 ### 2. A baseline (17 words, 12 s)
 
@@ -108,23 +131,25 @@ No segment is above 2.7 words per second (the highest is segment 1 at 2.47), so 
 
 Say nothing about why A exited. The page shows no cause statement that this line should add to.
 
-### 3. B (97 words, 45 s)
+### 3. B (102 words, 45 s)
 
 0:27 to 0:42 (3a, 29 words):
 "Experiment B. Docker recorded ExitCode 137 and OOMKilled false. The Runner's own record says it sent SIGKILL with docker kill. Docker did not record an out-of-memory kill for B."
 
-0:42 to 1:12 (3b, 68 words):
-"The chart plots preserved memory samples on a derived host-equivalent time axis, not independently proven. The dotted line is the Runner's stamp, taken on the host clock just before it issued docker kill. A second stamp was written after the command returned. The gap is the command's duration, inferred, not kill latency. Arrival in the container is not recorded. The page does not establish an order across clocks."
+0:42 to 1:12 (3b, 73 words, read in this order):
+"The chart plots preserved memory samples on a derived host-equivalent time axis, not independently proven." (15 words, derived-time uncertainty, kept)
+"One timestamp was recorded immediately before the Runner issued the kill command. Another was written after the command returned. They are 425 milliseconds apart, but that does not measure when the signal reached the container." (35 words, required wording, read exactly)
+"The dotted line marks the first timestamp. Arrival in the container is not recorded. The page does not establish an order across clocks." (23 words, kept uncertainty)
 
 What the two B records are (from `canonical-run-verification.md`, "B SIGKILL timestamp investigation", code read in `exp_b.py` lines 147 to 153):
 
 - `times.sigkill_sent_time` is a Host_Clock stamp taken immediately before the Runner issued `docker kill --signal=KILL`. The dotted line sits at this stamp.
 - The phase-log entry `sigkill_sent` was written after that command returned.
-- The gap between them is the Runner-side duration of the command, which is an inference from the code, not a measured kill latency.
+- The two stamps are 425 ms apart in the canonical B run. That gap does not measure when the signal reached the container. (`canonical-run-verification.md` labels the gap as an inferred command duration; do not say that on camera.)
 - The record does not say when the signal arrived in the container.
 - The dotted line's position on the derived axis is derived, not independently proven.
 
-Do not say: any exact SIGKILL time or clock reading, "the sample came before the kill", the -10 ms or -80 ms values or any reading of them as an order of events, "B's time is corrected and verified", "kill latency", or that ExitCode 137 means a Docker OOM kill. Never call B an out-of-memory kill.
+Do not say: any exact SIGKILL time or clock reading, "the sample came before the kill", the -10 ms or -80 ms values or any reading of them as an order of events, "B's time is corrected and verified", that the gap is the command duration or kill latency, or that ExitCode 137 means a Docker OOM kill. Never call B an out-of-memory kill.
 
 ### 4. C (72 words, 40 s)
 
@@ -271,7 +296,7 @@ Read from `copy.js`, `overview.js`, `app.py`, `cli.py`, `model.py` and the rende
 Produced by this task (headless Chrome 1920x1080 against the real saved runs, read-only, a scratch Viewer on port 8777, stopped afterwards): `docs/m2-plan/rehearsal-shots/`
 
 - `overview-1920x1080-top.png`, `a-1920x1080-top.png`, `b-1920x1080-top.png`, `c-1920x1080-top.png`, `compare-1920x1080-top.png` (the first 1080 px of each page)
-- `b-1920x9000-full-page.png`, `c-1920x9000-full-page.png` (full-page renders used to derive the scroll offsets)
+- `b-1920x9000-full-page.png`, `c-1920x9000-full-page.png` (full-page renders used to derive the scroll offsets; reference renders only. `c-1920x9000-full-page.png`: not for use in the video, it shows the stored Runner sentence superseded by D6)
 - `b-chart-1920x1080-viewport.png`, `c-chart-1920x1080-viewport.png` (chart-region viewport captures, added in task 3.2, see section 8)
 
 They are automated reference renders, not recorded evidence and not human observation. The overview, B, C and compare top frames and the two full-page renders were read as images and show no filesystem path or profile name. The A top frame's text was scanned. A byte scan of the PNGs for the profile name, `Users`, `AppData` and `C:\` found nothing, and no text chunks. The offsets in section A were read from these images at reduced scale and can differ by about 100 px. The B and C chart-region viewport captures were added in task 3.2.
@@ -279,7 +304,7 @@ They are automated reference renders, not recorded evidence and not human observ
 ## 7. Verification of this document against the facts
 
 - Each Non-Negotiable Demo Fact is used unchanged in meaning: A exited with code 1 and OOMKilled false; B ExitCode 137, OOMKilled false, SIGKILL by the Runner, not attributed to Docker OOM; C ExitCode 137, OOMKilled true, Docker recorded an OOM kill, growth cause not established; B's clock correction derived and not independently verified; A and C raw Probe Capture_Time; no cross-clock ordering.
-- No exact B SIGKILL timestamp is narrated, and the narration describes the two B timestamp records as `canonical-run-verification.md` does (pre-call stamp, post-call phase stamp, inferred command duration, arrival not recorded).
+- No exact B SIGKILL timestamp is narrated, and the narration describes the two B timestamp records as `canonical-run-verification.md` does (pre-call stamp, post-call phase stamp, 425 ms apart, not a measure of when the signal reached the container, arrival not recorded).
 - The Kiro narration states only what project records support (section B, segment 6); the sub-agent claim was removed.
 - ExitCode 137 of B is never used to infer a Docker OOM.
 - Section 1 sums to 162 s (2:42), strictly under 3:00 and under 2:50.
@@ -293,7 +318,7 @@ Every still in this section is an automated headless Chrome screenshot of the re
 
 Stale images (historical only, not a current fallback): `docs/m1-results/browser-4.7/07-experiment-c-chart.png` and `docs/m1-results/browser-4.7/rerun-1/07-experiment-c-chart.png`. They predate the current copy (old C sampling sentence). Use `c-chart-1920x1080-viewport.png` and `c-1920x1080-top.png` for C instead.
 
-`c-1920x9000-full-page.png` shows the C Sampling_Limitations box with the old Runner sentence (D6, section 9). Prefer `c-chart-1920x1080-viewport.png` and `c-1920x1080-top.png`. If the full-page still is used as a fallback, crop it in Clipchamp so the box is not shown (the committed file itself stays unchanged).
+`c-1920x9000-full-page.png` is a reference render only and is NOT a demo fallback: it shows the C Sampling_Limitations box with the stored Runner sentence superseded by D6 (section 9). Not for use in the video. For C use `c-1920x1080-top.png` and `c-chart-1920x1080-viewport.png`. Neither shows the D6 sentence. `c-1920x1080-top.png` covers only the first 1080 px, so it does not show Docker ExitCode or OOMKilled; for those values use `compare-1920x1080-top.png` (C column).
 
 ### Rules for every fallback
 
@@ -320,12 +345,12 @@ Paths are relative to the repository root. "Exists" was checked with `Test-Path`
 | 3 | B full page | `docs/m2-plan/rehearsal-shots/b-1920x9000-full-page.png` | Created in task 3.1 | yes | Whole B page at 1920 wide | automated headless Chrome screenshot, not live |
 | 4 | C recorded OOM kill (STALE: historical only, not a current fallback; same for `rerun-1/07-experiment-c-chart.png`) | `docs/m1-results/browser-4.7/07-experiment-c-chart.png` (1176x1281, chart section) | Committed automated screenshot, task 4.7 R04 | yes | C "RSS timeline": raw Capture_Time axis, 128 MiB line, final points above it, and the Runner's Sampling_Limitations box. This render predates the current wording: it shows "Sampling can miss growth in the final interval before the out-of-memory kill." where the current `copy.js` reads "Sampling can miss memory growth between preserved Samples and after the last preserved Sample." (line 342 to 343). It also shows the D6 sentence, see section 9. | automated headless Chrome screenshot, not live |
 | 4 | C chart at recording size | `docs/m2-plan/rehearsal-shots/c-chart-1920x1080-viewport.png` | **New in this task**, same method as the B still | yes | Whole C chart: axis title `Raw Probe Capture_Time`, ticks 21:14:40 to 21:14:55, final points above the dashed 128 MiB line, the axis note and the legend line. The "Sampling can miss growth..." line and the Runner's Sampling_Limitations box are below the frame, so D6 text is not visible in this still. | automated headless Chrome screenshot, not live |
-| 4 | C Docker state and banner | `docs/m2-plan/rehearsal-shots/c-1920x9000-full-page.png` | Created in task 3.1 | yes | Whole C page including Docker state (ExitCode 137, OOMKilled true) and the amber banner. It also contains the D6 sentence near the bottom of the chart section: crop the Sampling_Limitations box out before use, or prefer the two C stills in the rows above and below. | automated headless Chrome screenshot, not live |
-| 4 | C page top | `docs/m2-plan/rehearsal-shots/c-1920x1080-top.png` | Created in task 3.1 | yes | First 1080 px only; ExitCode and OOMKilled are below it | automated headless Chrome screenshot, not live |
+| 4 | C page top | `docs/m2-plan/rehearsal-shots/c-1920x1080-top.png` | Created in task 3.1 | yes | First 1080 px only; ExitCode and OOMKilled are below it. Use together with `compare-1920x1080-top.png` (C column shows ExitCode 137, OOMKilled true). | automated headless Chrome screenshot, not live |
+| 4 | C reference render (NOT a fallback) | `docs/m2-plan/rehearsal-shots/c-1920x9000-full-page.png` | Created in task 3.1 | yes | Not for use in the video: shows the stored Runner sentence superseded by D6. Listed only so nobody picks it up by mistake. | do not show |
 | 5 | A/B/C comparison | `docs/m1-results/browser-4.7/02-compare-desktop.png` (1280, full page) | Committed automated screenshot, task 4.7 test 01 | yes | Headline, three slot cards, the side-by-side table, the four statements, "What these values do not establish" | automated headless Chrome screenshot, not live |
 | 5 | Comparison statements | `docs/m1-results/browser-4.7/04-compare-statements.png` | Committed automated screenshot, task 4.7 test 01 | yes | Viewport capture of the statements ("Experiment B and Experiment C share ExitCode 137", "OOMKilled distinguishes ...") | automated headless Chrome screenshot, not live |
 | 5 | Comparison at recording size | `docs/m2-plan/rehearsal-shots/compare-1920x1080-top.png` | Created in task 3.1 | yes | Headline, slot cards and the whole table in the first frame | automated headless Chrome screenshot, not live |
-| 6 | Kiro's role | No Viewer screen is shown in this segment, so no still is needed. | Text title card made in Clipchamp (section A, segment 6) | n/a | Optional plain text only | If a Viewer image has to stay up, use `04-compare-statements.png` with the compare label above. |
+| 6 | Kiro's role | No Viewer screen is shown in this segment, so no still is needed. | Optional sanitized `.kiro` spec tree captured by the operator (section A, segment 6) | no (human capture, not yet made) | Directory tree only, no local path | If a Viewer image has to stay up, use `04-compare-statements.png` with the compare label above. |
 | all | Whole demo | The backup recording of the full script (task 3.4) | **Human clip**: Clipchamp export, under 3:00, stored outside `runs/` and outside the repository, second copy on another device or drive | **no** (human-only, task 3.4) | Segments 1 to 6 | pre-recorded rehearsal clip |
 
 The two new 1920x1080 viewport stills close the gap noted in section 6 (no B or C chart-region viewport capture). Method: the existing harness `tests/unit/viewer/cdp_harness.py` (`ViewerProcess`, `Chrome`, `Page`), real saved runs read-only, viewport set with `Emulation.setDeviceMetricsOverride` to 1920x1080, "RSS timeline" heading brought into view with `window.scrollTo` from a DOM query, `Page.captureScreenshot` of the viewport without `captureBeyondViewport`. The scratch Viewer ran on an automatically chosen free port and was stopped by the harness when the script ended. The capture script is a scratch file outside the repository. Both images were read: no filesystem path, profile name or email is visible.
@@ -349,7 +374,7 @@ Result: the sentence is wrong as written, it comes from the M0 Runner and is sto
 - Is it wrong: yes. The memory limit is a fixed configured value (134217728 bytes for the saved runs); sampling cannot understate it. What sampling can understate is the highest memory the container actually reached, because the last Sample can predate the kill. In run C the sampled peak (134.55 MiB) is already above the limit, so the sentence also reads oddly beside the chart.
 - Proposed fix: replace the sentence with "The peak RSS in the Samples may understate the highest memory the container reached before the kill." The change belongs in `coroner/runner/evaluate.py` line 572, with the M0 design, requirements, README, `scripts/make-sample-runs.py` and any test that asserts the string updated to match.
 - Constraints: M1.1 is frozen and the Runner is M0, so this needs reviewer approval and falls outside the Viewer-only scope of M2.4 (Global Rule 4). A Viewer-side rewrite is not appropriate, because the box is labelled "recorded by the Runner" and shows stored text. Saved runs would keep the old sentence unless a run is repeated, which M2 forbids (no Docker).
-- Handling for the demo, as in section D: do not scroll to or read that box. The new C chart still does not show it; `07-experiment-c-chart.png` and `c-1920x9000-full-page.png` do. If a viewer asks, say the page shows the Runner's stored text as recorded and that the wording is under review.
+- Handling for the demo, as in section D: do not scroll to or read that box. The new C chart still does not show it; `07-experiment-c-chart.png` (stale, historical) and `c-1920x9000-full-page.png` (reference render, not for the video) do. If a viewer asks, say the page shows the Runner's stored text as recorded and that the wording is under review.
 
 Check run for section 8: `Test-Path` returned True for every file listed in the table (the two rows marked "no" and "n/a" are human clips and the text card, not files).
 
@@ -380,7 +405,7 @@ Tabs or clips, in recording order. "Start" is the heading to scroll to so it sit
 | 6 | C RSS timeline | Heading "RSS timeline" (chart, axis title, axis note, limit line) | 28 | 4 (4b) |
 | 7 | A/B/C comparison, headline and table | Page top | 20 | 5 |
 | 8 | A/B/C comparison, statements | Heading "Comparison statements" scrolled into the top third; "What these values do not establish" sentence visible if it fits | 10 | 5, then 6 stays here |
-| 9 | Kiro's role | Same tab as clip 8 (no new screen), or an optional plain text card | 20 | 6 |
+| 9 | Kiro's role | Same tab as clip 8 (no new screen), or the optional sanitized `.kiro` spec tree (section A, segment 6) for the last 8 s | 20 | 6 |
 
 Clip 3 target: segment 3a is 15 s. Clips 7 and 8 split the 30 s of segment 5 into about 20 s and 10 s. Clip 9 reuses clip 8's screen for 20 s, so clip 8 plus 9 is 30 s on screen.
 
@@ -396,7 +421,7 @@ Clip 3 target: segment 3a is 15 s. Clips 7 and 8 split the 30 s of segment 5 int
 | 6 C RSS | Whole chart, dashed "128 MiB limit" line, final points above it, axis title "Raw Probe Capture_Time", axis note | The dashed "recorded by the Runner: Sampling_Limitations" box, and in particular its sentence "may understate the container memory limit" (defect D6). If any part shows, scroll up until it is gone. |
 | 7 Compare, headline | Headline "The same exit code does not always mean the same failure", the three slot cards, the table rows Docker ExitCode and Docker OOMKilled | Nothing special; no cause statements are on this page |
 | 8 Compare, statements | The statements "Experiment B and Experiment C share ExitCode 137" and "OOMKilled distinguishes Experiment B (false) from Experiment C (true)" | Nothing special |
-| 9 Kiro | Compare page or plain text card | No code editor, terminal, file explorer or Kiro window |
+| 9 Kiro | Compare page, or the `.kiro` spec tree (GitHub folder view or editor tree with path bar hidden) | A local path, a terminal, an open file, a chat or execution log, the Kiro window |
 
 For every clip, none of these may appear anywhere in the frame: a local path (terminal prompt, file explorer, Clipchamp save dialog), the Windows taskbar, a notification toast, the Chrome profile avatar or a name or email, other browser tabs with private titles, the bookmarks bar, or an error state. Check each clip on playback. If the Sample table or an `original` disclosure opened, redo the clip.
 
@@ -410,11 +435,11 @@ If a clip fails or the live Viewer is unavailable, use the matching still from s
 | 2 | No still exists for the A Docker state (section 8 gap). Use `docs/m1-results/browser-4.7/03-compare-values.png` (the A column of the comparison table), or the A clip from the rehearsal recording. | automated headless Chrome screenshot, not live; or pre-recorded rehearsal clip |
 | 3 | `docs/m1-results/browser-4.14/V9-B-incident-1280.png` (top of the B page, includes Docker state and the Runner block, and also the derived-interval cards: do not narrate them) | automated headless Chrome screenshot, not live |
 | 4 | `docs/m2-plan/rehearsal-shots/b-chart-1920x1080-viewport.png` (or `docs/m1-results/browser-4.7/06-experiment-b-chart.png`) | automated headless Chrome screenshot, not live |
-| 5 | `docs/m2-plan/rehearsal-shots/c-1920x9000-full-page.png`. It also contains the D6 sentence near the bottom of the chart section, so show only the upper part of it (Docker state and banner) and do not scroll the image down. | automated headless Chrome screenshot, not live |
+| 5 | `docs/m2-plan/rehearsal-shots/c-1920x1080-top.png` (page top only; it does not show ExitCode or OOMKilled), then `docs/m2-plan/rehearsal-shots/compare-1920x1080-top.png` (C column: ExitCode 137, OOMKilled true). Do not use `c-1920x9000-full-page.png` (shows the D6 sentence). | automated headless Chrome screenshot, not live |
 | 6 | `docs/m2-plan/rehearsal-shots/c-chart-1920x1080-viewport.png` (does not show the Sampling_Limitations box). Do not use `docs/m1-results/browser-4.7/07-experiment-c-chart.png`: it shows the D6 sentence. | automated headless Chrome screenshot, not live |
 | 7 | `docs/m2-plan/rehearsal-shots/compare-1920x1080-top.png` | automated headless Chrome screenshot, not live |
 | 8 | `docs/m1-results/browser-4.7/04-compare-statements.png` | automated headless Chrome screenshot, not live |
-| 9 | The same still as clip 8, or a plain text card | as above |
+| 9 | The same still as clip 8; the `.kiro` tree has no backup (skip it) | as above |
 
 Do not edit, crop or regenerate the committed stills. To show only the upper part of a tall still, scale and position it in Clipchamp.
 
@@ -451,3 +476,66 @@ Report only what happened. A segment that ran over its budget is recorded as ove
 ### Viewer defects relevant here
 
 No new Viewer defect was found in this review, and no Viewer change is proposed. The existing items remain as listed in section D and section 9: D2 (derived-interval numbers, handled by not narrating or pausing), D3 (the "send time" wording on B), D5 (Runner wording on C), D6 (the Sampling_Limitations sentence, a Runner-stored text that stays in saved C evidence even after the approved M0 fix).
+
+## 11. Final rehearsal checklist (updated narration)
+
+**NOT YET REHEARSED.** Task status: 3.3 NOT DONE, 3.4 NOT DONE, 3.5 NOT STARTED, 3.6 NOT STARTED. Every field marked "human" below is blank on purpose. An agent must not fill it in.
+
+The narration below is the current wording (task 3.1 follow-up). Word counts are exact; seconds are budgets, not measurements. Read each line exactly as written. The total budget is 162 s (2:42), at most 2:50.
+
+### Per clip
+
+| Clip | Narration to read (exact) | Words | Target (s) | Screen and start heading | Must be visible | Must NOT be visible | Backup still |
+|---|---|---|---|---|---|---|---|
+| 1 | "Two containers can die with the same exit code. Coroner preserves and analyses evidence from container failures. This read-only Viewer starts no containers and does not modify saved runs. Here are three recorded experiments: A, B and C." | 38 | 15 | Overview `/`, page top | Heading, cards for A, B, C | "Other saved runs" list | `rehearsal-shots/overview-1920x1080-top.png` |
+| 2 | "Experiment A exited with code 1, and Docker recorded OOMKilled false. That is the baseline. Now B." | 17 | 12 | A incident, heading "Docker state" | ExitCode `1`, OOMKilled `false` | Any cause for A's exit | `m1-results/browser-4.7/03-compare-values.png`, or the A clip |
+| 3 | "Experiment B. Docker recorded ExitCode 137 and OOMKilled false. The Runner's own record says it sent SIGKILL with docker kill. Docker did not record an out-of-memory kill for B." | 29 | 15 | B incident, heading "Docker state", Runner block below | ExitCode `137`, OOMKilled `false`, `SIGKILL sent by the runner (docker kill --signal=KILL)` | "Derived intervals" cards (-10 ms, -80 ms); the "SIGKILL send time" row | `m1-results/browser-4.14/V9-B-incident-1280.png` |
+| 4 | "The chart plots preserved memory samples on a derived host-equivalent time axis, not independently proven. One timestamp was recorded immediately before the Runner issued the kill command. Another was written after the command returned. They are 425 milliseconds apart, but that does not measure when the signal reached the container. The dotted line marks the first timestamp. Arrival in the container is not recorded. The page does not establish an order across clocks." | 73 | 30 | B incident, heading "RSS timeline" | Whole chart, axis title "Derived host-equivalent time", axis note, dotted SIGKILL line, both legend lines | "Recorded times" rows with an exact SIGKILL time | `rehearsal-shots/b-chart-1920x1080-viewport.png` |
+| 5 | "Experiment C. Docker recorded ExitCode 137 and OOMKilled true. The page says this establishes the immediate termination mechanism: an out-of-memory kill." | 21 | 12 | C incident, heading "Docker state" | ExitCode `137`, OOMKilled `true`, amber banner, "The underlying reason for the memory growth is not established by the recorded evidence." | Runner block text (D5) | `rehearsal-shots/c-1920x1080-top.png` then `rehearsal-shots/compare-1920x1080-top.png` (C column) |
+| 6 | "The memory limit is 128 MiB. The highest sampled memory is about 134.5 MiB, above that limit. The axis is raw probe capture time, with no correction applied. The page says the underlying reason for the memory growth is not established, and sampling can miss growth after the last preserved sample." | 51 | 28 | C incident, heading "RSS timeline" | Whole chart, dashed "128 MiB limit" line, final points above it, axis title "Raw Probe Capture_Time", axis note | The "Sampling_Limitations" box and its D6 sentence | `rehearsal-shots/c-chart-1920x1080-viewport.png` |
+| 7 | "Side by side, B and C share ExitCode 137. OOMKilled is false for B and true for C. That is what separates them. The page headline says: the same exit code does not always mean the same failure." | 38 | 20 | Compare, page top | Headline, slot cards, rows Docker ExitCode and Docker OOMKilled | Nothing special | `rehearsal-shots/compare-1920x1080-top.png` |
+| 8 | "The page also says ExitCode and OOMKilled are two separate recorded facts, and neither is inferred from the other." | 19 | 10 | Compare, heading "Comparison statements" in the top third | The two B/C statements; "What these values do not establish" if it fits | Nothing special | `m1-results/browser-4.7/04-compare-statements.png` |
+| 9 | "Coroner was built with Kiro's spec workflow. The first two milestones have requirements, design and task lists with review checkpoints, saved in the .kiro folder. Each task's executions are logged there, and the repository has unit and property-based tests." | 39 | 20 | Same tab as clip 8; optional sanitized `.kiro` tree for the last 8 s (section A, segment 6) | Compare page, or the tree | Any local path, terminal, open file, Kiro window | Same as clip 8 (tree has no backup) |
+
+Totals: clips 1 to 9 are 15 + 12 + 15 + 30 + 12 + 28 + 20 + 10 + 20 = 162 s, 325 words (clips 7 and 8 together are segment 5, 57 words in 30 s).
+
+| Segment | Seconds | Words | Words per second |
+|---|---|---|---|
+| 1 | 15 | 38 | 2.53 |
+| 2 | 12 | 17 | 1.42 |
+| 3 (clips 3 and 4) | 45 | 102 | 2.27 |
+| 4 (clips 5 and 6) | 40 | 72 | 1.80 |
+| 5 (clips 7 and 8) | 30 | 57 | 1.90 |
+| 6 (clip 9) | 20 | 39 | 1.95 |
+| Total | 162 | 325 | 2.01 |
+
+Fallback stills are labelled "automated headless Chrome screenshot, not live" and announced: "This is a saved screenshot, not the live Viewer." Do not use `c-1920x9000-full-page.png` or either `07-experiment-c-chart.png` (stale, historical).
+
+### Before the rehearsal or recording
+
+1. Preflight, from the repository root: `powershell -NoProfile -File scripts\demo-preflight.ps1 -Offline -BaselinePath "$env:TEMP\coroner-m2\demo-baseline.txt"`. Expect exit code 0 and an integrity PASS. If the baseline file is missing or the check fails, do not recreate it; report it.
+2. Restart the Viewer in its own window (Ctrl+C the old one, confirm the port is free, start it again as in section E).
+3. Hard reload every demo tab (Ctrl+F5) at 100% zoom, in the order of section 1, each at its start heading.
+4. Confirm each clip's "must be visible" and "must NOT be visible" columns in the frame.
+
+### After the rehearsal or recording
+
+1. Stop the Viewer (Ctrl+C) and confirm the port is free.
+2. Run the same offline preflight again with the same baseline path. Expect exit code 0 and an integrity PASS.
+3. `git status --short`: nothing under `runs/`.
+
+### Human results (leave blank until a person fills them in)
+
+| Field | Value |
+|---|---|
+| Rehearsal date | |
+| Chrome version (`chrome://version`) | |
+| Display resolution and zoom | |
+| Method and voice (live or synthetic) | |
+| Actual time per segment 1 to 6 | |
+| Actual total | |
+| Video duration (player) | |
+| Preflight before (exit code, integrity) | |
+| Preflight after (exit code, integrity) | |
+| Issues seen | |
+| Sign-off (name, date) | |

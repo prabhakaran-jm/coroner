@@ -393,7 +393,11 @@ def _manifest(key: str, spec: dict[str, Any], sch: dict[str, int], record_count:
                     "2.1 MiB of growth can occur between two Samples.",
                     "The final seconds before the out-of-memory kill may be unobserved: the last Sample can "
                     "predate the kill.",
-                    "The peak RSS in the Samples may understate the container memory limit that triggered the kill.",
+                    # Approved D6 wording. M0's coroner/runner/evaluate.py on this branch still emits the old
+                    # Runner sentence (the fix is in unmerged PR #4), so this synthetic run intentionally
+                    # uses the corrected text. Real Runner output is not changed by this script.
+                    "The highest sampled RSS may be lower than the highest RSS the container reached because "
+                    "sampling is not continuous.",
                 ],
             }
             if key == "C" else None

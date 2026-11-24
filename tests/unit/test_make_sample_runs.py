@@ -195,6 +195,27 @@ def test_viewer_lists_three_valid_runs_with_the_right_values(sample: Path, ids: 
         assert all(v["status"] == "ok" for v in detail["artifact_status"].values())
 
 
+D6_SENTENCE = (
+    "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous."
+)
+
+
+def test_c_third_sampling_limitation_uses_the_approved_d6_wording(sample: Path, ids: dict[str, str]) -> None:
+    manifest = json.loads((sample / ids["C"] / "manifest.json").read_text(encoding="utf-8"))
+    statements = manifest["sampling_limitations"]["statements"]
+    assert len(statements) == 3 and statements[2] == D6_SENTENCE
+    assert statements[0].startswith("Sample_Interval is 500 ms")
+    assert statements[1].startswith("The final seconds before the out-of-memory kill")
+    for key in ("A", "B"):
+        other = json.loads((sample / ids[key] / "manifest.json").read_text(encoding="utf-8"))
+        assert other["sampling_limitations"] is None
+
+
+def test_the_word_understate_appears_nowhere_in_the_generated_output(sample: Path) -> None:
+    for name, data in _tree(sample).items():
+        assert b"understate" not in data.lower(), name
+
+
 def test_b_has_a_sigkill_record_and_a_usable_clock_offset(sample: Path, ids: dict[str, str]) -> None:
     client = _client(sample)
     timing = _get(client, f"/api/runs/{ids['B']}").json()["timing"]

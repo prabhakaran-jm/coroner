@@ -206,7 +206,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: sum of the budgets is at most 2:45 (show the arithmetic); each Non-Negotiable Demo Fact appears unchanged.
     - _Plan: §4, §6, §7, §8, §12 M2.2_
 
-  - [-] 3.2 List the fallback screenshots and clips
+  - [x] 3.2 List the fallback screenshots and clips
     - Add a section to `docs/m2-plan/recording-script.md` listing, per screen, the fallback file: existing headless screenshots in `docs/m1-results/browser-4.7/` (for example `01-overview-desktop.png`, `02-compare-desktop.png`, `06-experiment-b-chart.png`, `07-experiment-c-chart.png`) and `docs/m1-results/browser-4.14/`, plus any new human-recorded clip. Verify each listed file exists (`Test-Path`).
     - State that a fallback is announced as "a recording / a saved screenshot, not the live Viewer" and that a second copy of the recording is kept on another device or drive.
     - Safety: do not change or regenerate any screenshot; no evidence changes.
@@ -274,7 +274,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: a triage table exists and the user approves each fix to be made.
     - _Plan: §12 M2.4_
 
-  - [~] 5.2 Fix each approved defect (only defects found in rehearsal)
+  - [-] 5.2 Fix each approved defect (only defects found in rehearsal)
     - For each approved defect: a minimal fix in `coroner/viewer/` only, with a test; no M0 change. Run `.\.venv\Scripts\python.exe -m pytest tests/unit/viewer tests/unit/test_structure.py tests/unit/test_docs.py -q -p no:cacheprovider -rs` (collect-only first) and record the counts.
     - Safety: M1.1 implementation is otherwise frozen; no commit; the reviewer approves each fix before group 6.
     - Verify: the new test fails before the fix and passes after, with real output recorded.
