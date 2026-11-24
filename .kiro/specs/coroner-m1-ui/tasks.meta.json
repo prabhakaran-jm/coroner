@@ -1,0 +1,727 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Preflight: branch, pins, runs/ protection, hash baseline, Node detection": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795256036901
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795259300932
+      }
+    ],
+    "1.2 Create the `coroner.viewer` package skeleton and the CLI": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795259305741
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795259376182
+      }
+    ],
+    "1.3 Create the fixture builder and its self-test": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795259376716
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264337912
+      }
+    ],
+    "1.4 Implement `coroner/viewer/files.py` (containment and bounded read)": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264338437
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264459162
+      }
+    ],
+    "1.5 Implement `coroner/viewer/hostcheck.py` (Host guard, security headers, method guard)": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264459818
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264528366
+      }
+    ],
+    "1.6 Implement `coroner/viewer/app.py` (factory, routes, static allowlist, error handlers) and the minimal shell": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264528882
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264818420
+      }
+    ],
+    "1.7 Wire `cli.main` to the app and uvicorn": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795264818894
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266421231
+      }
+    ],
+    "1.8 Update `tests/unit/test_structure.py` and add the module-level import boundary test": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266421772
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266614549
+      }
+    ],
+    "1.9 Write the file-access tests (containment, bounds, listing entries)": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266614966
+      },
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266808628
+      }
+    ],
+    "1.10 Write the HTTP guard and route-surface tests": [
+      {
+        "executionId": "bf029621-26e0-4112-9d66-53b86da56f3c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795266809134
+      },
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270360681
+      }
+    ],
+    "1.11 Write the CLI tests": [
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270362492
+      },
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270569379
+      }
+    ],
+    "1.12 Write the read-only test and the static read-only scan": [
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270568786
+      },
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270724059
+      }
+    ],
+    "1.18 Checkpoint - review before continuing (M1.1-A)": [
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270725088
+      },
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270949252
+      }
+    ],
+    "1. M1.1-A Safe local viewer foundation": [
+      {
+        "executionId": "7dcf66e2-7029-4b06-b342-e29821ab214c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795270949583
+      }
+    ],
+    "2.1 Implement `coroner/viewer/timefmt.py` and the Docker time parity test": [
+      {
+        "executionId": "0fbf3e6c-2847-4ec2-b839-f679328981dd",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271106130
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271426148
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271614534
+      }
+    ],
+    "2.3 Implement `coroner/viewer/model.py` data classes, null helpers and JSON dump": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271403789
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271617965
+      }
+    ],
+    "2.4 Implement `coroner/viewer/samples.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271624838
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271980074
+      }
+    ],
+    "2.7 Implement `coroner/viewer/classify.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271625375
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271981399
+      }
+    ],
+    "2.5 Implement `coroner/viewer/timeline.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271985069
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272223413
+      }
+    ],
+    "2.6 Implement `coroner/viewer/clocks.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795271985729
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272224461
+      }
+    ],
+    "2.12 Write the classification and Docker state tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272225654
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795273728915
+      }
+    ],
+    "2.8 Implement `coroner/viewer/loader.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272757389
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272766183
+      }
+    ],
+    "2.9 Implement the explicit allowlist serializers in `coroner/viewer/model.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272758500
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272766765
+      }
+    ],
+    "2.10 Wire the real provider into `coroner/viewer/app.py`": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272759121
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272767306
+      }
+    ],
+    "2.13 Write the evidence assembly tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272791599
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795273727393
+      }
+    ],
+    "2.11 Measure parse memory for a 16 MiB evidence file and record it": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795272792251
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795273726288
+      }
+    ],
+    "2.14 Write the timeline, segment and tick tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795273738073
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795288610149
+      }
+    ],
+    "2.15 Write the clock and timing tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795288610749
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795288748132
+      }
+    ],
+    "2.16 Write the discovery, Run_Order and `not_read` tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795288748931
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795289613641
+      }
+    ],
+    "2.17 Write the cache, error path and logging tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795289614647
+      }
+    ],
+    "2.18 Write the API contract, truncation, null policy and end-to-end read-only tests": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795289615216
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795290053232
+      }
+    ],
+    "2.35 Checkpoint - review before continuing (M1.1-B)": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795290053864
+      },
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795290378699
+      }
+    ],
+    "2. M1.1-B Evidence API": [
+      {
+        "executionId": "cf835323-a660-4946-a6d1-21dea9794ab4",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795290379280
+      }
+    ],
+    "3.1 Build the static shell, design tokens, shared modules and page router": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795290652165
+      },
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795291574389
+      }
+    ],
+    "3.2 Build the overview page (`overview.js`)": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795291573605
+      }
+    ],
+    "3.3 Build the SVG RSS timeline (`chart.js`)": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795291574958
+      },
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795294625837
+      }
+    ],
+    "3.4 Build the Evidence vs Uncertainty panel (`evidence-panel.js`)": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795294626656
+      }
+    ],
+    "3.5 Build the incident detail page (`incident.js`)": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795294627275
+      },
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795295201982
+      }
+    ],
+    "3.7 Create the acceptance record skeleton and the visual review procedure": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795295201307
+      },
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795295395063
+      }
+    ],
+    "3.6 Write the static UI tests": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795295202562
+      }
+    ],
+    "3.9 Checkpoint - review before continuing (M1.1-C)": [
+      {
+        "executionId": "873761e6-38d0-490c-b8a6-50260150ea11",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795295430147
+      },
+      {
+        "executionId": "0cd8bc6c-235b-49a5-8851-a385c284f171",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795298152764
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346078056
+      }
+    ],
+    "3.8 Perform the manual visual review on the real runs (read-only) and record the real results": [
+      {
+        "executionId": "0cd8bc6c-235b-49a5-8851-a385c284f171",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795298153427
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346077672
+      }
+    ],
+    "3. M1.1-C Investigation UI": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346079166
+      }
+    ],
+    "4.1 Implement `coroner/viewer/compare.py` and the `/compare` query validation": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346082870
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346093101
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346270951
+      }
+    ],
+    "4.2 Create the comparison reference vectors and the Python reference model": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346083476
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346271663
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346542953
+      }
+    ],
+    "4.3 Implement `compare-logic.js` and the Node vector test": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346083976
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346545197
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346686581
+      }
+    ],
+    "4.5 Implement the compare page (`compare.js`)": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346084424
+      },
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346687215
+      },
+      {
+        "executionId": "6e9d0573-53c1-4feb-9852-dcc19d0702a0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795373242363
+      },
+      {
+        "executionId": "6e9d0573-53c1-4feb-9852-dcc19d0702a0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795373427240
+      }
+    ],
+    "4.6 Extend the static tests for the compare files": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346084954
+      },
+      {
+        "executionId": "6e9d0573-53c1-4feb-9852-dcc19d0702a0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795373430251
+      },
+      {
+        "executionId": "6e9d0573-53c1-4feb-9852-dcc19d0702a0",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795374199342
+      }
+    ],
+    "4.7 Perform the mandatory real-browser smoke test and accessibility checks and record the real results": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346085467
+      },
+      {
+        "executionId": "4512200b-7fd3-4fec-875b-945c49e63341",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795374997561
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795462556575
+      },
+      {
+        "executionId": "e1b2b194-980c-4a95-a349-a4273e2e80f7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795471310799
+      },
+      {
+        "executionId": "3fd55ccd-0f5d-4ae6-af7d-7501f3f3f5f8",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795474423015
+      },
+      {
+        "executionId": "55fabea4-a6ba-4718-b502-a803aa31d2a1",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795514226959
+      }
+    ],
+    "4.8 Launch the Viewer on the real runs (read-only), verify the localhost bind manually and confirm the artifacts are unchanged": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346085926
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795462559102
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795468724892
+      }
+    ],
+    "4.9 Add the README \"Viewer\" section": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346086424
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795468730270
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470201817
+      }
+    ],
+    "4.10 Run the focused regression of directly relevant existing tests": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346086866
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470202132
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470510813
+      }
+    ],
+    "4.12 Complete the acceptance record and the tested / not tested ledger": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346087097
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470513359
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470890688
+      }
+    ],
+    "4.13 Final read-only verification": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346087674
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795470891158
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795471109692
+      }
+    ],
+    "4.14 Final checkpoint - review before M1.1 acceptance (M1.1-D)": [
+      {
+        "executionId": "8cdf8d13-f3c7-4ded-942f-7b37a52d28d7",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795346088144
+      },
+      {
+        "executionId": "c71efa55-a4d2-430a-8772-47f7169a698e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795471110113
+      },
+      {
+        "executionId": "55fabea4-a6ba-4718-b502-a803aa31d2a1",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795514231122
+      }
+    ],
+    "4. M1.1-D Comparison and acceptance": [
+      {
+        "executionId": "55fabea4-a6ba-4718-b502-a803aa31d2a1",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795514231523
+      }
+    ]
+  }
+}

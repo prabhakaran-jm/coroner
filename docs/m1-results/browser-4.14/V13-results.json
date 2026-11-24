@@ -1,0 +1,99 @@
+{
+ "fixture": "synthetic Experiment B, builder.py RunsBuilder.add_run('B', samples=sample_specs(5), clock_offset_ms=2**53-1), temp dir outside repo (removed after)",
+ "browser": "headless Chrome 158.0.8127.36 via cdp_harness",
+ "1_fallback_axis_documented_reason": {
+  "api": {
+   "chart.time_axis": "raw_uncorrected",
+   "timing.time_axis": "raw_uncorrected",
+   "timing.correction_available": false,
+   "timing.correction_unavailable_reason": "correction_out_of_range",
+   "termination_markers.sigkill.not_drawn_reason": "correction_out_of_range"
+  },
+  "rendered": [
+   true,
+   true
+  ],
+  "x_axis_title": "Raw Probe Capture_Time",
+  "result": "PASS"
+ },
+ "2_raw_capture_time_uncorrected": {
+  "capture_times_match_raw": true,
+  "x_ms_equals_epoch_of_raw": true,
+  "corrected_capture_time_all_null": true,
+  "plotted_cx": [
+   72,
+   288,
+   504,
+   720,
+   936
+  ],
+  "expected_cx_from_raw": [
+   72,
+   288,
+   504,
+   720,
+   936
+  ],
+  "tick_labels": [
+   [
+    "21:13:00",
+    72
+   ],
+   [
+    "21:13:00.500",
+    288
+   ],
+   [
+    "21:13:01",
+    504
+   ],
+   [
+    "21:13:01.500",
+    720
+   ],
+   [
+    "21:13:02",
+    936
+   ]
+  ],
+  "result": "PASS"
+ },
+ "3_finishedat_sigkill_block": {
+  "present": true,
+  "intervals": [
+   "finished_at_to_sigkill"
+  ],
+  "result": "PASS"
+ },
+ "4_values_match_fixture": {
+  "sigkill_sent_time": "2026-11-20T21:13:20.000Z",
+  "container_finished_at": "2026-11-20T21:13:21.760Z",
+  "difference_ms": 1760,
+  "expected_difference_ms": 1760,
+  "clock_uncertainty_ms": 12.5,
+  "tolerance_ms": 250,
+  "clock_offset_ms": 9007199254740991,
+  "result": "PASS"
+ },
+ "5_provenance_uncertainty": {
+  "offset_clock": "collector_minus_host",
+  "offset_source": "sample_timing",
+  "uncertainty_clock": "collector_minus_host",
+  "four_clocks_statement": true,
+  "uncertainty_does_not_bound": true,
+  "result": "PASS"
+ },
+ "6_no_ordering_claim": {
+  "claims_found": [],
+  "fixed_negative_statement": true,
+  "result": "PASS"
+ },
+ "7_console_csp": {
+  "console_errors": [],
+  "exceptions": [],
+  "csp_violations": [],
+  "note": "only the browser's own /favicon.ico 404 is logged",
+  "result": "PASS"
+ },
+ "screenshot": "docs/m1-results/browser-4.14/V13-fallback-1280.png"
+}

@@ -1,0 +1,881 @@
+/* Coroner Viewer: dark graphite incident-response theme.
+   No fonts, images or URLs are loaded. No inline style is needed. */
+
+:root {
+  --bg: #14161a;
+  --surface: #1c1f25;
+  --surface-2: #252932;
+  --border: #4a5261;
+  --text: #e8eaee;
+  --muted: #a6aebb;
+  --amber: #f5b041;
+  --red: #ff7b72;
+  --purple: #c4a3ff;
+
+  --font-sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+
+  --fs-12: 12px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-28: 28px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-16);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Colour transition on links and buttons (the only motion). */
+a,
+button {
+  transition: color 120ms linear, background-color 120ms linear, border-color 120ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a,
+  button {
+    transition: none;
+  }
+}
+
+/* Focus rings: amber, 3px, always visible for keyboard focus. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--amber);
+  color: var(--bg);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+/* Header */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 8px 24px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--amber);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text);
+  font-size: var(--fs-20);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--muted);
+  font-size: var(--fs-14);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.page {
+  display: grid;
+  gap: 24px;
+}
+
+/* Hero */
+.brand-line {
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.page-title {
+  font-size: var(--fs-28);
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-16);
+}
+
+/* Cards: one column, three from 960px */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 960px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--purple);
+  border-radius: 6px;
+}
+
+.card-empty {
+  border-top-color: var(--border);
+}
+
+.card-title {
+  font-size: var(--fs-20);
+}
+
+.card-desc,
+.card-note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-14);
+}
+
+.facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.fact {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-radius: 4px;
+}
+
+.fact-label {
+  color: var(--muted);
+  font-size: var(--fs-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fact-value {
+  margin: 0;
+  font-size: var(--fs-14);
+}
+
+/* Status badges: text label plus colour */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.badge-pass {
+  color: var(--purple);
+}
+
+.badge-fail {
+  color: var(--red);
+}
+
+.badge-unknown {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--bg);
+}
+
+.discrepancy {
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: var(--fs-14);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* Buttons and links */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  font: inherit;
+  font-size: var(--fs-14);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--bg);
+  border-color: var(--amber);
+}
+
+.button-link {
+  justify-self: start;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--purple);
+  text-decoration: underline;
+}
+
+/* A run id in a table never wraps character by character; a narrow table scrolls inside .table-wrap. */
+.table .text-link {
+  white-space: nowrap;
+}
+
+.text-link:hover {
+  color: var(--text);
+}
+
+/* Notices and states */
+.notice {
+  padding: 12px 16px;
+  background: var(--surface);
+  border-left: 4px solid var(--amber);
+  font-size: var(--fs-14);
+}
+
+.state {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--amber);
+  border-radius: 4px;
+}
+
+.state-error {
+  border-left-color: var(--red);
+}
+
+.state-title {
+  margin-bottom: 8px;
+  font-size: var(--fs-20);
+}
+
+.state .button {
+  margin-top: 12px;
+}
+
+/* Run list */
+.section-title {
+  margin-bottom: 8px;
+  font-size: var(--fs-20);
+}
+
+/* A grid item may shrink below its content, so a wide table scrolls inside .table-wrap instead of widening the page. */
+.page > * {
+  min-width: 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-14);
+}
+
+.table th,
+.table td {
+  padding: 4px 12px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  color: var(--muted);
+  font-size: var(--fs-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+
+/* Compare slots (used by the compare page of group D): side by side from 900px */
+.compare-slots {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .compare-slots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.compare-slots > * {
+  min-width: 0;
+}
+
+.compare-page > section {
+  min-width: 0;
+}
+
+.compare-headline {
+  padding: 16px;
+  background: var(--surface);
+  border: 2px solid var(--amber);
+  border-radius: 6px;
+}
+
+.headline-text {
+  color: var(--amber);
+  font-size: var(--fs-20);
+  font-weight: 600;
+}
+
+.card-excluded {
+  border-top-color: var(--red);
+}
+
+.warning {
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-left: 4px solid var(--red);
+  font-size: var(--fs-14);
+  overflow-wrap: anywhere;
+}
+
+.slot-run,
+.slot-state {
+  overflow-wrap: anywhere;
+}
+
+.slot-state {
+  font-size: var(--fs-14);
+}
+
+.chooser summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--purple);
+  font-size: var(--fs-14);
+  text-decoration: underline;
+}
+
+.choose-list {
+  display: grid;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: var(--fs-14);
+}
+
+.compare-facts,
+.compare-statements,
+.compare-limits,
+.compare-runner {
+  display: grid;
+  gap: 8px;
+}
+
+.compare-table {
+  min-width: 640px;
+}
+
+.compare-table th[scope="row"] {
+  color: var(--muted);
+  font-size: var(--fs-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.compare-table td {
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.discrepancy-text {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.statements,
+.omitted,
+.limit-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.runner-blocks {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .runner-blocks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Chart (chart.js). SVG presentation is by class; sizes are viewBox units. */
+.chart-section {
+  display: grid;
+  gap: 12px;
+}
+
+.subsection-title {
+  font-size: var(--fs-16);
+}
+
+.chart-section > * {
+  min-width: 0;
+}
+
+.chart-wrap {
+  padding-left: 8px;
+}
+
+.chart-plot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* The chart text is sized in viewBox units, so a narrow screen scrolls the plot sideways instead of
+   shrinking the text below a readable size. */
+.chart-svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-axis-notes {
+  display: grid;
+  gap: 4px;
+}
+
+.chart-axis-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-14);
+}
+
+.chart-svg text {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.chart-svg .chart-axis-title {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.chart-grid {
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.chart-axis {
+  stroke: var(--muted);
+  stroke-width: 1;
+}
+
+.chart-line {
+  stroke: var(--text);
+  stroke-width: 2;
+  fill: none;
+}
+
+.chart-point {
+  fill: var(--text);
+  stroke: var(--bg);
+  stroke-width: 1;
+}
+
+.chart-point.point-active {
+  fill: var(--amber);
+}
+
+.chart-active {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 3;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.chart-limit {
+  stroke: var(--amber);
+  stroke-width: 1.5;
+}
+
+.chart-svg .chart-limit-label {
+  fill: var(--amber);
+}
+
+.chart-sigkill {
+  stroke: var(--purple);
+  stroke-width: 1.5;
+}
+
+.chart-svg .chart-sigkill-label {
+  fill: var(--purple);
+}
+
+.chart-gap {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+
+.chart-svg .chart-gap-label {
+  fill: var(--muted);
+}
+
+.partial-label {
+  padding: 4px 12px;
+  border-left: 4px solid var(--amber);
+  font-family: var(--font-mono);
+  font-size: var(--fs-14);
+}
+
+.chart-readout {
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-size: var(--fs-14);
+}
+
+.readout-title {
+  color: var(--muted);
+  font-size: var(--fs-12);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.readout-lines {
+  margin: 4px 0;
+  padding-left: 20px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-14);
+}
+
+.swatch {
+  display: inline-block;
+  width: 32px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-top: 2px solid var(--text);
+}
+
+.swatch-dashed {
+  border-top-style: dashed;
+}
+
+.swatch-limit {
+  border-top: 2px dashed var(--amber);
+}
+
+.swatch-sigkill {
+  border-top: 2px dotted var(--purple);
+}
+
+.chart-empty {
+  font-weight: 600;
+}
+
+.chart-text {
+  display: grid;
+  gap: 8px;
+}
+
+.chart-note {
+  font-size: var(--fs-14);
+}
+
+.sample-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+/* Disclosure toggles keep their native <summary> behaviour and marker; the box is at least 44 px high. */
+.sample-table summary {
+  box-sizing: border-box;
+  min-block-size: 44px;
+  padding-block: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sample-table caption {
+  padding: 8px 0;
+  color: var(--muted);
+  text-align: left;
+}
+
+.original {
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+  font-size: var(--fs-12);
+}
+
+.original summary {
+  box-sizing: border-box;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding-block: 13px;
+  padding-inline: 4px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.time-note {
+  font-size: var(--fs-12);
+}
+
+/* Evidence vs Uncertainty panel (evidence-panel.js) */
+.evidence-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.ev-section {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.ev-section-known {
+  border-left: 4px solid var(--purple);
+}
+
+.ev-section-unknown {
+  border-left: 4px solid var(--amber);
+}
+
+.ev-section-title {
+  margin-bottom: 8px;
+  font-size: var(--fs-16);
+  letter-spacing: 0.08em;
+}
+
+.ev-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ev-entry {
+  font-size: var(--fs-14);
+}
+
+.ev-tag {
+  display: inline-block;
+  padding: 0 6px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.ev-tag-known {
+  color: var(--purple);
+}
+
+.ev-tag-unknown {
+  color: var(--amber);
+}
+
+.ev-label {
+  font-weight: 600;
+}
+
+.ev-sub {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+
+.runner-block {
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 2px dashed var(--muted);
+  border-radius: 6px;
+}
+
+.runner-block-title {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: var(--fs-14);
+  letter-spacing: 0.04em;
+}
+
+.runner-item {
+  margin-top: 8px;
+}
+
+.runner-item-label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+}
+
+.runner-text {
+  font-size: var(--fs-14);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.runner-list {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+
+/* Incident detail (incident.js) */
+.incident-section {
+  display: grid;
+  gap: 12px;
+}
+
+.last-fact {
+  display: grid;
+  gap: 8px;
+}
+
+.interval {
+  display: grid;
+  gap: 8px;
+}

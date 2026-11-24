@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "coroner"
 REQ_DIR = REPO_ROOT / "requirements"
 
-PACKAGES = ("common", "evidence", "probe", "demo_app", "collector", "runner")
+PACKAGES = ("common", "evidence", "probe", "demo_app", "collector", "runner", "viewer")
 IMPORTABLE = (
     "coroner",
     "coroner.common",
@@ -35,6 +35,7 @@ IMPORTABLE = (
     "coroner.collector",
     "coroner.runner",
     "coroner.runner.experiments",
+    "coroner.viewer",
 )
 
 # Design, "Dependency direction": evidence -> common; collector -> evidence, common;
@@ -47,6 +48,15 @@ ALLOWED_COMPONENTS: dict[str, frozenset[str]] = {
     "demo_app": frozenset({"probe"}),
     "collector": frozenset({"evidence", "common"}),
     "runner": frozenset({"evidence", "common"}),
+    # The Viewer is read-only. The package-level rule allows runner; the finer module-level
+    # rule (only runner.manifest) is RUNNER_MODULES_ALLOWED below and in
+    # tests/unit/viewer/test_import_boundary.py.
+    "viewer": frozenset({"evidence", "common", "runner"}),
+}
+
+# Finer rule inside an allowed component: only these coroner.runner modules may be imported.
+RUNNER_MODULES_ALLOWED: dict[str, frozenset[str]] = {
+    "viewer": frozenset({"coroner.runner", "coroner.runner.manifest"}),
 }
 
 # Third-party imports. The Probe is stdlib-only (design). The host runner is stdlib-only
@@ -107,6 +117,13 @@ def import_violations(
         if top == "coroner":
             if len(parts) > 1 and parts[1] != own and parts[1] not in allowed:
                 problems.append(f"line {ref.lineno}: coroner.{own} must not import {ref.module}")
+            elif (
+                own in RUNNER_MODULES_ALLOWED
+                and len(parts) > 1
+                and parts[1] == "runner"
+                and ref.module not in RUNNER_MODULES_ALLOWED[own]
+            ):
+                problems.append(f"line {ref.lineno}: coroner.{own} must not import {ref.module}")
         elif top in sys.stdlib_module_names or top == "":
             continue
         elif _normalise(top) not in third_party:
@@ -127,6 +144,8 @@ def pin_lines(path: Path) -> list[str]:
 def third_party_for(own: str) -> frozenset[str]:
     if own in STDLIB_ONLY:
         return frozenset()
+    if own == "viewer":  # no requirements/viewer.txt exists; the Viewer runs on the collector pins
+        return pinned_names(REQ_DIR / "collector.txt")
     return pinned_names(REQ_DIR / f"{own}.txt")
 
 
@@ -203,10 +222,15 @@ def test_probe_imports_only_the_standard_library() -> None:
         ("probe", "import importlib\nimportlib.import_module('coroner.common')", ("coroner", "probe")),
         ("probe", "__import__('coroner.runner')", ("coroner", "probe")),
         ("probe", "def f():\n    import coroner.evidence", ("coroner", "probe")),
+        ("viewer", "import coroner.collector", ("coroner", "viewer")),
+        ("viewer", "from coroner.probe import x", ("coroner", "viewer")),
+        ("viewer", "import docker", ("coroner", "viewer")),
+        ("viewer", "import yaml", ("coroner", "viewer")),
+        ("viewer", "from coroner.runner.experiments.base import parse_docker_time", ("coroner", "viewer")),
     ],
 )
 def test_checker_detects_prohibited_imports(own: str, source: str, parts: tuple[str, ...]) -> None:
-    third_party = frozenset({"fastapi", "starlette", "pydantic", "uvicorn"}) if own in {"demo_app", "collector"} else frozenset()
+    third_party = frozenset({"fastapi", "starlette", "pydantic", "uvicorn"}) if own in {"demo_app", "collector", "viewer"} else frozenset()
     assert import_violations(own, imported_modules(source, parts), third_party), source
 
 
@@ -220,10 +244,12 @@ def test_checker_detects_prohibited_imports(own: str, source: str, parts: tuple[
         ("collector", "from coroner.evidence import writer\nfrom coroner.common import clock\nimport uvicorn", ("coroner", "collector")),
         ("runner", "from coroner.evidence import reader\nfrom coroner.common import clock\nimport subprocess, urllib.request", ("coroner", "runner")),
         ("runner", "from ..experiments import base\nfrom ...common import clock", ("coroner", "runner", "experiments")),
+        ("viewer", "import fastapi", ("coroner", "viewer")),
+        ("viewer", "from coroner.evidence import reader", ("coroner", "viewer")),
     ],
 )
 def test_checker_accepts_allowed_imports(own: str, source: str, parts: tuple[str, ...]) -> None:
-    third_party = frozenset({"fastapi", "starlette", "pydantic", "uvicorn"}) if own in {"demo_app", "collector"} else frozenset()
+    third_party = frozenset({"fastapi", "starlette", "pydantic", "uvicorn"}) if own in {"demo_app", "collector", "viewer"} else frozenset()
     assert import_violations(own, imported_modules(source, parts), third_party) == []
 
 

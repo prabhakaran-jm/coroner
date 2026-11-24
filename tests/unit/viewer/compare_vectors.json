@@ -1,0 +1,593 @@
+{
+  "format": "coroner-m1-compare-vectors-1",
+  "notes": "Golden vectors for the /compare statements (Requirement 8). Slot facts are the values the compare page takes from GET /api/runs and GET /api/runs/{run_id}. expected.omitted lists the reasons per statement id; headline reasons mirror S3. Statements whose condition is false are simply absent (not omitted).",
+  "vectors": [
+    {
+      "id": "headline_recorded_abc",
+      "description": "Recorded A/B/C case: A exit 1, B 137 OOMKilled false, C 137 OOMKilled true",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": [], "docker_state_source": "inspect_and_manifest_agree"},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": [], "docker_state_source": "inspect_and_manifest_agree"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": [], "docker_state_source": "inspect_and_manifest_agree"}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    },
+    {
+      "id": "same_oom_false",
+      "description": "B and C both 137 with OOMKilled false: no S3, no headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": false, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {}
+      }
+    },
+    {
+      "id": "same_oom_true",
+      "description": "B and C both 137 with OOMKilled true: no S3, no headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": true, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {}
+      }
+    },
+    {
+      "id": "non_137_exit_codes",
+      "description": "B and C both exit 1 with different OOMKilled: ExitCode alone gives no S2, S3 or headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 0, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 1, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 1, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=0, B=1, C=1)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {}
+      }
+    },
+    {
+      "id": "exit_137_for_b_only",
+      "description": "Only B has exit 137 (OOMKilled true): C exit 1, so no S2, S3 or headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 0, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": true, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 1, "oom_killed": false, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=0, B=137, C=1)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {}
+      }
+    },
+    {
+      "id": "exit_137_for_c_only",
+      "description": "Only C has exit 137 (OOMKilled true): B exit 143, so no S2, S3 or headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 0, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 143, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=0, B=143, C=137)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {}
+      }
+    },
+    {
+      "id": "a_run_same_exit_code_as_b_and_c",
+      "description": "A-run with exit 137 and OOMKilled true: S1 does not apply; the headline depends on B and C only",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 137, "oom_killed": true, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    },
+    {
+      "id": "a_run_oom_not_recorded_is_irrelevant",
+      "description": "A-run with OOMKilled null: S1 and the headline do not use A's OOMKilled",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": null, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    },
+    {
+      "id": "a_run_exit_code_missing",
+      "description": "A-run without a recorded ExitCode: S1 omitted naming the value; headline unaffected",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": null, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S1": ["slot A: ExitCode not recorded"]
+        }
+      }
+    },
+    {
+      "id": "a_run_missing",
+      "description": "No saved A run: S1 and S4 omitted naming slot A; S2, S3 and the headline still come from B and C",
+      "slots": {
+        "a": {"state": "none", "run_id": null},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S1": ["slot A: no saved run for Experiment A"],
+          "S4": ["slot A: no saved run for Experiment A"]
+        }
+      }
+    },
+    {
+      "id": "missing_run_c",
+      "description": "No saved C run: every statement that needs C is omitted, B alone gives nothing",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "none", "run_id": null}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: no saved run for Experiment C"],
+          "S2": ["slot C: no saved run for Experiment C"],
+          "S3": ["slot C: no saved run for Experiment C"],
+          "S4": ["slot C: no saved run for Experiment C"],
+          "headline": ["slot C: no saved run for Experiment C"]
+        }
+      }
+    },
+    {
+      "id": "all_slots_missing",
+      "description": "No saved run for any type",
+      "slots": {
+        "a": {"state": "none", "run_id": null},
+        "b": {"state": "none", "run_id": null},
+        "c": {"state": "none", "run_id": null}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot A: no saved run for Experiment A", "slot B: no saved run for Experiment B", "slot C: no saved run for Experiment C"],
+          "S2": ["slot B: no saved run for Experiment B", "slot C: no saved run for Experiment C"],
+          "S3": ["slot B: no saved run for Experiment B", "slot C: no saved run for Experiment C"],
+          "S4": ["slot A: no saved run for Experiment A", "slot B: no saved run for Experiment B", "slot C: no saved run for Experiment C"],
+          "headline": ["slot B: no saved run for Experiment B", "slot C: no saved run for Experiment C"]
+        }
+      }
+    },
+    {
+      "id": "unknown_run_id_in_slot_b",
+      "description": "A valid run id that names no run (API 404) in slot B: unavailable, names the run id, no inference from C",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "unavailable", "run_id": "no-such-run"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot B: no saved run found for run id no-such-run"],
+          "S2": ["slot B: no saved run found for run id no-such-run"],
+          "S3": ["slot B: no saved run found for run id no-such-run"],
+          "S4": ["slot B: no saved run found for run id no-such-run"],
+          "headline": ["slot B: no saved run found for run id no-such-run"]
+        }
+      }
+    },
+    {
+      "id": "load_error_in_slot_c",
+      "description": "Another failure (HTTP 500) in slot C is not treated as a recorded value",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "error", "run_id": "run-c-1", "http_status": 500}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: run run-c-1 could not be loaded (HTTP 500)"],
+          "S2": ["slot C: run run-c-1 could not be loaded (HTTP 500)"],
+          "S3": ["slot C: run run-c-1 could not be loaded (HTTP 500)"],
+          "S4": ["slot C: run run-c-1 could not be loaded (HTTP 500)"],
+          "headline": ["slot C: run run-c-1 could not be loaded (HTTP 500)"]
+        }
+      }
+    },
+    {
+      "id": "type_mismatch_b_run_in_slot_a",
+      "description": "An Experiment B run supplied as slot a: excluded; S1 and S4 omitted naming the slot; the headline uses only slots b and c",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-b-9", "experiment_type": "B", "exit_code": 137, "oom_killed": true, "sample_count": 30, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S1": ["slot A: run run-b-9 is Experiment B, expected Experiment A"],
+          "S4": ["slot A: run run-b-9 is Experiment B, expected Experiment A"]
+        }
+      }
+    },
+    {
+      "id": "type_mismatch_c_run_in_slot_b",
+      "description": "An Experiment C run supplied as slot b: excluded; a mismatched run never counts toward S2, S3 or the headline",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-c-9", "experiment_type": "C", "exit_code": 137, "oom_killed": false, "sample_count": 25, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot B: run run-c-9 is Experiment C, expected Experiment B"],
+          "S2": ["slot B: run run-c-9 is Experiment C, expected Experiment B"],
+          "S3": ["slot B: run run-c-9 is Experiment C, expected Experiment B"],
+          "S4": ["slot B: run run-c-9 is Experiment C, expected Experiment B"],
+          "headline": ["slot B: run run-c-9 is Experiment C, expected Experiment B"]
+        }
+      }
+    },
+    {
+      "id": "type_mismatch_a_run_in_slot_c",
+      "description": "An Experiment A run supplied as slot c: excluded from every statement",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-a-9", "experiment_type": "A", "exit_code": 137, "oom_killed": true, "sample_count": 12, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: run run-a-9 is Experiment A, expected Experiment C"],
+          "S2": ["slot C: run run-a-9 is Experiment A, expected Experiment C"],
+          "S3": ["slot C: run run-a-9 is Experiment A, expected Experiment C"],
+          "S4": ["slot C: run run-a-9 is Experiment A, expected Experiment C"],
+          "headline": ["slot C: run run-a-9 is Experiment A, expected Experiment C"]
+        }
+      }
+    },
+    {
+      "id": "oom_killed_missing_for_c",
+      "description": "C has ExitCode 137 but no recorded OOMKilled: S3 and the headline are omitted, OOMKilled is not inferred from B or from the exit code",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": null, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S3": ["slot C: OOMKilled not recorded"],
+          "headline": ["slot C: OOMKilled not recorded"]
+        }
+      }
+    },
+    {
+      "id": "exit_code_missing_for_b",
+      "description": "B has no recorded ExitCode: nothing is inferred from C",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": null, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot B: ExitCode not recorded"],
+          "S2": ["slot B: ExitCode not recorded"],
+          "S3": ["slot B: ExitCode not recorded"],
+          "headline": ["slot B: ExitCode not recorded"]
+        }
+      }
+    },
+    {
+      "id": "partial_values_across_b_and_c",
+      "description": "B lacks OOMKilled and C lacks ExitCode: each missing value is named",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": null, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": null, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: ExitCode not recorded"],
+          "S2": ["slot C: ExitCode not recorded"],
+          "S3": ["slot B: OOMKilled not recorded", "slot C: ExitCode not recorded"],
+          "headline": ["slot B: OOMKilled not recorded", "slot C: ExitCode not recorded"]
+        }
+      }
+    },
+    {
+      "id": "docker_state_unavailable_for_all",
+      "description": "No Docker state recorded for any run: every ExitCode and OOMKilled statement is omitted; S4 needs only Samples",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": null, "oom_killed": null, "sample_count": 12, "discrepant_fields": [], "docker_state_source": "unavailable"},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": null, "oom_killed": null, "sample_count": 30, "discrepant_fields": [], "docker_state_source": "unavailable"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": null, "oom_killed": null, "sample_count": 25, "discrepant_fields": [], "docker_state_source": "unavailable"}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot A: ExitCode not recorded", "slot B: ExitCode not recorded", "slot C: ExitCode not recorded"],
+          "S2": ["slot B: ExitCode not recorded", "slot C: ExitCode not recorded"],
+          "S3": ["slot B: ExitCode not recorded", "slot B: OOMKilled not recorded", "slot C: ExitCode not recorded", "slot C: OOMKilled not recorded"],
+          "headline": ["slot B: ExitCode not recorded", "slot B: OOMKilled not recorded", "slot C: ExitCode not recorded", "slot C: OOMKilled not recorded"]
+        }
+      }
+    },
+    {
+      "id": "docker_state_from_one_source_only",
+      "description": "Raw inspect unavailable for B (manifest only) and manifest state missing for C (raw only): the recorded effective values are used",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": [], "docker_state_source": "inspect_and_manifest_agree"},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": [], "docker_state_source": "manifest_only"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": [], "docker_state_source": "raw_only"}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    },
+    {
+      "id": "discrepant_exit_code_in_c",
+      "description": "C has a discrepancy in exit_code: statements using ExitCode omit C and say the sources disagree; S4 is unaffected",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": ["exit_code"], "docker_state_source": "inspect_and_manifest_disagree"}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: Docker state sources disagree (ExitCode)"],
+          "S2": ["slot C: Docker state sources disagree (ExitCode)"],
+          "S3": ["slot C: Docker state sources disagree (ExitCode)"],
+          "headline": ["slot C: Docker state sources disagree (ExitCode)"]
+        }
+      }
+    },
+    {
+      "id": "discrepant_oom_killed_in_b",
+      "description": "B has a discrepancy in oom_killed: S1 and S2 stand (they use ExitCode), S3 and the headline are omitted",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": ["oom_killed"], "docker_state_source": "inspect_and_manifest_disagree"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S3": ["slot B: Docker state sources disagree (OOMKilled)"],
+          "headline": ["slot B: Docker state sources disagree (OOMKilled)"]
+        }
+      }
+    },
+    {
+      "id": "discrepant_both_fields_in_c",
+      "description": "C disagrees on exit_code and oom_killed: both are named for S3",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": ["exit_code", "oom_killed"]}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": null,
+        "omitted": {
+          "S1": ["slot C: Docker state sources disagree (ExitCode)"],
+          "S2": ["slot C: Docker state sources disagree (ExitCode)"],
+          "S3": ["slot C: Docker state sources disagree (ExitCode)", "slot C: Docker state sources disagree (OOMKilled)"],
+          "headline": ["slot C: Docker state sources disagree (ExitCode)", "slot C: Docker state sources disagree (OOMKilled)"]
+        }
+      }
+    },
+    {
+      "id": "discrepancy_in_a_run_exit_code",
+      "description": "A has a discrepancy in exit_code: S1 omitted; B and C statements and the headline stand",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": ["exit_code"], "docker_state_source": "inspect_and_manifest_disagree"},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S1": ["slot A: Docker state sources disagree (ExitCode)"]
+        }
+      }
+    },
+    {
+      "id": "discrepancy_in_unrelated_field",
+      "description": "Discrepancies only in memory_limit_bytes (B) and finished_at (C): ExitCode and OOMKilled agree, so the statements stand (Requirement 8 criterion 13 names only ExitCode and OOMKilled)",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": ["memory_limit_bytes"], "docker_state_source": "inspect_and_manifest_disagree"},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": ["finished_at"], "docker_state_source": "inspect_and_manifest_disagree"}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    },
+    {
+      "id": "zero_samples_in_b",
+      "description": "B preserved zero Samples: S4 omitted naming slot B; the Docker-state statements stand",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 0, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S4": ["slot B: no preserved Samples"]
+        }
+      }
+    },
+    {
+      "id": "sample_count_not_recorded_in_a",
+      "description": "A has no usable Sample count (evidence unavailable): S4 omitted naming the value",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": null, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": false, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": true, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (false) from Experiment C (true)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {
+          "S4": ["slot A: Sample count not recorded"]
+        }
+      }
+    },
+    {
+      "id": "headline_with_swapped_oom_values",
+      "description": "B true and C false: the statement names the recorded values per slot, it does not assume B is false",
+      "slots": {
+        "a": {"state": "loaded", "run_id": "run-a-1", "experiment_type": "A", "exit_code": 1, "oom_killed": false, "sample_count": 12, "discrepant_fields": []},
+        "b": {"state": "loaded", "run_id": "run-b-1", "experiment_type": "B", "exit_code": 137, "oom_killed": true, "sample_count": 30, "discrepant_fields": []},
+        "c": {"state": "loaded", "run_id": "run-c-1", "experiment_type": "C", "exit_code": 137, "oom_killed": false, "sample_count": 25, "discrepant_fields": []}
+      },
+      "expected": {
+        "statements": [
+          {"id": "S1", "text": "Experiment A differs from Experiment B and Experiment C by exit code (A=1, B=137, C=137)"},
+          {"id": "S2", "text": "Experiment B and Experiment C share ExitCode 137"},
+          {"id": "S3", "text": "OOMKilled distinguishes Experiment B (true) from Experiment C (false)"},
+          {"id": "S4", "text": "Evidence survived all three deaths in the recorded runs (Samples: A=12, B=30, C=25)"}
+        ],
+        "headline": "The same exit code does not always mean the same failure",
+        "omitted": {}
+      }
+    }
+  ]
+}

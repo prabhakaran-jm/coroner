@@ -578,17 +578,104 @@ limits recorded in the results:
 ## 16. Repository layout
 
 ```text
-coroner/            Python packages: probe, collector, demo_app, runner, evidence, common
+coroner/            Python packages: probe, collector, demo_app, runner, evidence, common, viewer (M1.1)
 docker/             collector.Dockerfile, demo_app.Dockerfile (base python:3.12.8-slim-bookworm)
 compose.yaml        Collector and Demo App services, named volume coroner_evidence
 requirements/       Exact-pinned requirements: collector, demo_app, runner, dev
 tests/unit/         Docker-free, network-free tests (default pytest)
 tests/docker_integration/   Opt-in Docker tests (--run-docker)
 docs/m0-results/    Recorded results for each M0 task
+docs/m1-results/    Recorded results for M1.1 (Viewer), including the browser acceptance record
 .kiro/specs/coroner-m0/     requirements.md, design.md, tasks.md
 spike/              Earlier OOM spike (see docs/m0-results/oom-spike.md)
 runs/               Local run output (gitignored)
 ```
+
+## Viewer (M1.1)
+
+The Viewer is a local web page for reading saved runs from the `runs/` directory. It is read-only: it never writes,
+renames or deletes anything under the runs directory. It listens on `127.0.0.1` only. It has no Docker dependency, no
+database and no network access beyond the local listener. The sections above (M0) are unchanged by it.
+
+### Launch
+
+From the repository root, in PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -m coroner.viewer --runs-dir runs --host 127.0.0.1 --port 8765
+```
+
+The defaults are `--runs-dir runs`, `--host 127.0.0.1` and `--port 8765`, so the command without options does the same.
+The only accepted `--host` value is the exact string `127.0.0.1`; any other value (for example `0.0.0.0`) is refused with
+exit code 2. A port outside 1 to 65535, or a runs directory that does not exist, is also refused with exit code 2. Port 80
+is accepted by the Viewer, but binding it may need privileges, and no test binds it. Stop the Viewer with `Ctrl+C`.
+
+### Bind and Host rules
+
+- The server binds the literal address `127.0.0.1`. It never binds `localhost` or `::1`.
+- Requests whose `Host` header is not `127.0.0.1:<port>` or `localhost:<port>` are answered with HTTP 421 (a missing or
+  repeated `Host` header gets 400). The names without a port are accepted only when the port is 80.
+- Only `GET` is served. No CORS header is sent.
+
+### Pages and API routes
+
+| Route | Content |
+|---|---|
+| `GET /` | Overview: one card per Experiment A, B and C, and a list of other saved runs |
+| `GET /runs/<run_id>` | Incident detail for one run |
+| `GET /compare?a=<run_id>&b=<run_id>&c=<run_id>` | Side-by-side comparison; each of `a`, `b` and `c` is optional, may appear once and must be a valid run id. Any other query parameter gives HTTP 400 |
+| `GET /static/<file>` | The Viewer's own `.html`, `.js` and `.css` files |
+| `GET /api/runs` | JSON list of saved runs |
+| `GET /api/runs/<run_id>` | JSON detail for one run |
+
+No other route exists. The incident page shows what the run's manifest, evidence file and raw Docker inspect record
+contain: the Docker state as recorded, the termination as the Runner described it, preserved Sample counts, an RSS
+timeline of at most 5,000 points (a Sample table beside it lists the plotted rows), the clock offset and uncertainty as
+recorded, and an "Evidence vs Uncertainty" panel that keeps recorded facts apart from what is unknown.
+
+### What the Viewer does not claim
+
+- It infers no root cause from `ExitCode`. A recorded `ExitCode` and `OOMKilled` are shown as recorded values.
+- It never infers Experiment B from Experiment C or the reverse. The compare page shows each run's own values, and a
+  difference between two runs is shown as a difference, not as an explanation.
+- A value that was not recorded is shown as not recorded. The Viewer does not fill it in.
+- The clocks (Container_Clock, Collector_Clock, Host_Clock, Docker_Clock) are not recorded as synchronised. Values from
+  different clocks are labelled with their own clock. The offset-corrected Capture_Time for Experiment B is computed by
+  the Viewer from the recorded `clock_offset_ms`; it is labelled derived, and is not independently proven.
+
+### Limits
+
+- Each artifact (`manifest.json`, `evidence.jsonl`, `docker_inspect.json`) is read with a bounded read of at most 16 MiB
+  (16,777,216 bytes; a file of exactly that size is accepted). A larger file is reported as `too_large` and is not parsed.
+- The chart is capped at 5,000 points. When a run has more plottable Samples, the chart is marked as a partial view.
+- Parse memory is not bounded by a measurement. A 16 MiB evidence file (46,894 Samples) was measured at a Python-side peak
+  of about 124.5 MiB for one load (`docs/m1-results/parse-memory.md`). The figure of about 307 MiB for two concurrent
+  loads is an arithmetic estimate and was not measured.
+- Cache limitation: The Viewer caches parsed results keyed by the size, modification time and file identity of each
+  artifact. An artifact rewritten with the same size, modification time and file identity (deliberate metadata forgery)
+  can be served from the cache. Restart the Viewer to discard the cache.
+
+### Tests and verification status
+
+Docker-free command (does not start a server; no test reads the real `runs/` directory):
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/unit/viewer tests/unit/test_structure.py tests/unit/test_docs.py -q -p no:cacheprovider
+```
+
+What was and was not verified, as recorded in `docs/m1-results/`:
+
+- pytest does not execute JavaScript. Node is not installed on the development machine, so the optional Node vector test
+  is skipped there. The browser code was run only in Chrome.
+- Headless Chrome 158 automation (Chrome DevTools Protocol) ran the Overview, incident and compare pages against the saved
+  runs and synthetic scratch runs. The record is `docs/m1-results/browser-4.7/task-4.7-report.md` and
+  `task-4.7-results.json`. The final automated rerun recorded no console error or CSP violation; three checks were not
+  tested.
+- Human-operated Chrome: NOT TESTED. Verification was automated headless Chrome only. Earlier human-check PASS entries
+  were withdrawn as not valid human observations and are kept in `docs/m1-results/` only as marked history.
+- Screen reader: NOT TESTED. An accessibility-tree dump was taken, which is not a screen reader test.
+- Real 200% browser zoom: NOT TESTED (the automation cannot set it, and no human zoom check was performed).
+- Not tested on other browsers, and not tested on a native Linux host.
 
 ## License
 
