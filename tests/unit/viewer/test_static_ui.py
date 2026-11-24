@@ -779,7 +779,7 @@ COMPARE_LOGIC_JS = STATIC_DIR / "compare-logic.js"
 COMPARE_FILES = [COMPARE_JS, COMPARE_LOGIC_JS]
 HEADLINE_PHRASE = "The same exit code does not always mean the same failure"
 PLACEHOLDER_PHRASE = "implemented in checkpoint M1.1-D"
-COMPARE_IMPORTS = {"/static/copy.js", "/static/api.js", "/static/compare-logic.js", "/static/dom.js"}
+COMPARE_IMPORTS = {"/static/copy.js", "/static/api.js", "/static/compare-logic.js", "/static/dom.js", "/static/oom-state.js"}
 ALLOWED_API_LITERALS = {"/api/runs", "/api/runs/"}
 
 

@@ -7,6 +7,7 @@ import { COPY, fill } from "/static/copy.js";
 import { fetchRun, fetchRuns } from "/static/api.js";
 import { evaluateComparison } from "/static/compare-logic.js";
 import { clear, el, textEl } from "/static/dom.js";
+import { oomState, oomStatements } from "/static/oom-state.js";
 
 const SLOTS = ["a", "b", "c"];
 const BYTES_PER_MIB = 1048576;
@@ -133,6 +134,15 @@ function dockerOf(slot) {
   return { ds: ds, eff: eff, discrepancies: discrepancies };
 }
 
+// Field names of the Docker state discrepancies. A conflicting OOMKilled pair that the payload did
+// not list is added, so the comparison logic withholds statements that would rely on it.
+function discrepantFields(slot, discrepancies) {
+  const fields = discrepancies.map((d) => (d && typeof d.field === "string" ? d.field : ""));
+  if (oomState(dockerOf(slot).ds).kind === "conflict" && fields.indexOf("oom_killed") < 0) {
+    fields.push("oom_killed");
+  }
+  return fields;
+}
 function slotFacts(slot) {
   if (slot.state === "none") {
     return { state: "none", run_id: null };
@@ -152,7 +162,7 @@ function slotFacts(slot) {
     exit_code: isInt(eff.exit_code) ? eff.exit_code : null,
     oom_killed: typeof eff.oom_killed === "boolean" ? eff.oom_killed : null,
     sample_count: isInt(summary.sample_count) ? summary.sample_count : null,
-    discrepant_fields: discrepancies.map((d) => (d && typeof d.field === "string" ? d.field : "")),
+    discrepant_fields: discrepantFields(slot, discrepancies),
   };
 }
 
@@ -285,6 +295,18 @@ function slotPanel(slot, items, explicit) {
 }
 
 // ------------------------------------------------------------ recorded values table
+// The Docker OOMKilled cell follows the same rule as the incident page (oom-state.js): when the
+// sources conflict both original values are shown by source and no single value is stated as fact.
+function oomCellText(ds, eff) {
+  const state = oomState(ds);
+  if (state.kind === "conflict") {
+    return oomStatements(state, false, null).rowValue;
+  }
+  if (state.kind === "none") {
+    return boolText(eff.oom_killed);
+  }
+  return boolText(state.value);
+}
 
 function cellsFor(slot) {
   const detail = slot.detail || {};
@@ -299,7 +321,7 @@ function cellsFor(slot) {
     mono(plain(slot.actual_type)),
     verdictBadge(run.verdict),
     mono(plain(eff.exit_code)),
-    mono(boolText(eff.oom_killed)),
+    mono(oomCellText(ds, eff)),
     mono(bytesText(peak, COPY.compare.peakValue)),
     mono(limitText(eff.memory_limit_bytes)),
     mono(plain(summary.sample_count)),
