@@ -109,11 +109,16 @@ def test_oom_mechanism_text_is_shared_by_incident_and_panel_and_claims_no_cause(
     assert mech and growth
     assert "{oom}" in mech.group(1) and "{code}" in mech.group(1)  # values come from the payload
     assert "is not established" in growth.group(1) and "memory growth" in growth.group(1)
+    # both places take the wording from the one shared rule; the mechanism sentence is conditional on it
+    shared = _text("oom-state.js")
+    assert "COPY.evidence.oomMechanism" in shared
+    assert "state.value === true" in shared and 'state.kind === "agree"' in shared
     for name in ("incident.js", "evidence-panel.js"):
         source = _text(name)
-        assert "COPY.evidence.oomMechanism" in source and "COPY.evidence.growthReasonNotEstablished" in source
-        # the mechanism line is conditional on the recorded OOMKilled value being true
-        assert re.search(r"oom_killed === true", source)
+        assert "oomStatements(oomState(" in source and "/static/oom-state.js" in source
+        assert "oom.mechanism" in source and "oom.conflict" in source
+    assert "COPY.evidence.growthReasonNotEstablished" in _text("incident.js")
+    assert "COPY.evidence.growthReasonNotEstablished" in _text("evidence-panel.js")
 
 
 # ---------------------------------------------------------------- identical last Samples

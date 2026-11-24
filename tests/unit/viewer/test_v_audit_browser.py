@@ -237,7 +237,7 @@ def test_c_text_rows_and_sampling_limitations(chrome: cdp.Chrome, fixture: Any) 
     for needle in ("Docker FinishedAt (Docker_Clock, uncorrected)",
                    "The position of the Docker FinishedAt (Docker_Clock) relative to the Capture_Time axis is not established. "
                    "The Capture_Time values (Container_Clock) and the FinishedAt are separate recorded values.",
-                   "Sampling can miss growth in the final interval before the out-of-memory kill.",
+                   "Sampling can miss memory growth between preserved Samples and after the last preserved Sample.",
                    "Sampling_Limitations", "synthetic sampling limitation statement",
                    "No Derived_Interval is shown for this run."):
         assert needle in text, needle

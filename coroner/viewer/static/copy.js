@@ -147,7 +147,7 @@ export const COPY = deepFreeze({
     limitExit:
       "ExitCode alone does not establish a cause. ExitCode and OOMKilled are two separate recorded facts, and neither is inferred from the other.",
     limitRss:
-      "The highest sampled RSS is the highest value among the preserved Samples. Sampling can miss growth between Samples and after the last preserved Sample, so it is not the true peak.",
+      "The highest sampled RSS is the highest value among the preserved Samples. Sampling can miss growth between Samples and after the last preserved Sample, so the actual peak may be higher than the highest sampled RSS.",
     limitSlots:
       "Each slot shows only its own run. Experiment B is never inferred from Experiment C, and no cause or confidence is stated by the Viewer.",
     runnerHeading: "Recorded by the Runner (interpretation, not established by the Viewer)",
@@ -339,7 +339,7 @@ export const COPY = deepFreeze({
     positionNotEstablishedC:
       "The position of the Docker FinishedAt (Docker_Clock) relative to the Capture_Time axis is not established. The Capture_Time values (Container_Clock) and the FinishedAt are separate recorded values.",
     samplingMissGrowth:
-      "Sampling can miss growth in the final interval before the out-of-memory kill.",
+      "Sampling can miss memory growth between preserved Samples and after the last preserved Sample.",
     samplingLimitationsLabel: "Sampling_Limitations",
     correctionUnavailable: "correction unavailable",
     correctionReason_offset_not_recorded: "clock offset not recorded",
@@ -428,6 +428,18 @@ export const COPY = deepFreeze({
     rootCause: "A root cause is not established by the recorded evidence.",
     oomMechanism:
       "Docker records OOMKilled {oom} and ExitCode {code} for this run. This establishes the immediate termination mechanism: an out-of-memory kill.",
+    oomMechanismExitDisputed:
+      "Docker records OOMKilled {oom} in the manifest and in raw inspect, and the two sources agree. This establishes the immediate termination mechanism: an out-of-memory kill. No ExitCode is stated here because the recorded ExitCode sources disagree (see DISCREPANCY).",
+    oomMechanismSingle:
+      "OOMKilled true is recorded by {source} only; not corroborated by a second source. As recorded by that source alone, the immediate termination mechanism is an out-of-memory kill.",
+    oomSingleNote:
+      "OOMKilled {value} is recorded by {source} only; not corroborated by a second source.",
+    oomConflict:
+      "The recorded OOMKilled values conflict: the manifest records {manifest} and raw inspect records {raw}. Neither source is selected as proof, so the OOMKilled outcome is not established by the recorded evidence (see DISCREPANCY).",
+    oomConflictValue: "conflict: manifest {manifest}, raw inspect {raw}",
+    oomSource_manifest: "the manifest",
+    oomSource_raw: "raw inspect",
+    oomSource_unknown: "one recorded source",
     growthReasonNotEstablished:
       "The underlying reason for the memory growth is not established by the recorded evidence.",
     yes: "yes",

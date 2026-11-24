@@ -5,6 +5,7 @@
 
 import { COPY, fill } from "/static/copy.js";
 import { el, textEl } from "/static/dom.js";
+import { oomState, oomStatements } from "/static/oom-state.js";
 
 const BYTES_PER_MIB = 1048576;
 
@@ -129,7 +130,14 @@ function buildKnown(detail, known, unknown) {
 
   simple(COPY.evidence.dockerStatus, eff ? eff.status : null, eff ? String(eff.status) : "", null, sourceNote);
   simple(COPY.evidence.exitCode, eff ? eff.exit_code : null, eff ? String(eff.exit_code) : "", null, sourceNote);
-  simple(COPY.evidence.oomKilled, eff ? eff.oom_killed : null, eff ? boolText(eff.oom_killed) : "", null, sourceNote);
+  // The shared rule (oom-state.js) also drives the incident Docker state section.
+  const oom = oomStatements(oomState(ds), (detail.run || {}).experiment_type === "C", eff ? eff.exit_code : null);
+  if (oom.rowValue !== null) {
+    // conflicting sources: neither value is KNOWN; both are shown
+    unknown.push(entry("unknown", COPY.evidence.oomKilled, textEl("span", "ev-value mono", oom.rowValue)));
+  } else {
+    simple(COPY.evidence.oomKilled, eff ? eff.oom_killed : null, eff ? boolText(eff.oom_killed) : "", null, sourceNote);
+  }
   simple(
     COPY.evidence.recordCount,
     es.valid_record_count,
@@ -163,11 +171,15 @@ function buildKnown(detail, known, unknown) {
       : COPY.evidence.lastRssDefFallback,
   );
 
-  // Experiment C: Docker establishes the termination mechanism only (OOMKilled as recorded).
-  if ((detail.run || {}).experiment_type === "C" && eff && eff.oom_killed === true) {
-    known.push(
-      sentence("known", fill(COPY.evidence.oomMechanism, { oom: boolText(eff.oom_killed), code: plainText(eff.exit_code) })),
-    );
+  // Experiment C: the termination mechanism only when the shared rule allows it.
+  if (oom.mechanism !== null) {
+    known.push(sentence("known", oom.mechanism));
+  }
+  if (oom.conflict !== null) {
+    unknown.push(sentence("unknown", oom.conflict));
+  }
+  if (oom.singleNote !== null) {
+    unknown.push(sentence("unknown", oom.singleNote));
   }
 }
 

@@ -11,6 +11,7 @@ import { fetchRun } from "/static/api.js";
 import { clear, el, textEl } from "/static/dom.js";
 import { renderChart } from "/static/chart.js";
 import { renderEvidencePanel } from "/static/evidence-panel.js";
+import { oomState, oomStatements } from "/static/oom-state.js";
 
 const BYTES_PER_MIB = 1048576;
 const ARTIFACTS = ["manifest", "evidence", "inspect"];
@@ -271,26 +272,30 @@ function dockerSection(detail) {
   const sourceText = has(COPY.dockerSource, ds.source) ? COPY.dockerSource[ds.source] : COPY.shared.notRecorded;
   const sourceNote = () => muted(" (" + fill(COPY.evidence.stateSource, { source: sourceText }) + ")");
 
+  // The shared rule (oom-state.js) decides what may be said about OOMKilled; the same
+  // rule drives the Evidence vs Uncertainty panel. Conflicting sources show both values.
+  const isC = (detail.run || {}).experiment_type === "C";
+  const oom = oomStatements(oomState(ds), isC, eff.exit_code);
+  const oomValue = oom.rowValue !== null ? oom.rowValue : boolText(eff.oom_killed);
+
   const rows = [
     fact(COPY.incident.stateSource, textEl("span", "", sourceText)),
     fact(COPY.evidence.dockerStatus, mono(plain(eff.status)), sourceNote()),
     fact(COPY.evidence.exitCode, mono(plain(eff.exit_code)), sourceNote()),
-    fact(COPY.evidence.oomKilled, mono(boolText(eff.oom_killed)), sourceNote()),
+    fact(COPY.evidence.oomKilled, mono(oomValue), oom.rowValue !== null ? null : sourceNote()),
     fact(COPY.incident.memoryLimit, mono(memoryText(eff.memory_limit_bytes)), sourceNote()),
   ];
   const children = [facts(rows)];
 
-  // Experiment C: the recorded OOMKilled value establishes the termination mechanism only.
-  if ((detail.run || {}).experiment_type === "C") {
-    if (eff.oom_killed === true) {
-      children.push(
-        textEl(
-          "p",
-          "notice",
-          fill(COPY.evidence.oomMechanism, { oom: boolText(eff.oom_killed), code: plain(eff.exit_code) }),
-        ),
-      );
+  for (const text of [oom.mechanism, oom.conflict]) {
+    if (text !== null) {
+      children.push(textEl("p", "notice", text));
     }
+  }
+  if (oom.singleNote !== null) {
+    children.push(textEl("p", "muted", oom.singleNote));
+  }
+  if (isC) {
     children.push(textEl("p", "muted", COPY.evidence.growthReasonNotEstablished));
   }
 

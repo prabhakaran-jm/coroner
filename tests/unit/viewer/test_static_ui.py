@@ -42,6 +42,7 @@ CONTENT_TYPES = {
 SVG_NS = "http://www.w3.org/2000/svg"
 INCIDENT_IMPORTS = {
     "/static/copy.js", "/static/api.js", "/static/dom.js", "/static/chart.js", "/static/evidence-panel.js",
+    "/static/oom-state.js",
 }
 
 
@@ -273,7 +274,7 @@ def test_static_directory_has_the_expected_files() -> None:
     names = {p.name for p in static_files()}
     assert {
         "index.html", "style.css", "app.js", "api.js", "dom.js", "copy.js", "overview.js", "chart.js",
-        "evidence-panel.js", "incident.js", "compare.js",
+        "evidence-panel.js", "incident.js", "compare.js", "oom-state.js",
     } <= names
 
 
