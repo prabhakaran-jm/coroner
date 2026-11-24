@@ -134,7 +134,7 @@ These rules apply to every task and are part of the completion criteria.
     - Report real results: commit id, push result, PR link or text, merge status, scan findings, regression counts.
     - Stop and wait for the user's decision before group 2.
 
-- [ ] 2. M2.1 Preflight and run sheet
+- [x] 2. M2.1 Preflight and run sheet
   - [x] 2.1 Create the read-only preflight script `scripts/demo-preflight.ps1`
     - Confirm the path with the user (suggested `scripts/demo-preflight.ps1`; the plan names no path). Run on Windows PowerShell 5.1 and PowerShell 7.
     - Parameters: `-RunsDir` (default `runs`), `-RunIds` (default the three canonical ids), `-Port` (default 8765), `-FallbackPort` (default 8766), `-BaselinePath` (required for the integrity check, must resolve outside `runs/` and outside the repository), `-Json` (JSON output), `-Offline` (skip every HTTP check and the Viewer launch, for the test), `-LaunchViewer` (switch, off by default).
@@ -193,12 +193,12 @@ These rules apply to every task and are part of the completion criteria.
     - Safety: no real run data in the sample; no Docker.
     - _Plan: §1, §2_
 
-  - [-] 2.8 Checkpoint - stop for review (M2.1)
+  - [x] 2.8 Checkpoint - stop for review (M2.1)
     - Report real results: script path and behaviour, test counts and skips, baseline location (name only), preflight output on the real runs, documents created.
     - Stop and wait for the user's review. No commit.
 
 - [ ] 3. M2.2 Rehearsal and backup recording
-  - [~] 3.1 Write the screen sequence and transitions
+  - [-] 3.1 Write the screen sequence and transitions
     - Create `docs/m2-plan/recording-script.md`: the ordered screen sequence with URLs, spoken lines, the pointer targets and the transition between pages, for a target of 2:45 and a hard limit of under 3:00. Order: `/` (three cards), A briefly (`/runs/a-20261120T211146Z-4300f395`, ExitCode 1, OOMKilled false), B (`/runs/b-20261120T211311Z-ce313da1`), C (`/runs/c-20261120T211433Z-09b81ca1`), then `/compare?a=...&b=...&c=...` and the closing statement on what Coroner does not claim.
     - Every spoken line is checked against the Non-Negotiable Demo Facts and against the text on the page; no statement goes beyond the page text. Do not say who sent the SIGKILL beyond "the Runner" and do not say "the sample came before the kill".
     - Add per-segment time budgets that sum to at most 2:45. Mark Clipchamp as the recording and editing tool and ElevenLabs as optional narration (a synthetic voice must be disclosed in the video description).
@@ -206,7 +206,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: sum of the budgets is at most 2:45 (show the arithmetic); each Non-Negotiable Demo Fact appears unchanged.
     - _Plan: §4, §6, §7, §8, §12 M2.2_
 
-  - [~] 3.2 List the fallback screenshots and clips
+  - [-] 3.2 List the fallback screenshots and clips
     - Add a section to `docs/m2-plan/recording-script.md` listing, per screen, the fallback file: existing headless screenshots in `docs/m1-results/browser-4.7/` (for example `01-overview-desktop.png`, `02-compare-desktop.png`, `06-experiment-b-chart.png`, `07-experiment-c-chart.png`) and `docs/m1-results/browser-4.14/`, plus any new human-recorded clip. Verify each listed file exists (`Test-Path`).
     - State that a fallback is announced as "a recording / a saved screenshot, not the live Viewer" and that a second copy of the recording is kept on another device or drive.
     - Safety: do not change or regenerate any screenshot; no evidence changes.
