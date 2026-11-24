@@ -649,6 +649,8 @@ class TestSuccessFlows:
         assert diag is not None and diag["sample_count"] >= 1 and "rss_monotonic_tail" in diag
         limits = manifest.extra["sampling_limitations"]
         assert limits is not None and len(limits["statements"]) == 3 and limits["sample_interval_ms"] == 500
+        assert limits["statements"][2] == "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous."
+        assert "understate" not in " ".join(limits["statements"])
         assert manifest.extra["container_left_running"] is False
         assert manifest.extra["sample_timing"] is None
         assert {
