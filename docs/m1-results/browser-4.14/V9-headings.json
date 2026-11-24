@@ -1,0 +1,429 @@
+{
+ "headings": [
+  {
+   "order": 0,
+   "level": 1,
+   "text": "Incident detail",
+   "id": null,
+   "in_section": false
+  },
+  {
+   "order": 1,
+   "level": 3,
+   "text": "Run",
+   "id": "inc-run-title",
+   "in_section": true
+  },
+  {
+   "order": 2,
+   "level": 3,
+   "text": "Verdict",
+   "id": "inc-verdict-title",
+   "in_section": true
+  },
+  {
+   "order": 3,
+   "level": 3,
+   "text": "Docker state",
+   "id": "inc-docker-title",
+   "in_section": true
+  },
+  {
+   "order": 4,
+   "level": 4,
+   "text": "Field comparison: manifest against raw inspect",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 5,
+   "level": 3,
+   "text": "Termination as described by the Runner",
+   "id": "inc-runner-title",
+   "in_section": true
+  },
+  {
+   "order": 6,
+   "level": 3,
+   "text": "Evidence records",
+   "id": "inc-records-title",
+   "in_section": true
+  },
+  {
+   "order": 7,
+   "level": 3,
+   "text": "Sample counts",
+   "id": "inc-samples-title",
+   "in_section": true
+  },
+  {
+   "order": 8,
+   "level": 3,
+   "text": "Last Samples and last Receive_Time",
+   "id": "inc-last-title",
+   "in_section": true
+  },
+  {
+   "order": 9,
+   "level": 4,
+   "text": "Last_Persisted_Sample and Latest_Capture_Sample",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 10,
+   "level": 4,
+   "text": "last Receive_Time",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 11,
+   "level": 3,
+   "text": "Clock offset and uncertainty",
+   "id": "inc-clock-title",
+   "in_section": true
+  },
+  {
+   "order": 12,
+   "level": 3,
+   "text": "Recorded sample timing (exactly as the Runner stored it)",
+   "id": "inc-timing-title",
+   "in_section": true
+  },
+  {
+   "order": 13,
+   "level": 3,
+   "text": "Derived intervals (Experiment B)",
+   "id": "inc-derived-title",
+   "in_section": true
+  },
+  {
+   "order": 14,
+   "level": 4,
+   "text": "Corrected_Capture_Time against SIGKILL send time (Host_Clock) (Last_Persisted_Sample)",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 15,
+   "level": 4,
+   "text": "Corrected_Capture_Time against Docker FinishedAt (Docker_Clock) (Last_Persisted_Sample)",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 16,
+   "level": 4,
+   "text": "Corrected_Capture_Time against SIGKILL send time (Host_Clock) (Latest_Capture_Sample)",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 17,
+   "level": 4,
+   "text": "Corrected_Capture_Time against Docker FinishedAt (Docker_Clock) (Latest_Capture_Sample)",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 18,
+   "level": 3,
+   "text": "RSS timeline",
+   "id": "chart-heading",
+   "in_section": true
+  },
+  {
+   "order": 19,
+   "level": 4,
+   "text": "Recorded times (each on its own clock)",
+   "id": null,
+   "in_section": true
+  },
+  {
+   "order": 20,
+   "level": 3,
+   "text": "Evidence vs Uncertainty",
+   "id": "evidence-heading",
+   "in_section": true
+  },
+  {
+   "order": 21,
+   "level": 4,
+   "text": "KNOWN",
+   "id": "ev-known-title",
+   "in_section": true
+  },
+  {
+   "order": 22,
+   "level": 4,
+   "text": "UNKNOWN OR LIMITED",
+   "id": "ev-unknown-title",
+   "in_section": true
+  },
+  {
+   "order": 23,
+   "level": 4,
+   "text": "recorded by the Runner",
+   "id": "runner-block-title",
+   "in_section": true
+  },
+  {
+   "order": 24,
+   "level": 3,
+   "text": "Artifact status",
+   "id": "inc-artifacts-title",
+   "in_section": true
+  },
+  {
+   "order": 25,
+   "level": 3,
+   "text": "Warnings",
+   "id": "inc-warnings-title",
+   "in_section": true
+  }
+ ],
+ "landmarks": [
+  {
+   "order": 0,
+   "tag": "header",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": "site-header"
+  },
+  {
+   "order": 1,
+   "tag": "nav",
+   "role": null,
+   "labelledby": null,
+   "label": "Primary",
+   "name": null,
+   "cls": "site-nav"
+  },
+  {
+   "order": 2,
+   "tag": "main",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": null
+  },
+  {
+   "order": 3,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-run-title",
+   "label": null,
+   "name": "Run",
+   "cls": "incident-section"
+  },
+  {
+   "order": 4,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-verdict-title",
+   "label": null,
+   "name": "Verdict",
+   "cls": "incident-section"
+  },
+  {
+   "order": 5,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-docker-title",
+   "label": null,
+   "name": "Docker state",
+   "cls": "incident-section"
+  },
+  {
+   "order": 6,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-runner-title",
+   "label": null,
+   "name": "Termination as described by the Runner",
+   "cls": "incident-section"
+  },
+  {
+   "order": 7,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-records-title",
+   "label": null,
+   "name": "Evidence records",
+   "cls": "incident-section"
+  },
+  {
+   "order": 8,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-samples-title",
+   "label": null,
+   "name": "Sample counts",
+   "cls": "incident-section"
+  },
+  {
+   "order": 9,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-last-title",
+   "label": null,
+   "name": "Last Samples and last Receive_Time",
+   "cls": "incident-section"
+  },
+  {
+   "order": 10,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-clock-title",
+   "label": null,
+   "name": "Clock offset and uncertainty",
+   "cls": "incident-section"
+  },
+  {
+   "order": 11,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-timing-title",
+   "label": null,
+   "name": "Recorded sample timing (exactly as the Runner stored it)",
+   "cls": "incident-section"
+  },
+  {
+   "order": 12,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-derived-title",
+   "label": null,
+   "name": "Derived intervals (Experiment B)",
+   "cls": "incident-section"
+  },
+  {
+   "order": 13,
+   "tag": "article",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": "interval notice"
+  },
+  {
+   "order": 14,
+   "tag": "article",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": "interval notice"
+  },
+  {
+   "order": 15,
+   "tag": "article",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": "interval notice"
+  },
+  {
+   "order": 16,
+   "tag": "article",
+   "role": null,
+   "labelledby": null,
+   "label": null,
+   "name": null,
+   "cls": "interval notice"
+  },
+  {
+   "order": 17,
+   "tag": "section",
+   "role": null,
+   "labelledby": "chart-heading",
+   "label": null,
+   "name": "RSS timeline",
+   "cls": "chart-section"
+  },
+  {
+   "order": 18,
+   "tag": "section",
+   "role": null,
+   "labelledby": "evidence-heading",
+   "label": null,
+   "name": "Evidence vs Uncertainty",
+   "cls": "evidence-panel"
+  },
+  {
+   "order": 19,
+   "tag": "section",
+   "role": null,
+   "labelledby": "ev-known-title",
+   "label": null,
+   "name": "KNOWN",
+   "cls": "ev-section ev-section-known"
+  },
+  {
+   "order": 20,
+   "tag": "section",
+   "role": null,
+   "labelledby": "ev-unknown-title",
+   "label": null,
+   "name": "UNKNOWN OR LIMITED",
+   "cls": "ev-section ev-section-unknown"
+  },
+  {
+   "order": 21,
+   "tag": "section",
+   "role": null,
+   "labelledby": "runner-block-title",
+   "label": null,
+   "name": "recorded by the Runner",
+   "cls": "runner-block"
+  },
+  {
+   "order": 22,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-artifacts-title",
+   "label": null,
+   "name": "Artifact status",
+   "cls": "incident-section"
+  },
+  {
+   "order": 23,
+   "tag": "section",
+   "role": null,
+   "labelledby": "inc-warnings-title",
+   "label": null,
+   "name": "Warnings",
+   "cls": "incident-section"
+  }
+ ],
+ "links": [
+  [
+   "Back to overview",
+   "/"
+  ]
+ ],
+ "report": {
+  "console_errors": [],
+  "console_warnings": [],
+  "uncaught_exceptions": [],
+  "log_errors": [
+   "network: Failed to load resource: the server responded with a status of 404 (Not Found) http://127.0.0.1:50870/favicon.ico"
+  ],
+  "log_warnings": [],
+  "csp_violations": [],
+  "failed_requests": [],
+  "http_errors": [
+   {
+    "url": "http://127.0.0.1:50870/favicon.ico",
+    "status": 404
+   }
+  ],
+  "fallback_page_shown": false
+ },
+ "csp": []
+}

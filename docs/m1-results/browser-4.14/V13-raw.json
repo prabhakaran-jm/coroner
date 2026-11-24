@@ -1,0 +1,366 @@
+{
+ "api_timing": {
+  "start_time": "2026-11-20T21:13:00.000Z",
+  "start_time_display": "2026-11-20T21:13:00.000Z",
+  "start_time_clock": "host",
+  "end_time": "2026-11-20T21:13:30.000Z",
+  "end_time_display": "2026-11-20T21:13:30.000Z",
+  "end_time_clock": "host",
+  "inspect_time": "2026-11-20T21:13:30.000Z",
+  "inspect_time_display": "2026-11-20T21:13:30.000Z",
+  "inspect_time_clock": "host",
+  "crash_request_time": null,
+  "crash_request_time_display": null,
+  "crash_request_time_clock": "host",
+  "sigkill_sent_time": "2026-11-20T21:13:20.000Z",
+  "sigkill_sent_time_display": "2026-11-20T21:13:20.000Z",
+  "sigkill_sent_time_clock": "host",
+  "container_finished_at": "2026-11-20T21:13:21.760Z",
+  "container_finished_at_display": "2026-11-20T21:13:21.760Z",
+  "container_finished_at_clock": "docker",
+  "state_finished_at": "2026-11-20T21:13:21.760545826Z",
+  "state_finished_at_display": "2026-11-20T21:13:21.760Z",
+  "state_finished_at_clock": "docker",
+  "clock_offset_ms": 9007199254740991,
+  "clock_offset_clock": "collector_minus_host",
+  "clock_offset_source": "sample_timing",
+  "clock_offset_conflict": null,
+  "clock_uncertainty_ms": 12.5,
+  "clock_uncertainty_clock": "collector_minus_host",
+  "tolerance_ms": 250,
+  "tolerance_status": "valid",
+  "tolerance_clock": "host",
+  "time_axis": "raw_uncorrected",
+  "correction_available": false,
+  "correction_unavailable_reason": "correction_out_of_range",
+  "sample_timing": {
+   "pre_kill_count": 5,
+   "pre_kill_late_received_count": 0,
+   "within_tolerance_count": 5,
+   "post_kill_beyond_tolerance": {
+    "count": 0,
+    "items": [],
+    "items_total": 0,
+    "items_truncated": false
+   },
+   "after_container_stop": {
+    "count": null,
+    "items": [],
+    "items_total": 0,
+    "items_truncated": false
+   },
+   "after_container_stop_analysis": "unavailable",
+   "clock_offset_ms": 9007199254740991,
+   "tolerance_ms": 250
+  },
+  "derived": {
+   "suppressed": false,
+   "suppressed_reason": null,
+   "finished_at_source": "manifest",
+   "intervals": [
+    {
+     "kind": "finished_at_to_sigkill",
+     "sample": null,
+     "sample_seq": null,
+     "from_time": null,
+     "from_time_display": "2026-11-20T21:13:21.760Z",
+     "from_clock": "docker",
+     "from_basis": "docker_finished_at",
+     "from_corrected_time": null,
+     "to_kind": "sigkill_sent",
+     "to_time": null,
+     "to_time_display": null,
+     "to_clock": "host",
+     "difference_ms": 1760,
+     "ordering": null,
+     "uncertainty_ms": 12.5,
+     "tolerance_ms": 250,
+     "threshold_ms": null,
+     "bounded": false,
+     "reason": "no_recorded_bound_for_docker_clock"
+    }
+   ]
+  }
+ },
+ "api_chart_axis": {
+  "domain_min_ms": 1795209180000,
+  "domain_max_ms": 1795209182000,
+  "ticks": [
+   {
+    "x_ms": 1795209180000,
+    "label": "2026-11-20T21:13:00.000Z"
+   },
+   {
+    "x_ms": 1795209180500,
+    "label": "2026-11-20T21:13:00.500Z"
+   },
+   {
+    "x_ms": 1795209181000,
+    "label": "2026-11-20T21:13:01.000Z"
+   },
+   {
+    "x_ms": 1795209181500,
+    "label": "2026-11-20T21:13:01.500Z"
+   },
+   {
+    "x_ms": 1795209182000,
+    "label": "2026-11-20T21:13:02.000Z"
+   }
+  ]
+ },
+ "markers": {
+  "sigkill": {
+   "drawn": false,
+   "time": "2026-11-20T21:13:20.000Z",
+   "time_display": "2026-11-20T21:13:20.000Z",
+   "x_ms": null,
+   "not_drawn_reason": "correction_out_of_range"
+  },
+  "text_times": [
+   {
+    "kind": "sigkill_sent",
+    "value": "2026-11-20T21:13:20.000Z",
+    "display": "2026-11-20T21:13:20.000Z",
+    "clock": "host"
+   },
+   {
+    "kind": "docker_finished_at",
+    "value": "2026-11-20T21:13:21.760545826Z",
+    "display": "2026-11-20T21:13:21.760Z",
+    "clock": "docker"
+   },
+   {
+    "kind": "last_persisted_capture",
+    "value": "2026-11-20T21:13:02.000Z",
+    "display": "2026-11-20T21:13:02.000Z",
+    "clock": "container"
+   },
+   {
+    "kind": "latest_capture",
+    "value": "2026-11-20T21:13:02.000Z",
+    "display": "2026-11-20T21:13:02.000Z",
+    "clock": "container"
+   },
+   {
+    "kind": "last_persisted_receive",
+    "value": "2026-11-20T21:13:02.020Z",
+    "display": "2026-11-20T21:13:02.020Z",
+    "clock": "collector"
+   }
+  ]
+ },
+ "points": [
+  {
+   "seq": 0,
+   "capture_time": "2026-11-20T21:13:00.000Z",
+   "capture_time_display": "2026-11-20T21:13:00.000Z",
+   "receive_time": "2026-11-20T21:13:00.020Z",
+   "receive_time_display": "2026-11-20T21:13:00.020Z",
+   "corrected_capture_time": null,
+   "x_ms": 1795209180000,
+   "rss_bytes": 50000000,
+   "gap_before": false,
+   "skipped_before": 0,
+   "omitted_before": 0,
+   "segment_before": "none"
+  },
+  {
+   "seq": 1,
+   "capture_time": "2026-11-20T21:13:00.500Z",
+   "capture_time_display": "2026-11-20T21:13:00.500Z",
+   "receive_time": "2026-11-20T21:13:00.520Z",
+   "receive_time_display": "2026-11-20T21:13:00.520Z",
+   "corrected_capture_time": null,
+   "x_ms": 1795209180500,
+   "rss_bytes": 51000000,
+   "gap_before": false,
+   "skipped_before": 0,
+   "omitted_before": 0,
+   "segment_before": "solid"
+  },
+  {
+   "seq": 2,
+   "capture_time": "2026-11-20T21:13:01.000Z",
+   "capture_time_display": "2026-11-20T21:13:01.000Z",
+   "receive_time": "2026-11-20T21:13:01.020Z",
+   "receive_time_display": "2026-11-20T21:13:01.020Z",
+   "corrected_capture_time": null,
+   "x_ms": 1795209181000,
+   "rss_bytes": 52000000,
+   "gap_before": false,
+   "skipped_before": 0,
+   "omitted_before": 0,
+   "segment_before": "solid"
+  },
+  {
+   "seq": 3,
+   "capture_time": "2026-11-20T21:13:01.500Z",
+   "capture_time_display": "2026-11-20T21:13:01.500Z",
+   "receive_time": "2026-11-20T21:13:01.520Z",
+   "receive_time_display": "2026-11-20T21:13:01.520Z",
+   "corrected_capture_time": null,
+   "x_ms": 1795209181500,
+   "rss_bytes": 53000000,
+   "gap_before": false,
+   "skipped_before": 0,
+   "omitted_before": 0,
+   "segment_before": "solid"
+  },
+  {
+   "seq": 4,
+   "capture_time": "2026-11-20T21:13:02.000Z",
+   "capture_time_display": "2026-11-20T21:13:02.000Z",
+   "receive_time": "2026-11-20T21:13:02.020Z",
+   "receive_time_display": "2026-11-20T21:13:02.020Z",
+   "corrected_capture_time": null,
+   "x_ms": 1795209182000,
+   "rss_bytes": 54000000,
+   "gap_before": false,
+   "skipped_before": 0,
+   "omitted_before": 0,
+   "segment_before": "solid"
+  }
+ ],
+ "dom": {
+  "pts": [
+   72,
+   288,
+   504,
+   720,
+   936
+  ],
+  "ticks": [
+   [
+    "21:13:00",
+    72
+   ],
+   [
+    "21:13:00.500",
+    288
+   ],
+   [
+    "21:13:01",
+    504
+   ],
+   [
+    "21:13:01.500",
+    720
+   ],
+   [
+    "21:13:02",
+    936
+   ]
+  ],
+  "lines": [
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-grid",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-axis",
+    null
+   ],
+   [
+    "chart-limit",
+    "8 5"
+   ]
+  ],
+  "axis": [
+   "Raw Probe Capture_Time",
+   "RSS (MiB)"
+  ],
+  "h": [
+   "Run",
+   "Verdict",
+   "Docker state",
+   "Field comparison: manifest against raw inspect",
+   "Termination as described by the Runner",
+   "Evidence records",
+   "Sample counts",
+   "Last Samples and last Receive_Time",
+   "Last_Persisted_Sample and Latest_Capture_Sample",
+   "last Receive_Time",
+   "Clock offset and uncertainty",
+   "Recorded sample timing (exactly as the Runner stored it)",
+   "Derived intervals (Experiment B)",
+   "Docker FinishedAt (Docker_Clock) against SIGKILL send time (Host_Clock)",
+   "RSS timeline",
+   "Recorded times (each on its own clock)",
+   "Evidence vs Uncertainty",
+   "KNOWN",
+   "UNKNOWN OR LIMITED",
+   "recorded by the Runner",
+   "Artifact status",
+   "Warnings"
+  ],
+  "svgText": "RSS timeline of run b-20261120T211300Z-00000001. X axis: Raw Probe Capture_Time.Points plotted: 5. Partial view: no. Highest plotted RSS: 51.50 MiB.02040608010012021:13:0021:13:00.50021:13:0121:13:01.50021:13:02Raw Probe Capture_TimeRSS (MiB)128 MiB limit"
+ },
+ "text": "Back to overview\n\nIncident detail\nRun\nRUN ID\nb-20261120T211300Z-00000001\nEXPERIMENT TYPE\nB\nSTART TIME (HOST_CLOCK)\n2026-11-20T21:13:00.000Z shown to ms; original in details\noriginal\nEND TIME (HOST_CLOCK)\n2026-11-20T21:13:30.000Z shown to ms; original in details\noriginal\nVerdict\nVERDICT\nPASS\nSTORED_OUTCOME\npassed\nFAILURE\nno failure recorded in the manifest\nDURABILITY_LEVEL\nProcess_Durable (stored value: process)\n\nThe Verdict is derived from the Stored_Outcome recorded by the Runner. A Docker state Discrepancy does not change it.\n\nDocker state\nSTATE SOURCE\nDocker inspect (raw file and manifest agree)\nDOCKER STATUS\nexited (state source: Docker inspect (raw file and manifest agree))\nDOCKER EXITCODE\n137 (state source: Docker inspect (raw file and manifest agree))\nDOCKER OOMKILLED\nfalse (state source: Docker inspect (raw file and manifest agree))\nMEMORY LIMIT\n128.00 MiB (134217728 bytes) (state source: Docker inspect (raw file and manifest agree))\nField comparison: manifest against raw inspect\nCompared fields of the Docker state with the value of each source\nFIELD\tMANIFEST VALUE\tRAW INSPECT VALUE\tRESULT\ncontainer_id\tf57f5809def73c43265a1ed55bab28d98463d656d8610b330f3af9c78fee2b37\tf57f5809def73c43265a1ed55bab28d98463d656d8610b330f3af9c78fee2b37\tequal\nstatus\texited\texited\tequal\nexit_code\t137\t137\tequal\noom_killed\tfalse\tfalse\tequal\nmemory_limit_bytes\t134217728\t134217728\tequal\nfinished_at\t2026-11-20T21:13:21.760Z\t2026-11-20T21:13:21.760545826Z\tequal\nTermination as described by the Runner\n\nrecorded by the Runner\n\ntermination_description\n\nsynthetic experiment B fixture\n\ncause_label\n\nnot recorded\n\nEvidence records\nEVIDENCE RECORD COUNT (MANIFEST)\n6\nVALID RECORDS READ FROM THE EVIDENCE FILE\n6\nSample counts\nPRESERVED SAMPLES\n5\nMISSING_SAMPLE_COUNT\n0\nUNRECONCILED_DROP_COUNT\n0 (uncertain: false)\nMALFORMED_LINE COUNT\n0\nLast Samples and last Receive_Time\nLast_Persisted_Sample and Latest_Capture_Sample\n\nThe Last_Persisted_Sample and the Latest_Capture_Sample are the same Sample (seq 4, same Capture_Time). Both facts are recorded and are shown once.\n\nSEQ\n4\nCAPTURE_TIME (CONTAINER_CLOCK)\n2026-11-20T21:13:02.000Z shown to ms; original in details\noriginal\nRECEIVE_TIME (COLLECTOR_CLOCK)\n2026-11-20T21:13:02.020Z shown to ms; original in details\noriginal\nlast Receive_Time\nLAST RECEIVE_TIME\n2026-11-20T21:13:02.020Z shown to ms; original in details\noriginal\n\nReceive_Time returned by the evidence summary for the last record (Collector_Clock)\n\nClock offset and uncertainty\nCLOCK_OFFSET (COLLECTOR_CLOCK MINUS HOST_CLOCK)\n9007199254740991 ms (recorded in: sample_timing)\nCLOCK_UNCERTAINTY\n12.5 ms\n\nThe recorded Clock_Uncertainty is the uncertainty the Runner recorded for the clock offset between the Collector_Clock and the Host_Clock. It does not bound any difference involving the Docker_Clock or the Container_Clock.\n\ncorrection unavailable: correction out of range\n\nRecorded sample timing (exactly as the Runner stored it)\nPRE_KILL_COUNT\n5\nPRE_KILL_LATE_RECEIVED_COUNT\n0\nWITHIN_TOLERANCE_COUNT\n5\nPOST_KILL_BEYOND_TOLERANCE COUNT\n0\nPOST_KILL_BEYOND_TOLERANCE CAPTURE_TIME VALUES\nnone recorded\nAFTER_CONTAINER_STOP_ANALYSIS\nunavailable\nTOLERANCE_MS (AS RECORDED)\n250\n\nThe analysis relative to the container stop is unavailable. No count is shown for after_container_stop.\n\nDerived intervals (Experiment B)\nDocker FinishedAt (Docker_Clock) against SIGKILL send time (Host_Clock)\n\nderived: derived, not independently proven\n\nFROM: DOCKER FINISHEDAT (DOCKER_CLOCK, UNCORRECTED)\n2026-11-20T21:13:21.760Z shown to ms; original in details clock: Docker_Clock\nTO: SIGKILL SEND TIME (HOST_CLOCK)\n2026-11-20T21:13:20.000Z shown to ms; original in details\noriginal\n clock: Host_Clock\nDIFFERENCE\ndifference 1760 ms (from minus to, signed)\nCLOCK_UNCERTAINTY\nClock_Uncertainty 12.5 ms\nno recorded bound exists for the Docker_Clock\nThe four clocks (Container_Clock, Collector_Clock, Host_Clock, Docker_Clock) are not recorded as synchronised.\nThe recorded Clock_Uncertainty does not bound the Docker_Clock or the Container_Clock.\nthis interval does not establish the order of two events\nRSS timeline\n0\n20\n40\n60\n80\n100\n120\n21:13:00\n21:13:00.500\n21:13:01\n21:13:01.500\n21:13:02\nRaw Probe Capture_Time\nRSS (MiB)\n128 MiB limit\n\nDate: 2026-11-20 UTC. Tick labels show the UTC clock time, HH:MM:SS.\n\nCapture_Time as recorded (Container_Clock). No clock correction is applied.\n\ndashed amber line, \"128 MiB limit\": recorded memory limit (134217728 bytes)\n\nHover a point, or focus the chart and use the Left, Right, Home and End keys, to read a Sample.\n\nSample table (accessible equivalent of the chart)\n\nSamples with no valid RSS (not drawn): 0\n\nRecorded times (each on its own clock)\nSIGKILL SEND TIME (HOST_CLOCK)\n2026-11-20T21:13:20.000Z shown to ms; original in details\noriginal\nDOCKER FINISHEDAT (DOCKER_CLOCK, UNCORRECTED)\n2026-11-20T21:13:21.760Z shown to ms; original in details\noriginal\nLAST_PERSISTED_SAMPLE CAPTURE_TIME (CONTAINER_CLOCK)\n2026-11-20T21:13:02.000Z shown to ms; original in details\noriginal\nLATEST_CAPTURE_SAMPLE CAPTURE_TIME (CONTAINER_CLOCK)\n2026-11-20T21:13:02.000Z shown to ms; original in details\noriginal\nLAST_PERSISTED_SAMPLE RECEIVE_TIME (COLLECTOR_CLOCK)\n2026-11-20T21:13:02.020Z shown to ms; original in details\noriginal\n\ncorrection unavailable: correction out of range\n\nNo SIGKILL marker is drawn on the chart: the correction is out of range.\n\nEvidence vs Uncertainty\nKNOWN\nKNOWN Docker status: exited (state source: Docker inspect (raw file and manifest agree))\nKNOWN Docker ExitCode: 137 (state source: Docker inspect (raw file and manifest agree))\nKNOWN Docker OOMKilled: false (state source: Docker inspect (raw file and manifest agree))\nKNOWN Persisted evidence records: 6 (valid records read from the evidence file)\nKNOWN Preserved Samples: 5 (valid Sample records in the evidence)\nKNOWN First RSS: 47.68 MiB (50000000 bytes), seq 0, Capture_Time (Container_Clock): 2026-11-20T21:13:00.000Z shown to ms; original in details\noriginal\n (the first plottable Sample in Capture_Time order)\nKNOWN Highest RSS: 51.50 MiB (54000000 bytes), seq 4, Capture_Time (Container_Clock): 2026-11-20T21:13:02.000Z shown to ms; original in details\noriginal\n (the highest rss_bytes among the plottable Samples of the full evidence)\nKNOWN Last-persisted RSS: 51.50 MiB (54000000 bytes), seq 4, Capture_Time (Container_Clock): 2026-11-20T21:13:02.000Z shown to ms; original in details\noriginal\n (the Last_Persisted_Sample (the last Sample in file order))\nUNKNOWN OR LIMITED\nUNKNOWN OR LIMITED Unobserved interval: The interval between the last received Sample and the actual termination time is unobserved.\nUNKNOWN OR LIMITED correction unavailable: the ordering of Capture_Time (Container_Clock) against Host_Clock and Docker_Clock times is not established.\nUNKNOWN OR LIMITED Every comparison of a Corrected_Capture_Time or of the Docker FinishedAt with the SIGKILL send time is \"derived, not independently proven\".\nUNKNOWN OR LIMITED The recorded Clock_Uncertainty does not bound the Docker_Clock.\nUNKNOWN OR LIMITED The four clocks (Container_Clock, Collector_Clock, Host_Clock, Docker_Clock) are not recorded as synchronised.\nUNKNOWN OR LIMITED The recorded Clock_Uncertainty is the uncertainty the Runner recorded for the clock offset between the Collector_Clock and the Host_Clock. It does not bound any difference involving the Docker_Clock or the Container_Clock.\nUNKNOWN OR LIMITED Docker FinishedAt (Docker_Clock) against SIGKILL send time (Host_Clock):\nderived, not independently proven\nfrom: Docker FinishedAt (Docker_Clock, uncorrected) 2026-11-20T21:13:21.760Z shown to ms; original in details\nto: SIGKILL send time (Host_Clock) 2026-11-20T21:13:20.000Z shown to ms; original in details\noriginal\ndifference 1760 ms (from minus to, signed)\nClock_Uncertainty 12.5 ms\nno recorded bound exists for the Docker_Clock\nthis interval does not establish the order of two events\nUNKNOWN OR LIMITED A root cause is not established by the recorded evidence.\nrecorded by the Runner\n\ntermination_description\n\nsynthetic experiment B fixture\n\ncause_label\n\nnot recorded\n\nlimitations\n\nnone recorded\n\nArtifact status\nMANIFEST.JSON\nok\nEVIDENCE.JSONL\nok\nDOCKER_INSPECT.JSON\nok\nWarnings\n\nno warnings",
+ "report": {
+  "console_errors": [],
+  "console_warnings": [],
+  "uncaught_exceptions": [],
+  "log_errors": [
+   "network: Failed to load resource: the server responded with a status of 404 (Not Found) http://127.0.0.1:51253/favicon.ico"
+  ],
+  "log_warnings": [],
+  "csp_violations": [],
+  "failed_requests": [],
+  "http_errors": [
+   {
+    "url": "http://127.0.0.1:51253/favicon.ico",
+    "status": 404
+   }
+  ],
+  "fallback_page_shown": false
+ },
+ "csp": []
+}
