@@ -59,7 +59,7 @@ These rules apply to every task and are part of the completion criteria.
 
 ## Tasks
 
-- [ ] 1. M1.1 Git preparation
+- [x] 1. M1.1 Git preparation
   - [x] 1.1 Record the starting state
     - Run `git branch --show-current` (expected `feat/coroner-forensic-ui`), `git rev-parse --short HEAD` (expected `618be05`), `git status --short`, `git remote -v`, `git log --oneline -3`. Record the output.
     - Safety: read-only git commands only. If branch or HEAD differs, STOP and ask.
@@ -104,38 +104,38 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: the staged list equals the intended list.
     - _Plan: §11_
 
-  - [-] 1.7 Commit
+  - [x] 1.7 Commit
     - Run `git commit -m "feat(viewer): M1.1 forensic viewer with acceptance records and M2 demo-readiness plan"`. Propose the message to the user first if they have a preferred style (check `git log --oneline -10`).
     - Safety: no `--amend`, no `--no-verify`, no git config change. If a hook fails, fix the cause and create a new commit.
     - Verify: `git status --short` shows no intended file left uncommitted and `git log --oneline -1` shows the new commit.
     - _Plan: §13 decision 1_
 
-  - [~] 1.8 Push to origin
+  - [x] 1.8 Push to origin
     - Run `git push origin feat/coroner-forensic-ui` (no force flag, no `--force-with-lease`). Before pushing, show the user `git log origin/feat/coroner-forensic-ui..HEAD --oneline` if the remote branch exists.
     - Safety: if the push is rejected, STOP and report; do not force.
     - Verify: push output recorded; `git status -sb` shows the branch up to date with origin.
     - _Plan: §13 decision 1_
 
-  - [~] 1.9 Prepare the pull request to master
+  - [x] 1.9 Prepare the pull request to master
     - Check `gh --version` and `gh auth status`. If both succeed, create the PR with `gh pr create --base master --head feat/coroner-forensic-ui --title "<title>" --body "<body>"` only after the user approves the title and body.
     - If `gh` is missing or not authenticated, record the exact PR title, the exact PR body (what M1.1 adds, test results from task 1.5, the preserved limitations in `docs/m1-results/m1.1-acceptance.md`, and a note that human checks H1 to H7 remain NOT TESTED) and the compare URL `https://github.com/<owner>/<repo>/compare/master...feat/coroner-forensic-ui` (derive owner and repository from `git remote -v`). Give them to the user to open manually.
     - Safety: no login or token handling by the agent; no merge in this task.
     - Verify: a PR URL, or the title, body and compare URL, recorded.
     - _Plan: §13 decision 1_
 
-  - [~] 1.10 Merge to master after a separate PR review (requires explicit user approval at execution time)
+  - [x] 1.10 Merge to master after a separate PR review (requires explicit user approval at execution time)
     - Review the PR diff separately from task 1.2 (for example `gh pr diff` or the compare page) and confirm the PR checks passed (`gh pr checks`, or the user's confirmation if checks are not available). Report the result.
     - Ask the user for explicit approval to merge now. Merge only after that approval, using the merge method the user names. Without approval at execution time, leave this task unticked.
     - Safety: no force push, no branch deletion, no git config change. Do not merge if any check failed or was not run.
     - Verify: the merged state is shown on the PR page or by `git log origin/master --oneline -3`.
     - _Plan: §13 decision 1_
 
-  - [~] 1.11 Checkpoint - stop for review (M1.1 Git preparation)
+  - [x] 1.11 Checkpoint - stop for review (M1.1 Git preparation)
     - Report real results: commit id, push result, PR link or text, merge status, scan findings, regression counts.
     - Stop and wait for the user's decision before group 2.
 
 - [ ] 2. M2.1 Preflight and run sheet
-  - [~] 2.1 Create the read-only preflight script `scripts/demo-preflight.ps1`
+  - [x] 2.1 Create the read-only preflight script `scripts/demo-preflight.ps1`
     - Confirm the path with the user (suggested `scripts/demo-preflight.ps1`; the plan names no path). Run on Windows PowerShell 5.1 and PowerShell 7.
     - Parameters: `-RunsDir` (default `runs`), `-RunIds` (default the three canonical ids), `-Port` (default 8765), `-FallbackPort` (default 8766), `-BaselinePath` (required for the integrity check, must resolve outside `runs/` and outside the repository), `-Json` (JSON output), `-Offline` (skip every HTTP check and the Viewer launch, for the test), `-LaunchViewer` (switch, off by default).
     - Checks, each reported as PASS or FAIL with a message: (1) `.venv\Scripts\python.exe --version` is 3.12.x; (2) `import coroner.viewer` succeeds; (3) each canonical run directory exists and holds `manifest.json`, `evidence.jsonl` and `docker_inspect.json`; (4) port 8765 is free, otherwise 8766 is free, and the process owning an occupied port is reported by name and id but never stopped; (5) with `-LaunchViewer` only, start `python -m coroner.viewer --runs-dir <RunsDir> --host 127.0.0.1 --port <port>` and remember its process id, and stop only that process at the end; (6) HTTP checks with `Host: 127.0.0.1:<port>` for `/`, `/api/runs`, `/runs/<id>` for the three ids and `/compare?a=<A>&b=<B>&c=<C>`, each expecting 200; (7) from `/api/runs/<id>` read the recorded ExitCode and OOMKilled and compare with the Non-Negotiable Demo Facts (A 1/false, B 137/false, C 137/true); (8) evidence integrity: SHA-256 of every file in the three canonical run directories compared with the baseline file.
@@ -145,7 +145,7 @@ These rules apply to every task and are part of the completion criteria.
     - Safety: read-only; no Docker; no process termination other than a Viewer the script itself launched.
     - _Plan: §5, §12 M2.1, §13 decision 5_
 
-  - [~] 2.2 Create the evidence baseline outside `runs/`
+  - [x] 2.2 Create the evidence baseline outside `runs/`
     - Create one baseline file with the SHA-256 and size of every file in the three canonical run directories (relative path, hash, size), at a location outside `runs/` and outside the repository (suggested `$env:TEMP\coroner-m2\demo-baseline.txt`). Use create-new semantics: refuse if the file exists, then mark it read-only. Copy it to a second location outside the repository and note the location.
     - Cross-check the values against the existing M1 snapshot (`$env:TEMP\coroner-m1\runs-before.snapshot.txt`) for the same files; report any difference and STOP. Read the M1 snapshot only.
     - Do not commit the baseline. Record in the task note only the file name, the file count and the aggregate SHA-256, not the per-file listing.
@@ -153,7 +153,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: `Test-Path` is true, `IsReadOnly` is true, `git status --short` shows no baseline file.
     - _Plan: §12 M2.4 (`runs/` unchanged against the baseline)_
 
-  - [~] 2.3 Write a test for the preflight script
+  - [x] 2.3 Write a test for the preflight script
     - Create `tests/unit/test_demo_preflight.py`. The test builds a synthetic runs directory in `tmp_path` with the existing fixture builders in `tests/unit/viewer/builder.py`, builds a baseline file in `tmp_path`, and runs the script with `-Offline -Json -RunsDir <tmp> -RunIds <synthetic ids> -BaselinePath <tmp baseline>`. Cases: all checks pass (exit code 0, `ok` true); a modified evidence file fails the integrity check (nonzero); a missing run directory fails (nonzero); the script leaves `runs`-style directory contents unchanged (hash before equals hash after).
     - The test skips cleanly with a stated reason when neither `pwsh` nor `powershell` is on `PATH` (`shutil.which`). It never reads the real `runs/`, never starts a server and never calls Docker.
     - Check `tests/unit/test_structure.py` for a top-level directory or file allowlist and update it only if the new `scripts/` directory breaks it (report the change to the user first).
@@ -161,21 +161,21 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: `.\.venv\Scripts\python.exe -m pytest tests/unit/test_demo_preflight.py --collect-only -q -p no:cacheprovider`, then the run with `-rs`. Record counts and `$LASTEXITCODE`; skips are reported as skips.
     - _Plan: §5, §12 M2.1_
 
-  - [~] 2.4 Document startup and shutdown
+  - [x] 2.4 Document startup and shutdown
     - Create `docs/m2-plan/startup-shutdown.md`: exact start command `.\.venv\Scripts\python.exe -m coroner.viewer --runs-dir runs --host 127.0.0.1 --port 8765` in its own PowerShell window, the expected start line `Coroner Viewer: http://127.0.0.1:8765/  (runs: runs, read-only)`, fallback port 8766 (and that every URL changes), Ctrl+F5 after any code change, stop with Ctrl+C in the Viewer window, how to identify a stale process on 8765 without stopping anything you cannot identify as your own Viewer, how to run the preflight script (with and without `-LaunchViewer`, with `-Json`), and the statement that no Docker is used.
     - Files: `docs/m2-plan/startup-shutdown.md`.
     - Verify: every command in the document is copied from the plan, `coroner/viewer/cli.py` or the script's own `-?` output; list each command checked.
     - Safety: documentation only; no server is started.
     - _Plan: §5_
 
-  - [~] 2.5 Verify the canonical runs against the real `runs/` (read-only)
+  - [x] 2.5 Verify the canonical runs against the real `runs/` (read-only)
     - With the user's agreement, start the Viewer once on port 8765 (or 8766 if occupied) via the process tool, run `scripts/demo-preflight.ps1 -BaselinePath <baseline from 2.2>` and then with `-Json`, and stop the Viewer.
     - Record the real output. Expected: all checks PASS, the facts of the Non-Negotiable Demo Facts match, the integrity check shows no difference. Any mismatch is reported to the user and is not worked around.
     - Safety: no Docker; no process stopped other than the Viewer started in this task; no write under `runs/`.
     - Verify: exit code 0 and the recorded output; `git status --short` shows no change under `runs/`.
     - _Plan: §5, §12 M2.1_
 
-  - [~] 2.6 Write the concise operator run sheet
+  - [x] 2.6 Write the concise operator run sheet
     - Create `docs/m2-plan/run-sheet.md`: one page with the preflight checklist (script command first, then the manual fallbacks from plan §5), exact commands, fallback port, the three canonical run ids and URLs (`/`, the three `/runs/<id>` URLs, `/compare?a=...&b=...&c=...`), and the demo order A briefly, then B and C and the comparison.
     - Include the Non-Negotiable Demo Facts section verbatim from this file. Include what Coroner refuses to claim (plan §7 and §8) and the headline condition (shown only when B and C both have ExitCode 137 and OOMKilled differs; suppressed on an ExitCode or OOMKilled source discrepancy).
     - Include the rule that a recording or screenshot is never presented as the live Viewer.
@@ -184,7 +184,7 @@ These rules apply to every task and are part of the completion criteria.
     - Safety: no claim beyond the recorded evidence; no new facts.
     - _Plan: §4, §5, §6, §7, §8, §12 M2.1_
 
-  - [~] 2.7 Write the reproducible judge test-build plan
+  - [x] 2.7 Write the reproducible judge test-build plan
     - Create `docs/m2-plan/judge-test-build.md`: install steps (create the venv, install `requirements/dev.txt`), the test command (`.\.venv\Scripts\python.exe -m pytest tests/unit/viewer tests/unit/test_structure.py tests/unit/test_docs.py -q -p no:cacheprovider -rs`), and a way to see the Viewer using safe synthetic sample evidence generated with the fixture builders in `tests/unit/viewer/builder.py` into a temporary directory outside the repository, then `python -m coroner.viewer --runs-dir <that directory> --host 127.0.0.1 --port 8765`.
     - State that the real `runs/` is not published, that the local viewer is never exposed publicly (no tunnel, no hosting), and that judges run it on their own machine. State what the synthetic sample proves and does not prove.
     - If generating the synthetic sample needs a new code file, STOP and ask the user for approval before creating it; do not add one silently.
@@ -193,7 +193,7 @@ These rules apply to every task and are part of the completion criteria.
     - Safety: no real run data in the sample; no Docker.
     - _Plan: §1, §2_
 
-  - [~] 2.8 Checkpoint - stop for review (M2.1)
+  - [-] 2.8 Checkpoint - stop for review (M2.1)
     - Report real results: script path and behaviour, test counts and skips, baseline location (name only), preflight output on the real runs, documents created.
     - Stop and wait for the user's review. No commit.
 
