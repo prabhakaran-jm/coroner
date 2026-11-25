@@ -60,6 +60,16 @@
         "executionId": "710c4928-1d53-4dca-96d1-d933509c231d",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795521030637
+      },
+      {
+        "executionId": "aa4c0d50-72d9-41ce-88c9-c439044600b9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795633405030
+      },
+      {
+        "executionId": "9e3128a4-9ae3-4b7e-a215-a8e5b7c49c8e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795643681304
       }
     ],
     "1.4 Ignored-file review": [
@@ -399,6 +409,11 @@
         "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795557913751
+      },
+      {
+        "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795559430494
       }
     ],
     "3.2 List the fallback screenshots and clips": [
@@ -426,6 +441,16 @@
         "executionId": "ded16b9e-c9e5-47de-9d8c-8b6c6ad1326a",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795557756421
+      },
+      {
+        "executionId": "aa4c0d50-72d9-41ce-88c9-c439044600b9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795633405301
+      },
+      {
+        "executionId": "9e3128a4-9ae3-4b7e-a215-a8e5b7c49c8e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795643681452
       }
     ],
     "3.3 HUMAN-ONLY: timed rehearsal": [
@@ -511,6 +536,21 @@
         "executionId": "d4d54fc6-76ae-42a0-95c7-46c34a4aec6c",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795557914740
+      },
+      {
+        "executionId": "1ce9a4ff-a8e3-4cb6-bd0a-726efadcc148",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795627558572
+      },
+      {
+        "executionId": "1ce9a4ff-a8e3-4cb6-bd0a-726efadcc148",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795629828773
+      },
+      {
+        "executionId": "9e3128a4-9ae3-4b7e-a215-a8e5b7c49c8e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795643681582
       }
     ],
     "5.3 HUMAN-ONLY: repeat the affected checks": [
@@ -553,6 +593,21 @@
         "executionId": "710c4928-1d53-4dca-96d1-d933509c231d",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795515897500
+      },
+      {
+        "executionId": "1ce9a4ff-a8e3-4cb6-bd0a-726efadcc148",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795627561422
+      },
+      {
+        "executionId": "aa4c0d50-72d9-41ce-88c9-c439044600b9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795633085218
+      },
+      {
+        "executionId": "aa4c0d50-72d9-41ce-88c9-c439044600b9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795633236484
       }
     ],
     "6.5 Freeze check": [
@@ -560,6 +615,16 @@
         "executionId": "710c4928-1d53-4dca-96d1-d933509c231d",
         "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
         "timestamp": 1795515898105
+      },
+      {
+        "executionId": "aa4c0d50-72d9-41ce-88c9-c439044600b9",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795641031173
+      },
+      {
+        "executionId": "9e3128a4-9ae3-4b7e-a215-a8e5b7c49c8e",
+        "chatSessionId": "sess_e7b4141b-745d-4b07-b42a-7454502fb8a8",
+        "timestamp": 1795643681697
       }
     ],
     "6.6 Commit and push the M2 deliverables (requires explicit user approval at execution time)": [

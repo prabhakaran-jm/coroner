@@ -74,7 +74,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: a written list of reviewed paths, with "intended" or "ask" per path.
     - _Plan: §3, §13 decision 1_
 
-  - [x] 1.3 Secrets and privacy scan
+  - [ ] 1.3 Secrets and privacy scan
     - Scan the intended files for tokens and keys (patterns such as `ghp_`, `github_pat_`, `AKIA`, `sk-`, `-----BEGIN`, `api_key`, `secret`, `password`, `token`), for absolute user paths (`C:\\Users\\<username>`, `C:/Users/<username>`, `<username>`) in committed docs, and for email addresses. Use `grep_search` or `Select-String`.
     - Inspect PNG screenshots under `docs/m1-results/browser-4.7/` and `docs/m1-results/browser-4.14/` for embedded text metadata containing user paths (read the text chunks with `.\.venv\Scripts\python.exe -c` and the standard library only) and visually check for visible paths or emails.
     - Report each hit with file and line. Do not redact or edit files without the user's decision. Existing M1 documents may reference the repository root; list them for the user to approve or fix.
@@ -198,7 +198,7 @@ These rules apply to every task and are part of the completion criteria.
     - Stop and wait for the user's review. No commit.
 
 - [ ] 3. M2.2 Rehearsal and backup recording
-  - [-] 3.1 Write the screen sequence and transitions
+  - [x] 3.1 Write the screen sequence and transitions
     - Create `docs/m2-plan/recording-script.md`: the ordered screen sequence with URLs, spoken lines, the pointer targets and the transition between pages, for a target of 2:45 and a hard limit of under 3:00. Order: `/` (three cards), A briefly (`/runs/a-20261120T211146Z-4300f395`, ExitCode 1, OOMKilled false), B (`/runs/b-20261120T211311Z-ce313da1`), C (`/runs/c-20261120T211433Z-09b81ca1`), then `/compare?a=...&b=...&c=...` and the closing statement on what Coroner does not claim.
     - Every spoken line is checked against the Non-Negotiable Demo Facts and against the text on the page; no statement goes beyond the page text. Do not say who sent the SIGKILL beyond "the Runner" and do not say "the sample came before the kill".
     - Add per-segment time budgets that sum to at most 2:45. Mark Clipchamp as the recording and editing tool and ElevenLabs as optional narration (a synthetic voice must be disclosed in the video description).
@@ -206,7 +206,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: sum of the budgets is at most 2:45 (show the arithmetic); each Non-Negotiable Demo Fact appears unchanged.
     - _Plan: §4, §6, §7, §8, §12 M2.2_
 
-  - [x] 3.2 List the fallback screenshots and clips
+  - [ ] 3.2 List the fallback screenshots and clips
     - Add a section to `docs/m2-plan/recording-script.md` listing, per screen, the fallback file: existing headless screenshots in `docs/m1-results/browser-4.7/` (for example `01-overview-desktop.png`, `02-compare-desktop.png`, `06-experiment-b-chart.png`, `07-experiment-c-chart.png`) and `docs/m1-results/browser-4.14/`, plus any new human-recorded clip. Verify each listed file exists (`Test-Path`).
     - State that a fallback is announced as "a recording / a saved screenshot, not the live Viewer" and that a second copy of the recording is kept on another device or drive.
     - Safety: do not change or regenerate any screenshot; no evidence changes.
@@ -274,7 +274,7 @@ These rules apply to every task and are part of the completion criteria.
     - Verify: a triage table exists and the user approves each fix to be made.
     - _Plan: §12 M2.4_
 
-  - [-] 5.2 Fix each approved defect (only defects found in rehearsal)
+  - [ ] 5.2 Fix each approved defect (only defects found in rehearsal)
     - For each approved defect: a minimal fix in `coroner/viewer/` only, with a test; no M0 change. Run `.\.venv\Scripts\python.exe -m pytest tests/unit/viewer tests/unit/test_structure.py tests/unit/test_docs.py -q -p no:cacheprovider -rs` (collect-only first) and record the counts.
     - Safety: M1.1 implementation is otherwise frozen; no commit; the reviewer approves each fix before group 6.
     - Verify: the new test fails before the fix and passes after, with real output recorded.
@@ -306,14 +306,14 @@ These rules apply to every task and are part of the completion criteria.
     - Files: `docs/m2-plan/run-sheet.md`.
     - _Plan: §12 M2.5_
 
-  - [~] 6.4 Write the Kiroween 2026 submission checklist
+  - [-] 6.4 Write the Kiroween 2026 submission checklist
     - Create `docs/m2-plan/submission-checklist.md` with these items, each with a status field starting as NOT DONE and an evidence field: deadline 4 December 2026 22:00 UK time; public GitHub repository; approved open-source license (check that a LICENSE file exists and is on the approved list, otherwise STOP and ask the user); root `.kiro` directory included in the repository (check it is not ignored: `git check-ignore -v .kiro`); working project or reproducible test build (`docs/m2-plan/judge-test-build.md`); install and test instructions in `README.md`; public YouTube video under 3 minutes; Kiro usage write-up; an accurate description of what Coroner proves and what it does not prove, consistent with the Non-Negotiable Demo Facts; and the statement that the local viewer is never made publicly reachable.
     - Do not tick any item that needs an external action (upload, form submission). Those are HUMAN-ONLY and are recorded by the person.
     - Files: `docs/m2-plan/submission-checklist.md`.
     - Verify: each item has a status; `git check-ignore -v .kiro` prints nothing.
     - _Plan: §1, §9_
 
-  - [~] 6.5 Freeze check
+  - [ ] 6.5 Freeze check
     - Run `scripts/demo-preflight.ps1 -BaselinePath <baseline>` with the Viewer launched by the script (`-LaunchViewer`) and record the output. Run the focused regression command from task 1.5 plus `tests/unit/test_demo_preflight.py` and record counts. Confirm that the preflight passes, the run sheet, recording script and checklist exist, and the backup recording exists and plays (a person confirms).
     - Report to the user, who decides whether the demo is frozen. After the freeze, no change is made except by a new decision.
     - Safety: no Docker; no write under `runs/`.
