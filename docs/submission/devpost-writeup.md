@@ -56,7 +56,7 @@ The real `runs/` directory is not published. Judges instead generate three synth
 
 ### Verified tests and limitations
 
-- Latest recorded runs on Windows with Python 3.12.10: `tests/unit` 5,962 collected, 5,950 passed, 0 failed, 12 skipped, exit code 0 (on a PR #4 worktree, before the PR #3 additions). The Viewer, structure, docs, preflight and sample generator tests: 1,604 collected, 1,601 passed, 3 skipped, exit code 0. A whole-tree run from a clean checkout of this branch is PENDING.
+- Latest recorded runs on Windows with Python 3.12.10: `tests/unit` 5,962 collected, 5,950 passed, 0 failed, 12 skipped, exit code 0 (on a PR #4 worktree, before the PR #3 additions). The Viewer, structure, docs, preflight and sample generator tests: 1,604 collected, 1,601 passed, 3 skipped, exit code 0. A clean-checkout whole-tree run at commit e2307a3 on Windows with Python 3.12.10: `tests/unit` 5,995 collected, 5,982 passed, 0 failed, 13 skipped (not passes; 5 need the unpublished real `runs/`), exit code 0.
 - A screenshot privacy audit inspected all 75 tracked images (54 unique) at pixel level and found nothing.
 - The Viewer is "accepted with documented exceptions" [m1.1-acceptance.md]. Automated headless Chrome 158 ran the pages. Human-operated Chrome, real 200% browser zoom and a screen reader are NOT TESTED. The optional Node test did not run.
 - Verified on Windows with Docker Desktop on one host. Native Linux hosts are not verified, macOS was not tested, and there is no repeat-consistency proof across hosts.

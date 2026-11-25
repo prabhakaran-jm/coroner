@@ -80,8 +80,7 @@ has the full diagram.
 - M2 (demo preparation): in progress. The demo video is not yet recorded.
 - Latest recorded test runs on Windows with Python 3.12.10: `tests/unit` 5,962 collected, 5,950 passed, 0 failed, 12
   skipped, exit code 0 (a PR #4 worktree run, before the PR #3 additions). The Viewer, structure, docs, preflight and
-  sample generator tests: 1,604 collected, 1,601 passed, 3 skipped, exit code 0. A whole-tree run from a clean checkout of
-  this branch is PENDING. The section 12 figures remain the historical M0 record.
+  sample generator tests: 1,604 collected, 1,601 passed, 3 skipped, exit code 0. A clean-checkout whole-tree run at commit e2307a3 on Windows with Python 3.12.10: `tests/unit` 5,995 collected, 5,982 passed, 0 failed, 13 skipped (not passes; 5 need the unpublished real `runs/`), exit code 0. The section 12 figures remain the historical M0 record.
 
 The detailed M0 documentation and the Viewer (M1.1) section follow.
 

@@ -135,7 +135,9 @@ Recorded results on Windows with Python 3.12.10:
 - Viewer, structure, docs, preflight and generator tests (the five-path command above): 1,604 collected, 1,601 passed, 3
   skipped, exit code 0.
 - A later whole-tree run in the author's main working copy had 1 failure caused by local CRLF line endings in that copy.
-  No count from that run is cited. A whole-tree run from a clean checkout of this branch is PENDING and is not recorded here.
+  No count from that run is cited.
+- Clean-checkout whole-tree run on 2026-11-25 at commit `e2307a3e900766f62d175b9d07351cc9050ec85e` (a fresh detached git worktree with its own `.venv`, Windows, Python 3.12.10, pinned `requirements/dev.txt`): `tests/unit` 5,995 collected, 5,982 passed, 0 failed, 13 skipped, exit code 0, about 10 minutes. The 13 skips are not passes: 2 need POSIX `fcntl.flock`, 3 need symlinks this account cannot create, 1 needs directory fsync, 1 needs the POSIX `resource` module, 1 needs `node` (not installed), and 5 need the real `runs/` folder, which is not published. Docs-only commits after that commit change no code.
+- Historical: an earlier clean checkout at `f076d6e` had 2 failures, caused by a CRLF `scripts/demo-preflight.ps1` and a worktree with no `.venv`. Commit `e2307a3` fixes the line endings through `.gitattributes`.
 
 Read a result as follows: passed plus skipped equals collected, and the exit code is 0 (exit code 5 means nothing was
 collected, which is a failure). Skips print a reason with `-rs`. A skip is not a pass. Typical skip reasons are `node` not
