@@ -537,8 +537,9 @@ named tasks, not a current run. The latest full default run is in section 12.
    `container_id_source` says which.
 10. **Pre-start data is not covered.** Nothing before the Probe starts, and nothing between ticks, is captured.
 11. **Experiment C Sampling_Limitations** (always recorded): the Sample_Interval compared with the leak speed bounds how much
-    growth can happen unseen between Samples; the final seconds before the OOM kill may be unobserved; the peak RSS may
-    understate the memory limit. Diagnostic_Metrics never decide pass or fail.
+    growth can happen unseen between Samples; the final seconds before the OOM kill may be unobserved; the highest sampled RSS may be
+    lower than the highest RSS the container reached because sampling is not continuous. Diagnostic_Metrics never decide pass or fail.
+    Runs saved before this wording fix keep the earlier sentence, which compared the peak RSS with the memory limit.
 12. **Experiment B capture versus receive time** (section 8). Classification uses an estimated offset and the 250 ms tolerance.
 13. **Unreconciled drops.** A Probe-reported drop whose range cannot be established is reported with an uncertainty flag.
 14. **Malformed lines remain in evidence files.** Append-only repair keeps the fragment for audit, so standard text tools show

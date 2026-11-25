@@ -224,7 +224,7 @@ def test_non_positive_or_non_int_limit_is_rejected(bad):
 # --------------------------------------------------------------------------- sampling limitations
 
 FIXED_2 = "The final seconds before the out-of-memory kill may be unobserved"
-FIXED_3 = "The peak RSS in the Samples may understate the container memory limit"
+FIXED_3 = "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous."
 
 
 @settings(**SETTINGS)
@@ -238,7 +238,7 @@ def test_sampling_limitations_always_three_statements(interval, rate):
     assert len(sl.statements) == 3
     assert all(isinstance(s, str) and s.strip() for s in sl.statements)
     assert sl.statements[1].startswith(FIXED_2)
-    assert sl.statements[2].startswith(FIXED_3)
+    assert sl.statements[2] == FIXED_3
     assert sl.to_dict()["statements"] == list(sl.statements)
 
 

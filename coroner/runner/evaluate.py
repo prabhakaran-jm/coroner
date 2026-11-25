@@ -569,6 +569,6 @@ def sampling_limitations(
     statements = (
         first,
         "The final seconds before the out-of-memory kill may be unobserved: the last Sample can predate the kill.",
-        "The peak RSS in the Samples may understate the container memory limit that triggered the kill.",
+        "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous.",
     )
     return SamplingLimitations(interval, rate, statements)

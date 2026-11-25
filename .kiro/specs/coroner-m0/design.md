@@ -845,7 +845,7 @@ statements = [
   f"Sample_Interval is {interval_ms} ms while the leak adds about {leak_rate_human} per second, "
   f"so up to {bytes_per_interval_human} of growth can occur between two Samples.",
   "The final seconds before the out-of-memory kill may be unobserved: the last Sample can predate the kill.",
-  "The peak RSS in the Samples may understate the container memory limit that triggered the kill.",
+  "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous.",
 ]
 ```
 
@@ -876,7 +876,7 @@ Last sample:    2025-01-01T12:17:01.874Z
 Termination:    observed by runner; the interval between the last sample and the actual termination is unobserved
 Durability:     crash (fsync before acknowledgement; storage caveats apply)
 Diagnostics:    rss_monotonic_tail=true peak_rss_ratio_of_limit=0.93 sample_count=141 (informational, not pass/fail)
-Limitations:    interval 500 ms vs leak ~4 MiB/s; final seconds before the OOM kill may be unobserved; peak RSS may understate the limit
+Limitations:    interval 500 ms vs leak ~4 MiB/s; final seconds before the OOM kill may be unobserved; highest sampled RSS may be lower than the highest RSS reached
 ```
 
 For Experiment B the summary also prints the Sample timing classification (pre-kill, late-received, within tolerance, anomalies). The Diagnostics and Limitations lines appear only for Experiment C.
@@ -1075,7 +1075,7 @@ Written by the Collector at the Runner's request. The Collector itself never kno
     "statements": [
       "Sample_Interval is 500 ms while the leak adds about 4 MiB per second, so up to about 2 MiB can grow between two Samples.",
       "The final seconds before the out-of-memory kill may be unobserved: the last Sample can predate the kill.",
-      "The peak RSS in the Samples may understate the container memory limit that triggered the kill."
+      "The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous."
     ]
   },
   "evidence_summary": {"sample_count": 141, "missing_sample_count": 0, "unreconciled_drop_count": 0,
@@ -1465,7 +1465,7 @@ M0 states what it does not know. These statements appear in the documentation, i
 8. **Clock skew.** On Docker Desktop the VM clock can differ from the host. The runner estimates the offset but the correction is approximate.
 9. **Container ID discovery.** Probe container-ID parsing depends on `/proc` layout and may fall back to the 12-character `HOSTNAME`. The `container_id_source` field says which.
 10. **Pre-start data is not covered.** Nothing before the Probe starts, and nothing between sample ticks, is captured.
-11. **Experiment C sampling limitations (always recorded in the manifest and summary).** The Sample_Interval compared with the leak speed bounds how much growth can happen unseen between Samples. The final seconds before the OOM kill may be unobserved. The peak RSS may understate the limit. Diagnostic_Metrics are informational and never decide pass or fail.
+11. **Experiment C sampling limitations (always recorded in the manifest and summary).** The Sample_Interval compared with the leak speed bounds how much growth can happen unseen between Samples. The final seconds before the OOM kill may be unobserved. The highest sampled RSS may be lower than the highest RSS the container reached because sampling is not continuous. Diagnostic_Metrics are informational and never decide pass or fail. (Runs saved before this wording fix keep the earlier sentence, which compared the peak RSS with the memory limit; saved runs are not rewritten.)
 12. **Experiment B capture versus receive time.** A Sample captured before the kill may arrive after it. The Collector clock and Probe clock are separate, so classification uses an estimated offset and a documented 250 ms tolerance.
 13. **Unreconciled drops.** A Probe-reported drop whose range cannot be established is reported with an uncertainty flag, not as a number of known missing Samples.
 14. **Malformed lines remain in evidence files.** Append-only repair keeps the fragment for audit. Standard text tools will show it. Only the Evidence_Reader quarantines it.
