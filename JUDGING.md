@@ -177,11 +177,11 @@ temporary folder outside the repository. The Viewer ran on port 8765 as a backgr
 ```text
 generator exit code: 0 (10 files written: README-SYNTHETIC.txt and 3 files per run)
 Viewer line: Coroner Viewer: http://127.0.0.1:8765/  (runs: coroner-judge-sample-<8 hex>, read-only)
-GET /                                        -> 200 (705 bytes, HTML shell)
-GET /api/runs                                -> 200 (1204 bytes)
-GET /compare?a=...&b=...&c=... (sample ids)  -> 200 (705 bytes, HTML shell)
-GET /runs/b-20260101T000100Z-sample02        -> 200 (705 bytes, HTML shell)
-GET /api/runs/c-20260101T000200Z-sample03    -> 200 (25859 bytes)
+GET /                                        -> 200 (HTML shell)
+GET /api/runs                                -> 200
+GET /compare?a=...&b=...&c=... (sample ids)  -> 200 (HTML shell)
+GET /runs/b-20260101T000100Z-sample02        -> 200 (HTML shell)
+GET /api/runs/c-20260101T000200Z-sample03    -> 200
 /api/runs: total_found 3, listed 3, truncated false
 c-20260101T000200Z-sample03  verdict PASS  exit_code 137  oom_killed true   sample_count 45
 b-20260101T000100Z-sample02  verdict PASS  exit_code 137  oom_killed false  sample_count 15
