@@ -12,7 +12,7 @@ The verification was performed on the same Windows/Docker Desktop host. It does 
 
 - Repository: `prabhakaran-jm/coroner`
 - Commit: `f87738c1522068046ca1beec63319db857774782`
-- Clone: `C:\Users\prabh\Projects\coroner-repro`
+- Clone: `%USERPROFILE%\Projects\coroner-repro`
 - Git state: detached HEAD at the specified commit
 - Python: 3.12.10
 - Virtual environment: `.venv-repro`

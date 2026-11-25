@@ -2,6 +2,88 @@
 
 Crash forensics workstation for Python containers, built with Kiro for Kiroween 2026.
 
+## What Coroner is
+
+Coroner is crash forensics for Python containers. A small Probe runs inside the container and sends process Samples
+(including RSS) to a Collector that runs outside it. When the container dies, the Samples the Probe already delivered are
+still on disk, preserved outside the container. A read-only Viewer then shows what the run recorded and what it did not.
+
+Coroner reports what Docker and the Samples recorded. It does not infer a root cause from an exit code.
+
+### Who it is for
+
+- Developers who need to triage a Python container that exited, and want to see which facts survived (Docker state, exit
+  code, the last Samples) before guessing at a cause.
+- Reviewers who want to check the recorded evidence themselves. The Viewer is local and read-only, and `JUDGING.md` runs it
+  on synthetic sample runs without Docker.
+
+### Key finding: the same exit code, different recorded causes
+
+Two of the three experiments ended with Docker `ExitCode` 137. Docker's own record tells them apart.
+
+- **Experiment B:** `ExitCode` 137, `OOMKilled` false. The Runner sent a SIGKILL (`docker kill --signal=KILL`).
+- **Experiment C:** `ExitCode` 137, `OOMKilled` true. Docker recorded an OOM kill at a 128 MiB memory limit. The underlying
+  cause of the memory growth is not established by the saved evidence.
+- For reference, Experiment A: `ExitCode` 1, `OOMKilled` false, a controlled fatal process exit.
+
+A matching exit code does not show a matching cause. Sources: `docs/m0-results/experiment-results.md` and
+`docs/m2-plan/canonical-run-verification.md`.
+
+### Architecture
+
+| Part | Package | One line |
+|---|---|---|
+| Probe | `coroner/probe` | Runs inside the Demo App container and posts a Sample every 500 ms by default. |
+| Collector | `coroner/collector` | FastAPI service that stores acknowledged Samples as append-only JSON Lines evidence on a named volume. |
+| Runner | `coroner/runner` | Host-side CLI that starts the Demo App, causes one termination (A, B or C), reads `docker inspect` and writes the run manifest. |
+| Viewer | `coroner/viewer` | Read-only local web page and JSON API over saved runs. Binds `127.0.0.1` only. |
+
+The Demo App (`coroner/demo_app`) is the test subject. Shared code is in `coroner/evidence` and `coroner/common`. Section 2
+has the full diagram.
+
+### Quick links
+
+- [`JUDGING.md`](JUDGING.md): install, run the Viewer on synthetic sample runs, and run the tests (no Docker).
+- Demo video: to be added (not yet recorded).
+- [`.kiro/specs/`](.kiro/specs/): the Kiro specs, tasks and checkpoints used to build the project. The task checkboxes and
+  `tasks.meta.json` execution history record that tasks were run and marked complete. They do not prove the code works; the
+  test suite and the acceptance records do. `.kiro` contains only `specs/` (no hooks, steering, MCP or other Kiro features
+  are recorded).
+- [`docs/m1-results/m1.1-acceptance.md`](docs/m1-results/m1.1-acceptance.md): the Viewer acceptance record.
+- [`docs/m2-plan/`](docs/m2-plan/): demo run sheet, recording script, canonical run verification and the judge test build.
+- [`docs/submission/`](docs/submission/): Devpost text, Kiro usage, judge testing text and the submission checklist.
+
+### Real and synthetic evidence
+
+- **Real:** the A, B and C runs behind the key finding were produced by the Runner against Docker Desktop (Linux containers,
+  WSL2) on one Windows host and are recorded in `docs/m0-results/`. The saved `runs/` directory is gitignored and is not
+  published in this repository.
+- **Synthetic:** `scripts/make-sample-runs.py` writes three invented runs (A, B, C) that carry the same ExitCode and
+  OOMKilled values. No container ran and nothing was measured. They let anyone try the Viewer, and they do not reproduce or
+  prove the real experiments.
+
+### Verified limitations
+
+- Verified on Windows with Docker Desktop on a single host only. Native Linux hosts are not verified, and macOS was not tested.
+- There is no repeat-consistency proof across hosts or operating systems (see the status note below).
+- Viewer acceptance (`docs/m1-results/m1.1-acceptance.md`) is "accepted with documented exceptions". Automated headless
+  Chrome 158 ran the pages. Human-operated Chrome, real 200% browser zoom and a screen reader are NOT TESTED. The Node
+  vector test did not run because Node is not installed on the development machine.
+- B's clock correction in the Viewer is derived from the recorded `clock_offset_ms` and is not independently verified.
+- Which cause drove the memory growth in Experiment C is not established.
+- The Viewer is a local program. It is not hosted anywhere.
+
+### Current status
+
+- M0 (evidence pipeline and Experiments A, B and C): complete.
+- M1.1 (Viewer): accepted with documented exceptions.
+- M2 (demo preparation): in progress. The demo video is not yet recorded.
+- Latest recorded test runs on Windows with Python 3.12.10: `tests/unit` 5,962 collected, 5,950 passed, 0 failed, 12
+  skipped, exit code 0 (a PR #4 worktree run, before the PR #3 additions). The Viewer, structure, docs, preflight and
+  sample generator tests: 1,604 collected, 1,601 passed, 3 skipped, exit code 0. A clean-checkout whole-tree run at commit e2307a3 on Windows with Python 3.12.10: `tests/unit` 5,995 collected, 5,982 passed, 0 failed, 13 skipped (not passes; 5 need the unpublished real `runs/`), exit code 0. The section 12 figures remain the historical M0 record.
+
+The detailed M0 documentation and the Viewer (M1.1) section follow.
+
 
 > **Status.** There is no repeat-consistency proof across different hosts or operating systems.
 > Verified on Windows with Docker Desktop (Linux containers, WSL2),

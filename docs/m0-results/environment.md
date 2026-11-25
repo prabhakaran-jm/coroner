@@ -8,8 +8,8 @@ Recorded on 2026-11-14 (host clock, Windows, PowerShell). All values below are c
 |---|---|
 | `git --version` | `git version 2.55.0.windows.5` |
 | `python --version` | `Python 3.12.10` |
-| `python -m pip --version` | `pip 25.0.1 from C:\Users\prabh\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip (python 3.12)` |
-| `where.exe python` | `C:\Users\prabh\AppData\Local\Programs\Python\Python312\python.exe` (first), `C:\Users\prabh\AppData\Local\Microsoft\WindowsApps\python.exe` (Store stub, second) |
+| `python -m pip --version` | `pip 25.0.1 from C:\Users\<REDACTED_USER>\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip (python 3.12)` (username redacted as <REDACTED_USER> before publication; the original output contained the local account name) |
+| `where.exe python` | `C:\Users\<REDACTED_USER>\AppData\Local\Programs\Python\Python312\python.exe` (first), `C:\Users\<REDACTED_USER>\AppData\Local\Microsoft\WindowsApps\python.exe` (Store stub, second) (username redacted as <REDACTED_USER> before publication; the original output contained the local account name) |
 | `docker --version` | `Docker version 29.9.3, build 5457199` |
 | `docker compose version` | `Docker Compose version v5.7.0` |
 | `docker info --format '{{.OSType}} {{.ServerVersion}}'` | `linux 29.9.3` |
@@ -82,7 +82,7 @@ Branch: `feat/coroner-m0`. `.venv` did not exist before this task. Created with 
 |---|---|---|
 | `python -m venv .venv` | 0 | `.venv\Scripts\python.exe` created |
 | `.\.venv\Scripts\python.exe --version` | 0 | `Python 3.12.10` (matches tasks 1.1 and 1.5) |
-| `.\.venv\Scripts\python.exe -m pip --version` | 0 | `pip 25.0.1 from C:\Users\prabh\Projects\coroner\.venv\Lib\site-packages\pip (python 3.12)` |
+| `.\.venv\Scripts\python.exe -m pip --version` | 0 | `pip 25.0.1 from C:\Users\<REDACTED_USER>\Projects\coroner\.venv\Lib\site-packages\pip (python 3.12)` (username redacted as <REDACTED_USER> before publication; the original output contained the local account name) |
 | `pip install -r requirements/dev.txt` | 0 | 24 packages installed |
 | `pip check` | 0 | `No broken requirements found.` |
 | `pip freeze` vs `requirements/dev.txt` | n/a | 24 lines each, 0 differences (case and `_`/`-` normalised). No extra packages. |
@@ -241,4 +241,4 @@ Run on 14 November 2026. Raw output: `runs/cp2/`.
 - Default suite on the final tree: `.\.venv\Scripts\python.exe -m pytest -q -rs`: exit 0, `121 passed, 1 deselected`, 0 failed, 0 skipped (`--collect-only`: `121/122 tests collected (1 deselected)`).
 - Task 1.10 documentation reference aligned to `docs/m0-results/oom-spike.md` in `tasks.md` (title, Files line, Expected line). The task id key in `tasks.meta.json` was renamed to match; task status is unchanged. The report was not renamed or duplicated.
 - Excluded from staging: `.venv/`, `spike/`, `runs/` (including the raw Docker inspect output and `spike.jsonl` evidence), `__pycache__/`. `git status --short -uall` lists none of them because `.gitignore` covers them.
-- Note: this file (lines for the Python and pip versions, lines in the Task 1.1 and 1.8 sections) contains Windows paths that include the local user name, for example `C:\Users\prabh\...\python.exe`; the first of them was already committed in a0c23ec. `docker-prereqs.md` has none. They are not credentials. Say if you want them shortened before the push.
+- Note: this file (lines for the Python and pip versions, lines in the Task 1.1 and 1.8 sections) contained Windows paths that included the local user name, for example `C:\Users\<REDACTED_USER>\...\python.exe`; the first of them was already committed in a0c23ec (the username remains in git history). These paths have now been redacted in the current version, with the username replaced by `<REDACTED_USER>`. `docker-prereqs.md` has none. They were not credentials.
